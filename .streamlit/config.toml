@@ -1,0 +1,18 @@
+# Streamlit runtime config. Anything sensitive (passwords, API keys) goes in
+# secrets.toml — managed via Streamlit Cloud's "Secrets" UI in production.
+
+[server]
+# Cloud platform usually sets the port for us — keeping headless behaviour explicit.
+headless = true
+runOnSave = false
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+# Light, RenewaBlox-aligned palette. Tweak via the deploy dashboard later if you want.
+base = "light"
+primaryColor = "#10b981"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f8fafc"
+textColor = "#0f172a"

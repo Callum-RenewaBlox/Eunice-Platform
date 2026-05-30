@@ -1,0 +1,73 @@
+name: Daily ingest + model refit
+
+# Runs the data pipeline (tariff / weather / BMRS / carbon intensity) and re-trains
+# the 7-day forecast model, then commits the updated SQLite DB back to the repo so the
+# Streamlit Cloud app picks it up automatically on its next rebuild.
+#
+# Trigger: 16:35 UTC daily — chosen because Octopus typically publishes day-ahead unit rates
+# around 16:00 UK time, so we want to ingest after they're available.
+# Also exposed as a manual trigger (workflow_dispatch) for ad-hoc runs.
+
+on:
+  schedule:
+    - cron: "35 16 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # required to commit the refreshed data.sqlite back
+
+concurrency:
+  # If a previous run is still going, queue the next one rather than running in parallel —
+  # avoids two concurrent writes to data.sqlite and the inevitable merge conflict.
+  group: daily-ingest
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout (with LFS)
+        uses: actions/checkout@v4
+        with:
+          # Required to fetch data.sqlite (tracked via Git LFS). Without this the checkout
+          # would only get a 134-byte LFS pointer file, not the real database.
+          lfs: true
+          # We need full history so the LFS commit pushes cleanly without rewriting.
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run ingest + retrain + predict
+        env:
+          # Secrets must be configured in repo Settings → Secrets and variables → Actions
+          METOFFICE_API_KEY: ${{ secrets.METOFFICE_API_KEY }}
+          # Optional / legacy — comment out if not configured:
+          # ENTSOE_API_KEY:    ${{ secrets.ENTSOE_API_KEY }}
+          # ELEXON_API_KEY:    ${{ secrets.ELEXON_API_KEY }}
+        run: python ingest.py
+
+      - name: Commit refreshed database
+        run: |
+          git config user.name  "eunice-bot"
+          git config user.email "eunice-bot@users.noreply.github.com"
+          # Only commit if data.sqlite actually changed (it always will when ingest runs,
+          # but the guard protects against weird no-op cases where the schedule fires but
+          # nothing is fetched, e.g. all upstream APIs down).
+          if ! git diff --quiet -- data.sqlite; then
+            git add data.sqlite
+            git commit -m "chore(ingest): daily refresh $(date -u +%Y-%m-%d)"
+            git push
+          else
+            echo "No changes to data.sqlite — skipping commit."
+          fi

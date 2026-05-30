@@ -1,0 +1,29 @@
+# Secrets — must NEVER be committed
+.env
+.env.local
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.python-version
+.venv/
+venv/
+
+# Databases — exclude all by default, then explicitly include the canonical one (tracked via Git LFS)
+*.db
+*.sqlite
+*.sqlite3
+!data.sqlite
+
+# Logs
+logs/
+*.log
+
+# IDE / OS noise
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

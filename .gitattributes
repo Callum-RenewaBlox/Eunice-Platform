@@ -1,0 +1,16 @@
+# Git LFS tracking — data.sqlite exceeds GitHub's 100 MB single-file recommendation,
+# and grows over time as more half-hourly tariff data accumulates.
+data.sqlite filter=lfs diff=lfs merge=lfs -text
+# Normalise line endings on text files so the Windows dev environment doesn't
+# pollute the repo with CRLF noise.
+* text=auto eol=lf
+*.py text eol=lf
+*.toml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+# Binary safeguards
+*.sqlite binary
+*.db binary
+*.png binary
+*.jpg binary

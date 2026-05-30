@@ -1,0 +1,12 @@
+# Runtime dependencies for Eunice (Streamlit Cloud + GitHub Actions ingest).
+# Floor versions chosen for known-compatibility with the model and HistGradientBoosting API.
+# Upper-bound major versions on the volatile libs to avoid surprise breaking changes on cloud rebuild.
+
+requests>=2.31,<3
+python-dotenv>=1.0,<2
+pandas>=2.1,<3
+numpy>=1.26,<3
+streamlit>=1.36,<2
+plotly>=5.18,<7
+scikit-learn>=1.4,<2
+holidays>=0.45,<1
