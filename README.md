@@ -4,6 +4,17 @@
 
 Tech stack: Python · Streamlit · SQLite · scikit-learn (HistGradientBoosting quantile regression).
 
+## Two apps, one repo
+
+| App | Entry file | Audience | Deploy as |
+| --- | --- | --- | --- |
+| **Eunice** (full) | `app.py` | Internal / analyst — domestic + commercial, live + predicted, backtest, spike/trough signals | One Streamlit Cloud app |
+| **Eunice-lite** | `app_lite.py` | Partners → SME clients — commercial-only, guided savings calculator + chart | A second Streamlit Cloud app, same repo |
+
+Both read the same `data.sqlite` (updated by one daily ingest) and share the backend modules
+(`model.py`, `features.py`, `scenarios.py`, `db.py`, …). To run lite locally:
+`streamlit run app_lite.py`.
+
 ---
 
 ## Local development
