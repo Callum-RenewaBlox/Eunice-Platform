@@ -38,9 +38,11 @@ CREATE TABLE IF NOT EXISTS prediction (
     product         TEXT NOT NULL,
     valid_to        TEXT NOT NULL,
     predicted_price REAL NOT NULL,
+    p05             REAL,
     p10             REAL,
     p90             REAL,
     p_spike         REAL,
+    p_trough        REAL,
     model_version   TEXT NOT NULL,
     generated_at    TEXT NOT NULL,
     PRIMARY KEY (valid_from, region, product, model_version, generated_at)
@@ -132,6 +134,12 @@ def init_db():
         cols_pred = {row[1] for row in c.execute("PRAGMA table_info(prediction)").fetchall()}
         if "p_spike" not in cols_pred:
             c.execute("ALTER TABLE prediction ADD COLUMN p_spike REAL")
+        if "p05" not in cols_pred and cols_pred:
+            # v3: lower band quantile so the downside can reach negative prices
+            c.execute("ALTER TABLE prediction ADD COLUMN p05 REAL")
+        if "p_trough" not in cols_pred and cols_pred:
+            # v3: P(price < 0) classifier — downside mirror of p_spike
+            c.execute("ALTER TABLE prediction ADD COLUMN p_trough REAL")
         if "region" not in cols_pred and cols_pred:
             # v1 → v2: add `region` to PK
             c.executescript(
@@ -217,7 +225,7 @@ def insert_predictions(rows, model_version, region, product):
     default_generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     with conn() as c:
         c.executemany(
-            "INSERT OR REPLACE INTO prediction (valid_from, region, product, valid_to, predicted_price, p10, p90, p_spike, model_version, generated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT OR REPLACE INTO prediction (valid_from, region, product, valid_to, predicted_price, p05, p10, p90, p_spike, p_trough, model_version, generated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
                 (
                     r["valid_from"],
@@ -225,9 +233,11 @@ def insert_predictions(rows, model_version, region, product):
                     product,
                     r["valid_to"],
                     r["predicted_price"],
+                    r.get("p05"),
                     r.get("p10"),
                     r.get("p90"),
                     r.get("p_spike"),
+                    r.get("p_trough"),
                     model_version,
                     r.get("generated_at", default_generated_at),
                 )

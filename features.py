@@ -11,11 +11,15 @@ WEATHER_COLS = [
     "shortwave_wm2",
     "precipitation_mm",
 ]
-GRID_COLS = ["carbon_intensity_forecast", "demand_mw"]
-# Pruned 2026-05-06 after ablation: dropped is_bank_holiday, wind_generation_mw,
-# and lag_1w_price (the latter actively hurt val MAE by ~0.12p).
+GRID_COLS = ["carbon_intensity_forecast", "demand_mw", "wind_generation_mw"]
+# Pruned 2026-05-06 after ablation: dropped is_bank_holiday and lag_1w_price (the latter
+# actively hurt val MAE by ~0.12p).
 # 2026-05-07: added wholesale_price_lag_7d (BMRS MID, 7-day lag — always available
 # since the lookup horizon is in the past) and region_id (label-encoded GSP region).
+# 2026-06-07: RESTORED wind_generation_mw and added derived net_demand_mw (demand - wind).
+# The 2026-05-06 ablation pruned wind because it didn't improve *median* MAE — but wind
+# surplus is THE driver of negative pricing, which lives entirely in the lower tail the
+# median ignores. net_demand_mw gives the tree an explicit renewable-surplus axis.
 FEATURE_COLS = [
     "hour",
     "minute",
@@ -24,6 +28,7 @@ FEATURE_COLS = [
     "is_weekend",
     *WEATHER_COLS,
     *GRID_COLS,
+    "net_demand_mw",
     "wholesale_price_lag_7d",
     "region_id",
 ]
@@ -63,6 +68,18 @@ def _attach_grid(df, ts_col, grid_history):
             df[col] = grid_history[col].reindex(target_idx).values
         else:
             df[col] = pd.NA
+    return df
+
+
+def _add_net_demand(df):
+    """Net demand (MW) = national demand − wind generation. The canonical predictor of
+    negative pricing: when wind floods a low-demand grid (sunny, breezy Sunday middays),
+    net demand collapses and the wholesale price goes negative. Derived from the (possibly
+    imputed) grid columns so it's always present wherever both inputs are."""
+    if "demand_mw" in df.columns and "wind_generation_mw" in df.columns:
+        df["net_demand_mw"] = df["demand_mw"] - df["wind_generation_mw"]
+    else:
+        df["net_demand_mw"] = pd.NA
     return df
 
 
@@ -132,6 +149,7 @@ def build_training_data(product):
     merged["lag_1w_price"] = lag_values
 
     merged = _attach_grid(merged, "valid_from", grid_idx)
+    merged = _add_net_demand(merged)
     merged = _attach_wholesale_lag_7d(merged, "valid_from", mid_idx)
 
     merged["region_id"] = merged["region"].map(REGION_ENCODING).astype("Int64")
@@ -191,5 +209,6 @@ def build_forecast_features(region, product):
 
     medians = _hourly_median(grid_hist_idx)
     df = _impute_by_hour(df, "valid_from", medians)
+    df = _add_net_demand(df)
 
     return df, df[FEATURE_COLS]

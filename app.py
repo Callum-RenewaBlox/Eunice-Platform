@@ -48,6 +48,13 @@ def _on_location_submit():
 
 
 # === Tariff toggle (top of page) ===
+# Sign-up referral link — value of the bonus differs between Domestic and Commercial.
+REFERRAL_URL = "https://share.octopus.energy/dull-brook-170"
+REFERRAL_LABELS = {
+    "AGILE":          "🎁 £50 domestic signup bonus",
+    "SHAPE_SHIFTERS": "🎁 £75 commercial signup bonus",
+}
+
 product_cols = st.columns([3, 1])
 with product_cols[0]:
     product = st.radio(
@@ -61,6 +68,13 @@ with product_cols[0]:
 with product_cols[1]:
     seg = PRODUCTS[product]["segment"]
     st.caption(f"**{seg}**")
+    st.link_button(
+        REFERRAL_LABELS[product],
+        REFERRAL_URL,
+        help="Sign up via this RenewaBlox referral link to claim the bonus credit on your first bill.",
+        type="primary",
+        width="stretch",
+    )
 
 
 def _on_client_rate_change():
@@ -159,7 +173,7 @@ def load_data(region, product):
             "SELECT timestamp, temperature_c, wind_speed_kmh, cloud_cover_pct FROM weather_forecast ORDER BY timestamp", c
         )
         preds_all = pd.read_sql_query(
-            "SELECT valid_from, predicted_price, p10, p90, p_spike, generated_at, model_version FROM prediction WHERE region = ? AND product = ?",
+            "SELECT valid_from, predicted_price, p05, p10, p90, p_spike, p_trough, generated_at, model_version FROM prediction WHERE region = ? AND product = ?",
             c, params=(region, product),
         )
     if not tariff.empty:
@@ -278,17 +292,30 @@ if not known.empty:
         name="Published", line=dict(color="#2563eb", width=2),
     ))
 if not predicted.empty:
-    if "p10" in predicted.columns and predicted["p10"].notna().any():
+    # Lower band uses p05 (5th pct) when available so the downside — including possible
+    # negative pricing on high-renewable days — is visible; falls back to p10 for old rows.
+    if "p05" in predicted.columns and predicted["p05"].notna().any():
+        lower_band = predicted["p05"]
+        band_label = "P05–P90"
+    else:
+        lower_band = predicted["p10"]
+        band_label = "P10–P90"
+    if predicted["p90"].notna().any():
         fig.add_trace(go.Scatter(
             x=list(predicted["x"]) + list(predicted["x"][::-1]),
-            y=list(predicted["p90"]) + list(predicted["p10"][::-1]),
+            y=list(predicted["p90"]) + list(lower_band[::-1]),
             fill="toself", fillcolor="rgba(245,158,11,0.15)",
-            line=dict(color="rgba(0,0,0,0)"), name="P10–P90", hoverinfo="skip",
+            line=dict(color="rgba(0,0,0,0)"), name=band_label, hoverinfo="skip",
         ))
     fig.add_trace(go.Scatter(
         x=predicted["x"], y=predicted["predicted_price"], mode="lines",
         name="Predicted", line=dict(color="#f59e0b", width=2, dash="dot"),
     ))
+    # Zero-line reference so negative-price territory is unmistakable when the band dips below it
+    if lower_band.min() < 2:
+        fig.add_hline(y=0, line_dash="dot", line_color="rgba(16,185,129,0.5)",
+                      annotation_text="£0 / free", annotation_position="bottom right",
+                      annotation_font_color="#10b981", annotation_font_size=10)
 
 if not current_slot.empty:
     cur_x = to_local_one(now)
@@ -390,6 +417,25 @@ if "p_spike" in predicted.columns and predicted["p_spike"].notna().any():
         st.markdown(spike_md)
     else:
         st.caption("✅ No high-spike-risk slots (P > 25%) in the next 7 days.")
+
+# === Trough risk: likely very-cheap / negative-price periods ===
+# Mirror of the spike signal. The classifier ranks negative-price slots far better than the
+# point forecast can (it doesn't need the median to cross zero), so it's the primary signal
+# for "load up here". Driven by high renewables + low demand (sunny, breezy, low-load hours).
+if "p_trough" in predicted.columns and predicted["p_trough"].notna().any():
+    low_risk = predicted[predicted["p_trough"] > 0.15].nlargest(8, "p_trough")
+    if not low_risk.empty:
+        st.markdown("**🟢 Likely very cheap / possible negative-price periods (high renewables — next 7 days)**")
+        trough_md = "| Slot (Europe/London) | Negative-price probability | Predicted median |\n| --- | --- | --- |\n"
+        for _, r in low_risk.iterrows():
+            trough_md += f"| {fmt_local(r['valid_from'])} | **{r['p_trough'] * 100:.0f}%** | {r['predicted_price']:.2f} p |\n"
+        st.markdown(trough_md)
+        st.caption(
+            "Best windows to shift flexible load into / charge batteries. Probability is the "
+            "model's estimated chance the half-hour settles below 0p (you get paid to consume)."
+        )
+    else:
+        st.caption("✅ No elevated negative-price windows (P > 15%) in the next 7 days.")
 
 if not forward.empty:
     st.caption(f"Model: `{latest_model}` · Latest run: {fmt_local(forward['generated_at'].iloc[0])}")
