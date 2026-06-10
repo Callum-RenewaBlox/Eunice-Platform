@@ -14,6 +14,7 @@ Differences vs the full Eunice (app.py):
   - No manual refresh button: latest data renders on every page load
 """
 import os
+from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -30,6 +31,7 @@ except (FileNotFoundError, Exception):
 
 from config import REGION, REGION_NAMES, ALL_REGIONS
 from db import conn
+from octopus import fetch_agile_rates
 from region_lookup import lookup_region
 from scenarios import (
     apply_load_shift,
@@ -278,6 +280,24 @@ def load_data(region, product):
     return tariff, preds_all
 
 
+@st.cache_data(ttl=1800)
+def fetch_live_tariff(region, product):
+    """Pull the most recent published rates straight from the source so the live/published
+    line and the Now/Next prices are always current — the committed database is only a
+    periodic snapshot, so on a hosted app it goes stale between data refreshes. Public
+    endpoint, no key needed. Returns recent + current + any day-ahead published slots."""
+    period_from = (datetime.now(timezone.utc) - timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    try:
+        rows = fetch_agile_rates(region, product, period_from=period_from)
+    except Exception:
+        return pd.DataFrame(columns=["valid_from", "value_inc_vat"])
+    if not rows:
+        return pd.DataFrame(columns=["valid_from", "value_inc_vat"])
+    df = pd.DataFrame(rows)[["valid_from", "value_inc_vat"]]
+    df["valid_from"] = pd.to_datetime(df["valid_from"], utc=True)
+    return df.sort_values("valid_from").reset_index(drop=True)
+
+
 def to_local(series):
     return series.dt.tz_convert(DISPLAY_TZ).dt.tz_localize(None)
 
@@ -289,6 +309,17 @@ def to_local_one(ts):
 st.subheader("Live & predicted unit price")
 
 tariff, preds_all = load_data(region, PRODUCT)
+
+# Merge live published rates over the (possibly stale) snapshot so the blue line + Now/Next
+# always reflect the current half-hour. Live rows win on overlap; DB still provides deep history.
+live = fetch_live_tariff(region, PRODUCT)
+if not live.empty:
+    tariff = (
+        pd.concat([tariff, live], ignore_index=True)
+        .drop_duplicates("valid_from", keep="last")
+        .sort_values("valid_from")
+        .reset_index(drop=True)
+    )
 
 if tariff.empty:
     st.warning(f"No commercial tariff data for region {region} yet.")
