@@ -1,4 +1,6 @@
 import os
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -17,8 +19,17 @@ except (FileNotFoundError, Exception):
     # config.py's dotenv loader handles the local-dev case.
     pass
 
+# Point the data layer at the slim, normal-file database when present. Streamlit Cloud does NOT
+# pull Git LFS, so the full LFS-tracked data.sqlite isn't readable there — data_lite.sqlite
+# (a normal git file, rebuilt + committed daily by the Action) is. Falls back to the full DB
+# locally. Must run before importing config/db so config.DB_PATH picks it up.
+_lite_db = Path(__file__).resolve().parent / "data_lite.sqlite"
+if _lite_db.exists():
+    os.environ["EUNICE_DB_PATH"] = str(_lite_db)
+
 from config import ALL_REGIONS, DEFAULT_PRODUCT, PRODUCTS, REGION, REGION_NAMES
 from db import conn
+from octopus import fetch_agile_rates
 from region_lookup import lookup_region
 
 DISPLAY_TZ = "Europe/London"
@@ -100,8 +111,8 @@ client_fixed_rate = st.number_input(
 
 st.divider()
 
-# === Region + location + refresh ===
-header_cols = st.columns([2, 2, 2, 1])
+# === Region + location ===
+header_cols = st.columns([2, 2, 2])
 with header_cols[0]:
     st.title("7-Day Tariff Forecast")
 with header_cols[1]:
@@ -126,40 +137,12 @@ with header_cols[2]:
             st.caption(f"📍 Matched **{matched}** ({REGION_NAMES[matched]})")
         else:
             st.caption(f"⚠️ No match for '{location_query}'")
-with header_cols[3]:
-    st.write("")
-    refresh_clicked = st.button(
-        "🔄 Refresh data",
-        width="stretch",
-        help="Pull the latest market and weather data, retrain the model, and regenerate predictions (~30s).",
-    )
 
 st.caption(
     f"Tariff **{PRODUCTS[product]['label']}** · Region **{region}** ({REGION_NAMES[region]}) · "
-    "Day 1 is the live RenewaBlox Solution settlement (published ~4pm); days 2–7 are Eunice model predictions. Times in Europe/London."
+    "Day 1 is the live RenewaBlox Solution settlement (published ~4pm); days 2–7 are Eunice model predictions. "
+    "Live prices update automatically; the 7-day forecast is regenerated daily. Times in Europe/London."
 )
-
-if refresh_clicked:
-    with st.spinner("Pulling latest data + regenerating predictions…"):
-        try:
-            from db import init_db
-            from ingest import (
-                ingest_forecast,
-                ingest_tariff,
-                ingest_weather_history,
-                run_predictions,
-            )
-            init_db()
-            ingest_tariff(full=False)
-            ingest_weather_history(full=False)
-            ingest_forecast()
-            run_predictions()
-            st.cache_data.clear()
-            st.toast("Data refreshed.", icon="✅")
-            st.rerun()
-        except Exception as e:
-            st.error(f"Refresh failed: {e}")
-            st.stop()
 
 
 @st.cache_data(ttl=60)
@@ -186,6 +169,23 @@ def load_data(region, product):
     return tariff, forecast, preds_all
 
 
+@st.cache_data(ttl=1800)
+def fetch_live_tariff(region, product):
+    """Pull the most recent published rates straight from the source so the live/published line
+    and the current/next prices are always current — the slim deploy DB only carries a short
+    recent window. Public endpoint, no key needed."""
+    period_from = (datetime.now(timezone.utc) - timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    try:
+        rows = fetch_agile_rates(region, product, period_from=period_from)
+    except Exception:
+        return pd.DataFrame(columns=["valid_from", "value_inc_vat"])
+    if not rows:
+        return pd.DataFrame(columns=["valid_from", "value_inc_vat"])
+    df = pd.DataFrame(rows)[["valid_from", "value_inc_vat"]]
+    df["valid_from"] = pd.to_datetime(df["valid_from"], utc=True)
+    return df.sort_values("valid_from").reset_index(drop=True)
+
+
 def to_local(series):
     return series.dt.tz_convert(DISPLAY_TZ).dt.tz_localize(None)
 
@@ -200,10 +200,20 @@ def fmt_local(ts):
 
 tariff, forecast, preds_all = load_data(region, product)
 
+# Merge live published rates over the slim-DB snapshot so the published line + Now/Next are
+# always current, regardless of when the deploy database was last rebuilt.
+live = fetch_live_tariff(region, product)
+if not live.empty:
+    tariff = (
+        pd.concat([tariff, live], ignore_index=True)
+        .drop_duplicates("valid_from", keep="last")
+        .sort_values("valid_from")
+        .reset_index(drop=True)
+    )
+
 if tariff.empty:
     st.warning(
-        f"No **{PRODUCTS[product]['label']}** tariff data for region **{region}** yet. "
-        "Run `python ingest.py --full` to populate the database."
+        f"No **{PRODUCTS[product]['label']}** tariff data for region **{region}** yet."
     )
     st.stop()
 
