@@ -466,4 +466,17 @@ if rate > 0:
         "price sits below it, the RenewaBlox Solution is cheaper than what they pay today."
     )
 _latest = to_local_one(tariff["valid_from"].iloc[-1])
-st.caption(f"📡 Latest published slot: **{_latest.strftime('%a %d %b %H:%M')}** (London) · data refreshes automatically.")
+st.caption(f"📡 Latest published slot: **{_latest.strftime('%a %d %b %H:%M')}** (London) · live prices update automatically.")
+
+# Forecast provenance + staleness guard — never silently show out-of-date predictions.
+if not forward.empty:
+    pred_gen = to_local_one(forward["generated_at"].max())
+    pred_to = to_local_one(forward["valid_from"].max())
+    if pred_to < to_local_one(now):
+        st.warning(
+            f"⚠️ The 7-day forecast was last generated **{pred_gen:%a %d %b}** and only extends to "
+            f"**{pred_to:%a %d %b}**, which is now in the past — the daily refresh may have failed. "
+            "Live prices above are still current, but treat the forecast as out of date."
+        )
+    else:
+        st.caption(f"🔮 Forecast generated **{pred_gen:%a %d %b %H:%M}**, covering through **{pred_to:%a %d %b}** (London).")
