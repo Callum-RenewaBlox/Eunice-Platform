@@ -45,8 +45,24 @@ def get_profile(product):
 
 
 def get_mean_agile_by_hour(region, product):
-    """Mean tariff price by hour of day (UK local), p/kWh inc VAT."""
+    """Mean tariff price by hour of day (UK local), p/kWh inc VAT.
+
+    Prefers a precomputed `tariff_hourly_avg` table when present (the slim deploy DB ships
+    these, computed from the FULL history, so hosted savings match the full app exactly
+    without shipping years of half-hourly rows). Falls back to averaging the raw `tariff`
+    table (the full local DB has no precomputed table).
+    """
     with conn() as c:
+        has_avg = c.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='tariff_hourly_avg'"
+        ).fetchone()
+        if has_avg:
+            adf = pd.read_sql_query(
+                "SELECT hour, avg_price FROM tariff_hourly_avg WHERE region = ? AND product = ?",
+                c, params=(region, product),
+            )
+            if not adf.empty:
+                return adf.set_index("hour")["avg_price"].reindex(range(24)).fillna(20.0)
         df = pd.read_sql_query(
             "SELECT valid_from, value_inc_vat FROM tariff WHERE region = ? AND product = ?",
             c, params=(region, product),

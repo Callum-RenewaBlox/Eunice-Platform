@@ -15,6 +15,7 @@ Differences vs the full Eunice (app.py):
 """
 import os
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -28,6 +29,14 @@ try:
             os.environ[_k] = _v
 except (FileNotFoundError, Exception):
     pass
+
+# Point the data layer at the slim, normal-file database when present. Streamlit Cloud does NOT
+# pull Git LFS, so the full LFS-tracked data.sqlite isn't readable there — data_lite.sqlite
+# (committed as a normal git file) is. Falls back to data.sqlite for local dev if absent.
+# Must run before importing config/db so config.DB_PATH picks it up.
+_lite_db = Path(__file__).resolve().parent / "data_lite.sqlite"
+if _lite_db.exists():
+    os.environ["EUNICE_DB_PATH"] = str(_lite_db)
 
 from config import REGION, REGION_NAMES, ALL_REGIONS
 from db import conn

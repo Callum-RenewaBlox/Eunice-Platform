@@ -67,7 +67,10 @@ ENTSOE_API_KEY = os.environ.get("ENTSOE_API_KEY", "").strip()
 ELEXON_BASE = "https://data.elexon.co.uk/bmrs/api/v1"
 ELEXON_API_KEY = os.environ.get("ELEXON_API_KEY", "").strip()
 
-DB_PATH = ROOT / "data.sqlite"
+# DB_PATH can be overridden via EUNICE_DB_PATH — the hosted lite app points this at the slim
+# data_lite.sqlite (a normal, non-LFS file) because Streamlit Cloud doesn't pull Git LFS.
+# Local training / ingest leave it unset and use the full data.sqlite.
+DB_PATH = Path(os.environ.get("EUNICE_DB_PATH") or (ROOT / "data.sqlite"))
 HISTORY_YEARS = 2
 
 GB_SITES = [

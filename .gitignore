@@ -11,11 +11,14 @@ __pycache__/
 .venv/
 venv/
 
-# Databases — exclude all by default, then explicitly include the canonical one (tracked via Git LFS)
+# Databases — exclude all by default, then explicitly include the two we ship:
+#   data.sqlite      — full history, tracked via Git LFS (local training / ingest)
+#   data_lite.sqlite — slim deploy DB, a NORMAL git file (Streamlit Cloud can't read LFS)
 *.db
 *.sqlite
 *.sqlite3
 !data.sqlite
+!data_lite.sqlite
 
 # Logs
 logs/
