@@ -4,16 +4,23 @@
 
 Tech stack: Python · Streamlit · SQLite · scikit-learn (HistGradientBoosting quantile regression).
 
-## Two apps, one repo
+## Four apps, one repo
 
 | App | Entry file | Audience | Deploy as |
 | --- | --- | --- | --- |
 | **Eunice** (full) | `app.py` | Internal / analyst — domestic + commercial, live + predicted, backtest, spike/trough signals | One Streamlit Cloud app |
 | **Eunice-lite** | `app_lite.py` | Partners → SME clients — commercial-only, guided savings calculator + chart | A second Streamlit Cloud app, same repo |
+| **Eunice Domestic** | `app_domestic.py` | Domestic clients — fixed vs Agile savings | Another Streamlit Cloud app, same repo |
+| **Eunice HeatX** | `app_heatx.py` | Project partners (public) — tailrace heat-exchanger studio: animated concept diagrams, tube-packing explorer, duty vs river flow, hybrid sizing, sensitivity, assumptions register | Another Streamlit Cloud app, same repo |
 
-Both read the same `data.sqlite` (updated by one daily ingest) and share the backend modules
+The price apps read the same `data.sqlite` (updated by one daily ingest) and share the backend modules
 (`model.py`, `features.py`, `scenarios.py`, `db.py`, …). To run lite locally:
 `streamlit run app_lite.py`.
+
+**Eunice HeatX** is self-contained: `app_heatx.py` + `sizing_model.py` (the verified
+thermal/hydraulic model — single computational source of truth) + `heatx_assets.py`
+(embedded interactive explorer and animated flow diagrams). No database, no secrets.
+Run locally: `streamlit run app_heatx.py`.
 
 ---
 
@@ -151,6 +158,9 @@ If the LFS bandwidth budget gets tight (unlikely until you have many concurrent 
 ## Files reference
 
 - `app.py` — Streamlit dashboard
+- `app_heatx.py` — Eunice HeatX (tailrace heat-exchanger studio)
+- `sizing_model.py` — verified heat-exchanger thermal/hydraulic model (HeatX source of truth)
+- `heatx_assets.py` — embedded HTML: packing explorer + animated flow diagrams
 - `ingest.py` — daily data + retrain pipeline (entrypoint for GitHub Actions)
 - `config.py` — region map, tariff product codes, API endpoints
 - `db.py` — SQLite schema + upserts
