@@ -1,6 +1,6 @@
 """Self-contained HTML assets for Eunice HeatX (app_heatx.py).
 
-Both blocks are rendered via st.components.v1.html inside a sandboxed
+Both blocks are rendered via st.iframe inside a sandboxed
 iframe, so they carry their own styles. The explorer's equations are
 IDENTICAL to sizing_model.py — if the model changes, change both
 (see HANDOVER.md: mirror, don't fork). Palette matches the Eunice
