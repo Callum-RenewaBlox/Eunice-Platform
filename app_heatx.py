@@ -16,7 +16,6 @@ import math
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
-import streamlit.components.v1 as components
 
 import sizing_model as sm
 from heatx_assets import EXPLORER_HTML, FLOW_HTML
@@ -120,7 +119,7 @@ if page == "Concept & flow diagrams":
         "single closed glycol loop), or a **plate heat exchanger** with a "
         "pumped open river-water secondary (option B). Dashes move in the "
         "direction of flow.")
-    components.html(FLOW_HTML, height=1190, scrolling=False)
+    st.iframe(FLOW_HTML, height=1190)
     st.subheader("What the analysis found")
     st.markdown(
         "1. **Envelope is the binding constraint.** The study's 120–150 m "
@@ -149,7 +148,7 @@ elif page == "Packing explorer":
         "How many finned tubes actually fit the drop-in envelope, and what "
         "duty they deliver. Equations are identical to `sizing_model.py` "
         "(counts from envelope ÷ pitch, duty from Q = U·A·ΔT_lm).")
-    components.html(EXPLORER_HTML, height=1130, scrolling=False)
+    st.iframe(EXPLORER_HTML, height=1130)
     st.caption(
         "Defaults reproduce the reference packing: 63 mm OD at 150 mm pitch "
         "with 3× fins → 30 tubes, ~25 m, ~15 m² effective, ~407 kW with the "

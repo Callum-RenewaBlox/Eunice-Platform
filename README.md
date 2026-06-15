@@ -4,7 +4,7 @@
 
 Tech stack: Python · Streamlit · SQLite · scikit-learn (HistGradientBoosting quantile regression).
 
-## Four apps, one repo
+## Five apps, one repo
 
 | App | Entry file | Audience | Deploy as |
 | --- | --- | --- | --- |
@@ -12,6 +12,7 @@ Tech stack: Python · Streamlit · SQLite · scikit-learn (HistGradientBoosting 
 | **Eunice-lite** | `app_lite.py` | Partners → SME clients — commercial-only, guided savings calculator + chart | A second Streamlit Cloud app, same repo |
 | **Eunice Domestic** | `app_domestic.py` | Domestic clients — fixed vs Agile savings | Another Streamlit Cloud app, same repo |
 | **Eunice HeatX** | `app_heatx.py` | Project partners (public) — tailrace heat-exchanger studio: animated concept diagrams, tube-packing explorer, duty vs river flow, hybrid sizing, sensitivity, assumptions register | Another Streamlit Cloud app, same repo |
+| **Eunice Atlas** | `app_atlas.py` | Public — UK renewable-site prospecting map: Hydro + Peaker / AD-BM layers, each site scored and sized by capacity, with live filters and click-through detail | Another Streamlit Cloud app, same repo |
 
 The price apps read the same `data.sqlite` (updated by one daily ingest) and share the backend modules
 (`model.py`, `features.py`, `scenarios.py`, `db.py`, …). To run lite locally:
@@ -21,6 +22,12 @@ The price apps read the same `data.sqlite` (updated by one daily ingest) and sha
 thermal/hydraulic model — single computational source of truth) + `heatx_assets.py`
 (embedded interactive explorer and animated flow diagrams). No database, no secrets.
 Run locally: `streamlit run app_heatx.py`.
+
+**Eunice Atlas** is likewise self-contained: `app_atlas.py` + `atlas_assets.py` +
+`atlas.html` (a standalone Leaflet map with the ~300 site records embedded; Leaflet
+loads from a CDN). No database, no secrets. The tab bar builds itself from the map's
+`ATLAS` config, so adding a layer is one config entry plus its data array.
+Run locally: `streamlit run app_atlas.py`.
 
 ---
 
@@ -161,6 +168,9 @@ If the LFS bandwidth budget gets tight (unlikely until you have many concurrent 
 - `app_heatx.py` — Eunice HeatX (tailrace heat-exchanger studio)
 - `sizing_model.py` — verified heat-exchanger thermal/hydraulic model (HeatX source of truth)
 - `heatx_assets.py` — embedded HTML: packing explorer + animated flow diagrams
+- `app_atlas.py` — Eunice Atlas (UK renewable-site prospecting map)
+- `atlas_assets.py` — loads `atlas.html` as the embedded `ATLAS_HTML` map asset
+- `atlas.html` — standalone Leaflet map (Hydro + Peaker / AD-BM site data, embedded)
 - `ingest.py` — daily data + retrain pipeline (entrypoint for GitHub Actions)
 - `config.py` — region map, tariff product codes, API endpoints
 - `db.py` — SQLite schema + upserts
