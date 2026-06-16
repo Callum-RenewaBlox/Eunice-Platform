@@ -23,7 +23,7 @@ thermal/hydraulic model — single computational source of truth) + `heatx_asset
 (embedded interactive explorer and animated flow diagrams). No database, no secrets.
 Run locally: `streamlit run app_heatx.py`.
 
-**Eunice Atlas** is likewise self-contained: `app_atlas.py` + `atlas_assets.py` +
+**Eunice Atlas** is likewise self-contained: `app_atlas.py` +
 `atlas.html` (a standalone Leaflet map with the ~300 site records embedded; Leaflet
 loads from a CDN). No database, no secrets. The tab bar builds itself from the map's
 `ATLAS` config, so adding a layer is one config entry plus its data array.
@@ -168,8 +168,7 @@ If the LFS bandwidth budget gets tight (unlikely until you have many concurrent 
 - `app_heatx.py` — Eunice HeatX (tailrace heat-exchanger studio)
 - `sizing_model.py` — verified heat-exchanger thermal/hydraulic model (HeatX source of truth)
 - `heatx_assets.py` — embedded HTML: packing explorer + animated flow diagrams
-- `app_atlas.py` — Eunice Atlas (UK renewable-site prospecting map)
-- `atlas_assets.py` — `load_atlas_html()`: reads `atlas.html` fresh each run for embedding
+- `app_atlas.py` — Eunice Atlas (reads and embeds `atlas.html` at runtime)
 - `atlas.html` — standalone Leaflet map (Hydro + Peaker / AD-BM site data, embedded)
 - `ingest.py` — daily data + retrain pipeline (entrypoint for GitHub Actions)
 - `config.py` — region map, tariff product codes, API endpoints

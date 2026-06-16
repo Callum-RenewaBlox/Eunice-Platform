@@ -4,7 +4,7 @@ A Leaflet atlas of scored UK sites for the RenewaBlox Solution: a **Hydro**
 layer and a **Peaker / AD-BM** layer, each site coloured by priority/tier
 and sized by installed capacity, with click-through detail and live
 filters. The whole map is a self-contained HTML page (``atlas.html``,
-loaded by ``atlas_assets.load_atlas_html()``) embedded via
+read from its sibling ``atlas.html`` at runtime) embedded via
 ``st.iframe``.
 
 No database, no secrets — like Eunice HeatX, this app stands alone.
@@ -12,14 +12,20 @@ No database, no secrets — like Eunice HeatX, this app stands alone.
 Run locally:  streamlit run app_atlas.py
 """
 import streamlit as st
-
-from atlas_assets import load_atlas_html
+from pathlib import Path
 
 st.set_page_config(
     page_title="Eunice Atlas — UK renewable-site map",
     page_icon=":material/map:",
     layout="wide",
 )
+
+# Read the map fresh in the main script (NOT via an imported module): Streamlit
+# reruns this script on each load but can keep imported modules cached, so a
+# constant defined in another module may serve a stale atlas.html after a
+# redeploy. Reading it here keeps the embedded map current on every rerun.
+ATLAS_HTML = (Path(__file__).resolve().parent / "atlas.html").read_text(
+    encoding="utf-8")
 
 # ----------------------------------------------------------------- sidebar
 st.sidebar.title("Eunice Atlas")
@@ -43,6 +49,6 @@ st.sidebar.caption(
 st.title("Eunice Atlas")
 st.caption("Where the RenewaBlox Solution fits the map — **no Watt wasted.**")
 
-st.iframe(load_atlas_html(), height=780)
+st.iframe(ATLAS_HTML, height=780)
 
 st.caption("RenewaBlox · Eunice platform · contact callum@renewablox.com")
