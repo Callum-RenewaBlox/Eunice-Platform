@@ -29,7 +29,7 @@ st.sidebar.divider()
 st.sidebar.markdown(
     "**Layers** — switch with the tabs in the map header:\n\n"
     "- **Hydro** — 189 sites · ~138 MW · coloured by priority\n"
-    "- **Peaker / AD-BM** — 114 sites · ~70 MW · coloured by BM tier\n\n"
+    "- **Peaker - BM** — 129 sites · ~144 MW · coloured by BM tier\n\n"
     "Bubble size = installed capacity. Use the **Filters** panel (top-right) "
     "to **search** by site, operator or postcode, narrow by priority/tier "
     "and confidence, or show the top 30 by rank only. Click any site for "
