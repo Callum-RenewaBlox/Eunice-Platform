@@ -4,7 +4,7 @@
 
 Tech stack: Python · Streamlit · SQLite · scikit-learn (HistGradientBoosting quantile regression).
 
-## Five apps, one repo
+## Six apps, one repo
 
 | App | Entry file | Audience | Deploy as |
 | --- | --- | --- | --- |
@@ -13,6 +13,7 @@ Tech stack: Python · Streamlit · SQLite · scikit-learn (HistGradientBoosting 
 | **Eunice Domestic** | `app_domestic.py` | Domestic clients — fixed vs Agile savings | Another Streamlit Cloud app, same repo |
 | **Eunice HeatX** | `app_heatx.py` | Project partners (public) — tailrace heat-exchanger studio: animated concept diagrams, tube-packing explorer, duty vs river flow, hybrid sizing, sensitivity, assumptions register | Another Streamlit Cloud app, same repo |
 | **Eunice Atlas** | `app_atlas.py` | Public — UK renewable-site prospecting map: Hydro + Peaker / AD-BM layers, each site scored and sized by capacity, with live filters and click-through detail | Another Streamlit Cloud app, same repo |
+| **RenewaBlox Client Atlas** | `app_client_atlas.py` | Public — client-facing opportunity map: GB hydro stranded-capacity + peaker BM-revenue layers (client-safe — internal scores/notes/targeting stripped) | Another Streamlit Cloud app, same repo |
 
 The price apps read the same `data.sqlite` (updated by one daily ingest) and share the backend modules
 (`model.py`, `features.py`, `scenarios.py`, `db.py`, …). To run lite locally:
@@ -28,6 +29,12 @@ Run locally: `streamlit run app_heatx.py`.
 loads from a CDN). No database, no secrets. The tab bar builds itself from the map's
 `ATLAS` config, so adding a layer is one config entry plus its data array.
 Run locally: `streamlit run app_atlas.py`.
+
+**RenewaBlox Client Atlas** is the public, client-facing sibling: `app_client_atlas.py` +
+`client_atlas.html`. The HTML is a client-safe build of the atlas — the internal hydro
+target list is removed and peaker rows are trimmed to client fields (no scores, BM-scores
+or internal notes), so nothing internal ships even in the page source.
+Run locally: `streamlit run app_client_atlas.py`.
 
 ---
 
@@ -170,6 +177,8 @@ If the LFS bandwidth budget gets tight (unlikely until you have many concurrent 
 - `heatx_assets.py` — embedded HTML: packing explorer + animated flow diagrams
 - `app_atlas.py` — Eunice Atlas (reads and embeds `atlas.html` at runtime)
 - `atlas.html` — standalone Leaflet map (Hydro + Peaker / AD-BM site data, embedded)
+- `app_client_atlas.py` — RenewaBlox Client Atlas (public, client-safe; embeds `client_atlas.html`)
+- `client_atlas.html` — client-safe Leaflet map (internal scores / notes / target list stripped)
 - `ingest.py` — daily data + retrain pipeline (entrypoint for GitHub Actions)
 - `config.py` — region map, tariff product codes, API endpoints
 - `db.py` — SQLite schema + upserts
