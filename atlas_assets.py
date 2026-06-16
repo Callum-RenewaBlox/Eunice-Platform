@@ -19,5 +19,15 @@ The tab buttons are generated from that object, so nothing else changes.
 """
 from pathlib import Path
 
-ATLAS_HTML = (Path(__file__).resolve().parent / "atlas.html").read_text(
-    encoding="utf-8")
+
+def load_atlas_html():
+    """Read ``atlas.html`` fresh on every call.
+
+    Deliberately a function, not a module-level constant: Streamlit reruns
+    the *main* script but keeps imported modules cached, so a constant here
+    would go stale after a redeploy that only changes ``atlas.html`` — the
+    sidebar would update but the embedded map would not. Reading on each
+    call (from the main script) keeps the map current without a reboot.
+    """
+    return (Path(__file__).resolve().parent / "atlas.html").read_text(
+        encoding="utf-8")

@@ -169,7 +169,7 @@ If the LFS bandwidth budget gets tight (unlikely until you have many concurrent 
 - `sizing_model.py` — verified heat-exchanger thermal/hydraulic model (HeatX source of truth)
 - `heatx_assets.py` — embedded HTML: packing explorer + animated flow diagrams
 - `app_atlas.py` — Eunice Atlas (UK renewable-site prospecting map)
-- `atlas_assets.py` — loads `atlas.html` as the embedded `ATLAS_HTML` map asset
+- `atlas_assets.py` — `load_atlas_html()`: reads `atlas.html` fresh each run for embedding
 - `atlas.html` — standalone Leaflet map (Hydro + Peaker / AD-BM site data, embedded)
 - `ingest.py` — daily data + retrain pipeline (entrypoint for GitHub Actions)
 - `config.py` — region map, tariff product codes, API endpoints
