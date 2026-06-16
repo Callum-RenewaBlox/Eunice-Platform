@@ -90,7 +90,7 @@ const ATLAS={
  peaker:{data:PEAKER,search:['site','postcode','town','operator'],cap:d=>d.installed_kw,center:[52.7,-1.6],zoom:6,univ:'129 sites &middot; 144 MW',
    ftitle:'BM Tier filters',
    fmuted:'Coloured by BM Tier (1 = highest priority). Size = installed capacity. Bubble shows installed capacity, developer / operator and the tier’s <b class="pk-rev">projected BM offer revenue</b>. Each tier carries a uniform projection for the next 12 months in p/kWh — an <b>average</b> and a <b>top-5%</b> (scarcity) figure — modelling each site as a gas peaker, scaled by BM-tier location value and uprated +20% for the baked-in forward rise in gas. Lower tiers are floored to stay above a peaker’s ~13 p/kWh wholesale capture (BM offers price nationally, above wholesale).',
-   legtitle:'BM Tier — projected p/kWh (next 12m)',
+   legtitle:'BM Tier — projected p/kWh',
    legend:[['#800026','Tier 1<span class="leg-fig">29.6p avg · 122p top 5%</span>'],['#e31a1c','Tier 2<span class="leg-fig">25.3p avg · 104p top 5%</span>'],['#fd8d3c','Tier 3<span class="leg-fig">21.7p avg · 80p top 5%</span>'],['#fed976','Tier 4<span class="leg-fig">18.0p avg · 61p top 5%</span>'],['#a6a6a6','Tier 5<span class="leg-fig">16.0p avg · 50p top 5%</span>']],
    filters:'<label><input type="checkbox" id="t1" checked> Tier 1 - Highest</label><label><input type="checkbox" id="t2" checked> Tier 2 - Strong</label><label><input type="checkbox" id="t3" checked> Tier 3 - Moderate</label><label><input type="checkbox" id="t4" checked> Tier 4 - Modest</label><label><input type="checkbox" id="t5" checked> Tier 5 - Lower</label><label><input type="checkbox" id="topn"> Top 30 by rank only</label>',
    colour:d=>pcol(d.tier),
