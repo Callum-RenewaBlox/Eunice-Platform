@@ -1,0 +1,27 @@
+# Keep the image small and free of secrets / huge LFS data.
+# NOTE: exclude the exact file data.sqlite — NOT data*.sqlite, which would also
+# drop data_lite.sqlite (the small DB the apps actually read at runtime).
+
+.git
+.github
+data.sqlite
+
+# Secrets must never be baked into the image.
+.env
+.streamlit/secrets.toml
+
+# Python / tooling cruft
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+*.log
+*.ipynb
+
+# Local deploy docs aren't needed in the runtime image.
+deploy/

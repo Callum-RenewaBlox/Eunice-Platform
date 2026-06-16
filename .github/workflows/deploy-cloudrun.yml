@@ -1,0 +1,79 @@
+name: Deploy to Cloud Run
+
+# Durable hosting for the partner-facing app. Unlike Streamlit Community Cloud,
+# Cloud Run cold-starts automatically in a few seconds on the next request — there
+# is no "click to wake" button a partner has to find. This mirrors Streamlit
+# Cloud's deploy-on-push: it runs on every push to main (so the daily
+# data_lite.sqlite refresh redeploys with fresh data) and on manual dispatch.
+#
+# ONE-TIME GCP SETUP IS REQUIRED FIRST — see deploy/cloud-run/README.md. The job is
+# gated on the repo variable DEPLOY_CLOUD_RUN so that merely adding this file does
+# not fail a run before GCP exists. Set DEPLOY_CLOUD_RUN=true to switch it on.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**.py"
+      - "data_lite.sqlite"
+      - "requirements.txt"
+      - "Dockerfile"
+      - ".dockerignore"
+      - ".github/workflows/deploy-cloudrun.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write     # keyless auth to GCP via Workload Identity Federation
+
+concurrency:
+  group: deploy-cloudrun
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: ${{ vars.DEPLOY_CLOUD_RUN == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout (no LFS — runtime uses the small data_lite.sqlite)
+        uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - name: Authenticate to Google Cloud (Workload Identity Federation)
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy Eunice Lite
+        run: |
+          gcloud run deploy eunice-lite \
+            --source . \
+            --project="${{ secrets.GCP_PROJECT_ID }}" \
+            --region="${{ vars.GCP_REGION }}" \
+            --set-env-vars=APP_FILE=app_lite.py \
+            --allow-unauthenticated \
+            --memory=1Gi \
+            --cpu=1 \
+            --timeout=3600 \
+            --session-affinity \
+            --min-instances=0 \
+            --max-instances=4 \
+            --port=8080 \
+            --quiet
+
+      - name: Show the live service URL
+        run: |
+          URL=$(gcloud run services describe eunice-lite \
+            --project="${{ secrets.GCP_PROJECT_ID }}" \
+            --region="${{ vars.GCP_REGION }}" \
+            --format="value(status.url)")
+          echo "Eunice Lite is live at: $URL"
+          echo "### Eunice Lite deployed → $URL" >> "$GITHUB_STEP_SUMMARY"
