@@ -42,7 +42,7 @@ header h1{font-size:16px;margin:0;font-weight:700}
 .hy-line{color:#222}
 .hy-line b{color:#111}
 .hy-line b.hy-s{color:#0a7d3b}
-</style></head><body><div id="wrap">
+.cli-search{position:absolute;z-index:1000;top:92px;left:50%;transform:translateX(-50%);background:#fff;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.18);padding:7px 9px;width:min(440px,82vw)}.cli-search input{width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:9px 12px;font-size:14px;font-family:inherit;box-sizing:border-box}.cli-search input:focus{outline:none;border-color:#8fd14f;box-shadow:0 0 0 2px rgba(143,209,79,.3)}.cli-hits{font-size:12px;color:#475569;margin:4px 2px 0;min-height:14px}</style></head><body><div id="wrap">
 <header>
   <div><h1>RenewaBlox Client Atlas</h1><div class="tag">no Watt wasted</div></div>
   <div class="tabs">
@@ -55,6 +55,7 @@ header h1{font-size:16px;margin:0;font-weight:700}
   </div>
 </header>
 <div id="map"></div>
+<div class="cli-search"><input type="search" id="q" placeholder="Find your site — name, town, postcode, operator…" autocomplete="off"><div class="cli-hits" id="qhits"></div></div>
 <div class="legend"><div id="legtitle" style="font-weight:700;margin-bottom:4px"></div><div id="legrows"></div></div>
 </div>
 <script>
@@ -79,14 +80,14 @@ const HYX=[[1400,91],[1990,855],[2000,1100],[900,95],[715,0],[750,50],[1400,712]
 HYDRO_S.forEach((d,i)=>{if(HYX[i]){d.inst=HYX[i][0];d.mec=HYX[i][1];}});
 function hcolor(c){return ({High:'#1a9850',Medium:'#f0a020',Low:'#d73027'})[c]||'#9aa0a6';}
 const ATLAS={
- hydro:{data:HYDRO_S,center:[56.7,-4.3],zoom:6,univ:'57 sites &middot; 15.2 MW stranded',
+ hydro:{data:HYDRO_S,search:['name'],center:[56.7,-4.3],zoom:6,univ:'57 sites &middot; 15.2 MW stranded',
    kw:d=>d.kw,
    legtitle:'Confidence',
    legend:[['#1a9850','High'],['#f0a020','Medium'],['#d73027','Low'],['#9aa0a6','Unverified']],
    colour:d=>hcolor(d.conf),
    popup:d=>'<div class="hy-pop"><div class="hy-name">'+esc(d.name)+'</div>'+(d.exp==='No export'?'<div class="hy-line">No export</div>':'<div class="hy-line">Installed capacity: <b>'+fmt(d.inst)+' kW</b></div><div class="hy-line">Export capacity: <b>'+fmt(d.mec)+' kW</b></div>')+'<div class="hy-line"><b class="hy-s">'+fmt(d.kw)+' kW</b> stranded</div></div>'
  },
- peaker:{data:PEAKER,center:[52.7,-1.6],zoom:6,univ:'129 sites &middot; 144 MW',
+ peaker:{data:PEAKER,search:['site','postcode','town','operator'],center:[52.7,-1.6],zoom:6,univ:'129 sites &middot; 144 MW',
    ftitle:'BM Tier filters',
    fmuted:'Coloured by BM Tier (1 = highest priority). Size = installed capacity. Bubble shows installed capacity, developer / operator and the tier’s <b class="pk-rev">projected BM offer revenue</b>. Each tier carries a uniform projection for the next 12 months in p/kWh — an <b>average</b> and a <b>top-5%</b> (scarcity) figure — modelling each site as a gas peaker, scaled by BM-tier location value and uprated +20% for the baked-in forward rise in gas. Lower tiers are floored to stay above a peaker’s ~13 p/kWh wholesale capture (BM offers price nationally, above wholesale).',
    legtitle:'BM Tier — projected p/kWh (next 12m)',
@@ -103,10 +104,15 @@ const layer=L.layerGroup().addTo(map);
 let cur='hydro';
 function render(){
   const a=ATLAS[cur]; layer.clearLayers();
-  let cap=0;
-  a.data.forEach(d=>{var kw=(a.kw?a.kw(d):d.installed_kw)||0;cap+=kw;
+  const q=(gid('q')?gid('q').value:'').trim().toLowerCase();
+  let rows=a.data;
+  if(q){const f=a.search||[];rows=rows.filter(d=>f.some(k=>{var v=d[k];return v!=null&&(''+v).toLowerCase().indexOf(q)>=0;}));}
+  let cap=0;const pts=[];
+  rows.forEach(d=>{var kw=(a.kw?a.kw(d):d.installed_kw)||0;cap+=kw;pts.push([d.lat,d.lon]);
     L.circleMarker([d.lat,d.lon],{radius:rad(kw),fillColor:a.colour(d),color:'#222',weight:.6,fillOpacity:.85}).bindPopup(a.popup(d)).addTo(layer);});
   const mw=gid('mw'); if(mw) mw.textContent=(cap/1000).toFixed(1);
+  const h=gid('qhits'); if(h) h.textContent=q?(rows.length+' site'+(rows.length===1?'':'s')+' found'):'';
+  if(q&&pts.length){map.fitBounds(pts,{padding:[40,40],maxZoom:12});}
 }
 function setTab(name){
   cur=name; const a=ATLAS[name];
@@ -120,5 +126,5 @@ function setTab(name){
 }
 gid('tab_hydro').addEventListener('click',()=>setTab('hydro'));
 gid('tab_peaker').addEventListener('click',()=>setTab('peaker'));
-setTab('peaker');
+gid('q').addEventListener('input',render);setTab('peaker');
 </script></body></html>
