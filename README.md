@@ -4,7 +4,7 @@
 
 Tech stack: Python · Streamlit · SQLite · scikit-learn (HistGradientBoosting quantile regression).
 
-## Six apps, one repo
+## Seven apps, one repo
 
 | App | Entry file | Audience | Deploy as |
 | --- | --- | --- | --- |
@@ -14,6 +14,7 @@ Tech stack: Python · Streamlit · SQLite · scikit-learn (HistGradientBoosting 
 | **Eunice HeatX** | `app_heatx.py` | Project partners (public) — tailrace heat-exchanger studio: animated concept diagrams, tube-packing explorer, duty vs river flow, hybrid sizing, sensitivity, assumptions register | Another Streamlit Cloud app, same repo |
 | **Eunice Atlas** | `app_atlas.py` | Public — UK renewable-site prospecting map: Hydro + Peaker / AD-BM layers, each site scored and sized by capacity, with live filters and click-through detail | Another Streamlit Cloud app, same repo |
 | **RenewaBlox Client Atlas** | `app_client_atlas.py` | Public — client-facing opportunity map: GB hydro stranded-capacity + peaker BM-revenue layers (client-safe — internal scores/notes/targeting stripped) | Another Streamlit Cloud app, same repo |
+| **RenewaBlox Investor Atlas** | `app_investor_atlas.py` | Investors (gated) — presentation map of the UK flexibility opportunity (peaker + hydro) with headline KPIs and site-level commercial detail | Another Streamlit Cloud app, same repo |
 
 The price apps read the same `data.sqlite` (updated by one daily ingest) and share the backend modules
 (`model.py`, `features.py`, `scenarios.py`, `db.py`, …). To run lite locally:
@@ -35,6 +36,11 @@ Run locally: `streamlit run app_atlas.py`.
 target list is removed and peaker rows are trimmed to client fields (no scores, BM-scores
 or internal notes), so nothing internal ships even in the page source.
 Run locally: `streamlit run app_client_atlas.py`.
+
+**RenewaBlox Investor Atlas** is the investor-presentation sibling: `app_investor_atlas.py` +
+`investor_atlas.html` (a standalone Leaflet map — peaker + hydro — with headline KPIs). It carries
+site-level commercial detail (developer, capacity, contract-value metrics), so deploy it **gated**
+to invited investor viewers rather than public. Run locally: `streamlit run app_investor_atlas.py`.
 
 ---
 
@@ -179,6 +185,8 @@ If the LFS bandwidth budget gets tight (unlikely until you have many concurrent 
 - `atlas.html` — standalone Leaflet map (Hydro + Peaker / AD-BM site data, embedded)
 - `app_client_atlas.py` — RenewaBlox Client Atlas (public, client-safe; embeds `client_atlas.html`)
 - `client_atlas.html` — client-safe Leaflet map (internal scores / notes / target list stripped)
+- `app_investor_atlas.py` — RenewaBlox Investor Atlas (investor presentation; embeds `investor_atlas.html`)
+- `investor_atlas.html` — standalone Leaflet investor map (peaker + hydro, KPIs; deploy gated)
 - `ingest.py` — daily data + retrain pipeline (entrypoint for GitHub Actions)
 - `config.py` — region map, tariff product codes, API endpoints
 - `db.py` — SQLite schema + upserts
