@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WN Infrastructure Map</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<style>
+  html,body{margin:0;height:100%;font-family:Arial,Helvetica,sans-serif;color:#1f2d3d}
+  #map{position:absolute;top:0;bottom:0;left:0;right:0}
+  .panel{position:absolute;top:10px;right:10px;z-index:1000;background:rgba(255,255,255,.95);
+    padding:10px 12px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.25);width:300px;font-size:12px;max-height:92vh;overflow:auto}
+  .panel h2{font-size:11px;margin:9px 0 5px;text-transform:uppercase;letter-spacing:.04em;color:#2E75B6}
+  .panel h2:first-child{margin-top:0}
+  .panel details.sec{border-top:1px solid #e3e6ea}
+  .panel details.sec[open]{padding-bottom:5px}
+  .panel summary.sh{font-size:11px;margin:7px 0 4px;text-transform:uppercase;letter-spacing:.04em;color:#2E75B6;font-weight:bold;cursor:pointer;outline:none}
+  .panel summary.sh:hover{color:#1b4f80}
+  .row{display:flex;align-items:flex-start;gap:7px;margin:4px 0}
+  .dot{width:12px;height:12px;border-radius:50%;margin-top:2px;flex:0 0 auto;border:1px solid #0003}
+  .ln{width:16px;height:0;border-top-width:3px;border-top-style:solid;margin-top:7px;flex:0 0 auto}
+  .row b{display:block}
+  .row span{color:#667;font-size:11px}
+  .note{margin-top:8px;padding-top:7px;border-top:1px solid #e3e6ea;color:#667;font-size:11px;line-height:1.45}
+  table.d{border-collapse:collapse;width:100%;font-size:11px;margin-top:2px}
+  table.d th,table.d td{border:1px solid #e3e6ea;padding:3px 5px;text-align:left}
+  table.d th{background:#f4f7fb}
+  .leaflet-tooltip.lbl{background:#fff;border:1px solid #999;font-weight:bold;font-size:11px;padding:1px 5px}
+  .leaflet-tooltip.dlbl{background:#fffbe6;border:1px solid #d4a017;font-size:10px;padding:0 4px}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="panel" id="panel"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const C={built:'#2e9e4f',proposed:'#95a5a6',grid:'#c0392b',context:'#2E75B6',v11:'#f39c12',v33:'#2980b9',v66:'#8e44ad',dist:'#d35400',gsp:'#111',owf:'#16a085',bnd:'#d81b60'};
+
+const sites=[
+ {id:'WNA',name:'West Newton A',lat:53.8351,lon:-0.1891,cat:'built',type:'Gas wellsite (built)',
+  grid:'PROPOSED 0.99 MW non-firm EXPORT connection — a ~1.3 MW wellhead-gas genset (co-located Bitcoin data-centre offtake) exporting up to 0.99 MW. The 11 kV distribution cable runs THROUGH the site, ~19 m from the data-centre location: tie in via an NPg switched point (RMU) + an on-site step-up substation. Sized at 0.99 MW to stay below the 1 MW fault-level TIA floor; non-firm / ANM-curtailable (LIFO). Fault level (RED) is the key check.',
+  land:'Norman Caley Ltd (Caley family). Rathlin LEASES (Occupation Lease, reported ~50 yr) — confirmed in Rathlin’s own Planning Statement §4.7.'},
+ {id:'WNB',name:'West Newton B',lat:53.8178,lon:-0.1710,cat:'built',type:'Gas wellsite (built)',
+  grid:'Had a TEMPORARY NPg mains connection (applied 21 May 2020, completed by 18 Aug 2020) to displace some diesel use during WNB-1 drilling — a service spur from the local network. Temporary, not a permanent substation; probably removed after suspension. Voltage unstated.',
+  land:'Norman Caley Ltd (Caley family), Crook Lane. Rathlin leases.'},
+ {id:'WND',name:'West Newton D',lat:53.8227,lon:-0.1797,cat:'proposed',type:'Gas wellsite (proposed, shelved)',
+  grid:'No connection (proposal only). 11 kV runs close by.',
+  land:'Norman Caley Ltd — the company’s 2015 NatWest charge mortgages "105.58 acres at Low Fosham".'},
+ {id:'TAN',name:'Tansterne Biomass',lat:53.8197,lon:-0.1480,cat:'grid',type:'Grid connection 22 MW @ 66 kV',
+  grid:'NPg 66 kV, 22 MW max export, ROC to 2037. Plant idle; owner Tansterne Biomass Ltd. Real 66 kV now traced (OSM) linking Tansterne to Burton Pidsea primary and west toward Creyke Beck.',
+  land:'Caley family farmland (Tansterne Grange); plant developed/operated by Caley-founded GB-Bio (in administration).'},
+ {id:'WIW',name:'Withernwick Wind Farm',lat:53.8472,lon:-0.1833,cat:'context',type:'66 kV substation (context)',
+  grid:'18 MW wind; 66 kV into the constrained Driffield/Beverley group.',land:'—'}
+];
+
+// ---- 11 / 33 / 66 kV geometry (OpenStreetMap via Overpass). Compact "lat lon;..." per line, "|" between lines ----
+const dec=s=>s.split('|').map(pl=>pl.split(';').map(pt=>pt.trim().split(/\s+/).map(Number)));
+const RAW11='53.7745 -0.0956;53.7865 -0.0975;53.7969 -0.1025;53.7983 -0.1045|53.7737 -0.0961;53.7637 -0.1009|53.774 -0.0963;53.7734 -0.1075;53.7744 -0.1128|53.7739 -0.0952;53.7732 -0.0926;53.7732 -0.0863;53.7535 -0.0469|53.7787 -0.1869;53.7765 -0.1921|53.7691 -0.221;53.7686 -0.2202;53.7687 -0.2194;53.7707 -0.2063;53.7701 -0.199;53.7702 -0.1946|53.7915 -0.1814;53.7862 -0.1712;53.782 -0.1557;53.7721 -0.1443|53.7871 -0.173;53.7843 -0.1797|53.7769 -0.1653;53.7831 -0.159|53.7755 -0.12;53.7721 -0.1443|53.7755 -0.12;53.7744 -0.1128|53.8289 -0.1078;53.8279 -0.1067;53.8236 -0.1072;53.822 -0.1099;53.8217 -0.1113;53.8218 -0.1132;53.8227 -0.1158;53.8284 -0.1213;53.8353 -0.1219;53.8362 -0.1226;53.8447 -0.1251;53.8481 -0.124;53.8483 -0.1233|53.8395 -0.1236;53.8407 -0.1313;53.841 -0.137;53.8425 -0.1467|53.8347 -0.097;53.8323 -0.1028;53.8317 -0.1051;53.8311 -0.117|53.8147 -0.1779;53.8146 -0.1828;53.8227 -0.1856;53.8311 -0.1927;53.835 -0.1924;53.8395 -0.19;53.8473 -0.1886;53.8531 -0.1865|53.8353 -0.1835;53.8352 -0.2045;53.8361 -0.2116|53.7775 -0.1851;53.7755 -0.1803|53.7941 -0.1356;53.7978 -0.1142;53.7969 -0.1053;53.7982 -0.098;53.7981 -0.0947;53.7986 -0.0906;53.799 -0.0672;53.7995 -0.0589;53.7994 -0.0574;53.7985 -0.0553;53.7984 -0.0517;53.794 -0.0496|53.7721 -0.1443;53.772 -0.1442|53.7756 -0.1192;53.7755 -0.12|53.8506 -0.1874;53.8512 -0.1925|53.8649 -0.1343;53.8606 -0.1324;53.8595 -0.1335|53.8596 -0.1321;53.8565 -0.148|53.8018 -0.0876;53.8072 -0.0904;53.8113 -0.0949|53.8419 -0.1429;53.8451 -0.1417;53.8458 -0.1422|53.8409 -0.1389;53.8331 -0.1368|53.8338 -0.137;53.832 -0.1476;53.832 -0.1495|53.84 -0.1267;53.8371 -0.127|53.8312 -0.1147;53.8303 -0.1147|53.8296 -0.1197;53.8304 -0.1199;53.8311 -0.117|53.83 -0.1198;53.83 -0.1214|53.8252 -0.1182;53.8266 -0.113|53.8261 -0.115;53.8269 -0.1154|53.8361 -0.0939;53.8362 -0.0931|53.8312 -0.0933;53.8317 -0.094;53.832 -0.0926;53.8277 -0.0842;53.8256 -0.083;53.8234 -0.084;53.8207 -0.0776|53.8202 -0.1065;53.8175 -0.101;53.8113 -0.0949|53.8151 -0.0989;53.8121 -0.1061;53.8129 -0.1157;53.8147 -0.12;53.8167 -0.1304|53.8165 -0.1292;53.8162 -0.1295|53.8113 -0.1215;53.8147 -0.1204|53.8073 -0.1495;53.7947 -0.1357;53.7901 -0.1345;53.789 -0.1363|53.809 -0.1461;53.8046 -0.1466|53.8076 -0.1484;53.8071 -0.15|53.7918 -0.1001;53.792 -0.105;53.7916 -0.1076|53.7904 -0.0994;53.7898 -0.1024|53.7983 -0.1045;53.7987 -0.1051;53.802 -0.1057|53.7987 -0.086;53.8018 -0.0876|53.7851 -0.1013;53.7836 -0.0994;53.7831 -0.097|53.78 -0.0923;53.7793 -0.0964|53.7999 -0.0862;53.8009 -0.0832|53.7732 -0.0863;53.7733 -0.0797;53.7781 -0.0632;53.7792 -0.0625;53.7807 -0.0578;53.7829 -0.0474|53.7946 -0.1439;53.7949 -0.1402|53.7915 -0.1814;53.7933 -0.1848;53.7961 -0.1871;53.8046 -0.1903;53.8118 -0.1937|53.7933 -0.1848;53.7973 -0.1651|53.7953 -0.1747;53.7968 -0.1765|53.7948 -0.1861;53.7946 -0.1881|53.7972 -0.1875;53.7967 -0.1896|53.8029 -0.1898;53.802 -0.199|53.803 -0.1898;53.8029 -0.1838|53.8082 -0.192;53.81 -0.1861;53.8146 -0.1828|53.8029 -0.1519;53.803 -0.1448|53.8227 -0.1856;53.8222 -0.1751;53.819 -0.1621;53.8195 -0.149;53.82 -0.1457|53.8245 -0.1871;53.8238 -0.1918|53.8353 -0.1835;53.8352 -0.1795|53.8445 -0.1891;53.8447 -0.184;53.8458 -0.1824|53.8551 -0.177;53.8562 -0.1792|53.8565 -0.1813;53.8603 -0.1821;53.8633 -0.1802;53.8653 -0.1809|53.8512 -0.1925;53.8524 -0.2068;53.8532 -0.2275;53.8564 -0.2354;53.8591 -0.2361;53.8601 -0.2387;53.8647 -0.2429;53.8681 -0.2569|53.8522 -0.2053;53.8561 -0.2077;53.8586 -0.2079;53.8622 -0.214;53.8745 -0.2028|53.857 -0.2078;53.8565 -0.2116|53.8526 -0.2116;53.8511 -0.2115|53.852 -0.2027;53.8505 -0.2029|53.8155 -0.2258;53.8151 -0.221;53.8141 -0.2159;53.8139 -0.2086;53.8131 -0.2048|53.8141 -0.2151;53.8125 -0.2145|53.7887 -0.1917;53.7888 -0.1869;53.7915 -0.1814|53.773 -0.2171;53.7785 -0.215|53.7877 -0.2049;53.7856 -0.204;53.786 -0.2022';
+const RAWBR='53.7787 -0.1869;53.7775 -0.1851|53.7765 -0.1921;53.7702 -0.1946|53.7687 -0.2194;53.773 -0.2171|53.7787 -0.1869;53.7843 -0.1797|53.7871 -0.173;53.7862 -0.1712|53.7737 -0.0961;53.7739 -0.0952|53.7739 -0.0952;53.7745 -0.0956|53.7961 -0.1871;53.7972 -0.1875|53.7961 -0.1871;53.7948 -0.1861|53.7983 -0.1045;53.7969 -0.1053|53.7941 -0.1356;53.7947 -0.1357|53.8046 -0.1903;53.803 -0.1898|53.8076 -0.1484;53.809 -0.1461|53.8046 -0.1466;53.803 -0.1448|53.782 -0.1557;53.7831 -0.159|53.7865 -0.0975;53.7851 -0.1013|53.7947 -0.1357;53.7949 -0.1402|53.7986 -0.0906;53.7987 -0.086|53.7987 -0.086;53.7999 -0.0862|53.8175 -0.101;53.8151 -0.0989|53.8167 -0.1304;53.8162 -0.1295|53.8202 -0.1065;53.822 -0.1099|53.8284 -0.1213;53.8296 -0.1197|53.8311 -0.117;53.8312 -0.1147|53.8347 -0.097;53.8361 -0.0939|53.8362 -0.1226;53.8371 -0.127|53.84 -0.1267;53.8395 -0.1236|53.841 -0.137;53.8409 -0.1389|53.8331 -0.1368;53.8338 -0.137|53.8425 -0.1467;53.8419 -0.1429|53.8227 -0.1158;53.8252 -0.1182|53.8266 -0.113;53.8261 -0.115|53.8347 -0.097;53.8317 -0.094|53.8046 -0.1903;53.8082 -0.192|53.8227 -0.1856;53.8245 -0.1871|53.8531 -0.1865;53.8506 -0.1874|53.8524 -0.2068;53.8522 -0.2053|53.8561 -0.2077;53.857 -0.2078|53.8522 -0.2053;53.852 -0.2027|53.8473 -0.1886;53.8445 -0.1891|53.8524 -0.2068;53.8526 -0.2116|53.7831 -0.097;53.7793 -0.0964|53.7865 -0.0975;53.7904 -0.0994|53.7904 -0.0994;53.7918 -0.1001|53.8531 -0.1865;53.8565 -0.1813|53.8565 -0.1813;53.8562 -0.1792|53.835 -0.1924;53.8353 -0.1835|53.7915 -0.1814;53.7953 -0.1747|53.8118 -0.1937;53.8131 -0.2048|53.7887 -0.1917;53.786 -0.2022|53.8458 -0.1422;53.8565 -0.148|53.8596 -0.1321;53.8595 -0.1335';
+const RAW66='53.9052 -0.221;53.9038 -0.2246;53.8967 -0.2284;53.8882 -0.227;53.8871 -0.2258;53.8742 -0.1926;53.8485 -0.1689|53.7741 -0.0959;53.7755 -0.0992;53.782 -0.1405;53.7854 -0.1574;53.7868 -0.1793;53.7869 -0.1878;53.7898 -0.2025;53.793 -0.23;53.8018 -0.2597;53.8047 -0.2644;53.8098 -0.2808;53.8122 -0.2932;53.812 -0.3072;53.8137 -0.3298;53.8128 -0.3379;53.8135 -0.3481;53.8145 -0.3563;53.8208 -0.3737;53.8259 -0.383|53.8481 -0.1686;53.8377 -0.1591;53.8326 -0.1472;53.8236 -0.1441;53.8207 -0.1415|53.8485 -0.1675;53.8485 -0.1689|53.8484 -0.1675;53.8481 -0.1686|53.8173 -0.1385;53.8101 -0.132;53.7871 -0.1085;53.7788 -0.0989;53.7742 -0.0957|53.8198 -0.1403;53.8197 -0.1406;53.8207 -0.1415|53.8197 -0.1402;53.8187 -0.1423;53.8167 -0.1401;53.8173 -0.1385';
+const RAW33='53.7739 -0.0953;53.7721 -0.0977;53.769 -0.1178;53.7666 -0.179;53.7644 -0.1988;53.7627 -0.2039;53.7593 -0.2205;53.757 -0.2225;53.7566 -0.224|53.7122 -0.0996;53.7154 -0.1072;53.7157 -0.1104;53.7178 -0.1191;53.7194 -0.1294;53.728 -0.144;53.7274 -0.1485;53.7311 -0.1578;53.7413 -0.1759;53.7455 -0.1854;53.7488 -0.1948;53.7484 -0.1996;53.7509 -0.2309|53.7448 -0.057;53.7567 -0.0736;53.7728 -0.0924;53.7739 -0.0953';
+const lines11=dec(RAW11), links11=dec(RAWBR), lines66=dec(RAW66), lines33=dec(RAW33);
+// Indicative service spurs tying each pad to the nearest mapped 11 kV [id,[lat,lon],[lat,lon]]
+const spurs=[['WNA',[53.8351,-0.1891],[53.8350,-0.1924]],['WNB',[53.8178,-0.1710],[53.8222,-0.1751]],['WND',[53.8227,-0.1797],[53.8222,-0.1751]],['WIW',[53.8472,-0.1833],[53.8458,-0.1824]]];
+
+const subs=[
+ {name:'Withernwick WF (66 kV)',lat:53.84842,lon:-0.16713,note:'66 kV substation — wind-farm connection into the Driffield/Beverley group.'},
+ {name:'Tansterne (66 kV)',lat:53.81978,lon:-0.14011,note:'66 kV grid connection (22 MW). Real 66 kV traced (OSM) south to Burton Pidsea and west toward Creyke Beck.'},
+ {name:'Burton Pidsea primary (66/11 kV)',lat:53.77405,lon:-0.09583,note:'The 66/11 kV primary feeding the local 11 kV network (incl. West Newton). Real 66 kV now traced (OSM): east/north to the Tansterne area and west toward the Creyke Beck 400 kV GSP.'}
+];
+const cps=[
+ {id:'CP_WNA',name:'West Newton A — 0.99 MW export connection (proposed)',lat:53.8355,lon:-0.1894,kv:11,key:true,
+  note:'PROPOSED 0.99 MW non-firm EXPORT connection. The 11 kV cable runs through WN A (~19 m from the data-centre location). Tie-in: NPg inserts a switched point (RMU) on the cable; on-site step-up substation (0.4/11 kV) + G99 Type-B protection + export-limitation relay (holds export at or below 0.99 MW) + ANM interface. Indicative connection capex ~£280k (range £150–410k); ~12–24 months. Non-firm / ANM (LIFO); fault-level study required.'},
+ {id:'CP_TAN',name:'Tansterne — 66 kV grid connection',lat:53.8197,lon:-0.1480,kv:66,key:false,
+  note:'Existing 66 kV connection, 22 MW max export.'}
+];
+
+// ---- Regional: GSPs, real offshore-wind array footprints + export cables. OFF by default ----
+const gsps=[
+ {name:'Birkhill Wood GSP (400 kV) — consented 23 Jun 2026',lat:53.80736,lon:-0.41516,note:'New 400 kV substation ~700 m north of Creyke Beck (East Riding consent 23 Jun 2026; build from spring 2027). Connection point for <b>Dogger Bank D (1.22 GW)</b>, <b>Dogger Bank South East (1.5 GW)</b> and <b>Dogger Bank South West (1.5 GW)</b> = <b>4.22 GW</b>, and the <b>northern end of the North Humber&ndash;High Marnham 400 kV line</b>. A later phase (Wanlass Beck) expands Creyke Beck for ~3.2 GW of battery storage. Adds to the Creyke Beck-area export surplus that West Newton import can absorb.'},
+ {name:'Creyke Beck GSP (400 kV)',lat:53.80046,lon:-0.41516,note:'The dominant node for this area (OSM-verified). ~13 GW connecting by early 2030s vs ~7 GW export capability = ~6 GW SHORTFALL. Feeds: Dogger Bank A &amp; B. To be reinforced by the North Humber–High Marnham 400 kV line. Serves the Holderness 66 kV network incl. West Newton.'},
+ {name:'Salt End GSP (400/275 kV)',lat:53.74216,lon:-0.23846,note:'Eastern Hull node (Saltend North). Feeds: Humber Gateway (219 MW) + Saltend Chemicals Park / CCGT.'},
+ {name:'Killingholme GSP (400 kV)',lat:53.65586,lon:-0.25613,note:'South Humber bank (OSM-verified). Feeds: Hornsea 1 (1,218 MW) &amp; Hornsea 2 (1,386 MW) — south of the Humber, not the West Newton node.'},
+ {name:'Lackenby GSP (400 kV)',lat:54.56681,lon:-1.13167,note:'Teesside node — grid connection for Dogger Bank C. Shown for context (north of the Humber cluster).'}
+];
+const owf=[
+ {name:'Dogger Bank A',mw:1235,st:'Commissioning (88/95 turbines Nov 2025; full 2026)',gsp:'Creyke Beck',ec:'EC3 / EC7',poly:[[54.8421,1.619],[54.8438,2.1714],[54.8136,2.2448],[54.6527,1.9783],[54.7369,1.6258]]},
+ {name:'Dogger Bank B',mw:1235,st:'Under construction',gsp:'Creyke Beck',ec:'EC3 / EC7',poly:[[54.871,1.4739],[54.968,1.4888],[55.0745,1.5055],[55.0781,1.5579],[55.1003,1.6731],[55.1022,1.855],[54.8592,1.8619]]},
+ {name:'Hornsea 1',mw:1218,st:'Operational',gsp:'Killingholme',ec:'EC1',poly:[[53.97838,1.74219],[53.92957,1.79661],[53.93969,1.86595],[53.92537,1.88175],[53.92711,1.89392],[53.92315,1.92229],[53.91893,1.93628],[53.92651,1.98915],[53.91737,1.99605],[53.92296,2.03728],[53.93786,2.02091],[53.94627,2.08445],[53.95347,2.07566],[53.95681,2.10186],[53.83612,2.23254],[53.82064,2.19356],[53.83294,1.99855],[53.83304,1.98328],[53.83476,1.64956],[53.91925,1.66445],[53.93423,1.68337],[53.94157,1.72933],[53.97162,1.69633]]},
+ {name:'Hornsea 2',mw:1386,st:'Operational',gsp:'Killingholme',ec:'EC1',poly:[[53.99359,2.06276],[53.95681,2.10186],[53.83476,1.64956],[53.83534,1.44999],[53.97162,1.69633]]},
+ {name:'Humber Gateway',mw:219,st:'Operational',gsp:'Salt End',ec:'—',poly:[[53.6694,0.3297],[53.6146,0.3297],[53.6146,0.2552],[53.6694,0.2552]]},
+ {name:'Dogger Bank C',mw:1218,st:'Under construction / commissioning 2026 (context)',gsp:'Lackenby',ec:'context',poly:[[55.1353,2.5461],[55.1359,2.763],[54.9699,3.0028],[54.9373,3.0028],[54.9365,2.5487]]}
+];
+const cables=[
+ {name:'Dogger Bank A &amp; B export → Creyke Beck (landfall Ulrome)',route:[[54.85,1.75],[53.99,-0.19],[53.895,-0.307],[53.865,-0.375],[53.80046,-0.41516]]},
+ {name:'Hornsea 1 &amp; 2 export → Killingholme (landfall Horseshoe Point)',route:[[53.9,1.9],[53.505,0.106],[53.55,-0.05],[53.65586,-0.25613]]},
+ {name:'Humber Gateway → Salt End (landfall Easington)',route:[[53.6439,0.2928],[53.643,0.13],[53.6857,-0.0072],[53.7128,-0.1075],[53.7398,-0.1966],[53.74216,-0.23846]]},
+ {name:'Dogger Bank C → Lackenby (context)',route:[[55.02,2.73],[54.605,-1.01],[54.56681,-1.13167]]}
+];
+
+// Offshore local boundaries (NESO Integrated Offshore Transmission — East); indicative label points
+const ecb=[
+ {t:'EC3 / EC7 — Dogger Bank → Creyke Beck',lat:54.55,lon:1.75},
+ {t:'EC1 — Hornsea → Killingholme (not West Newton)',lat:53.78,lon:1.95}
+];
+// Onshore transmission boundary B8 (N. England -> Midlands) — INDICATIVE alignment
+const b8=[[53.55,-0.95],[53.55,-0.55],[53.56,-0.15],[53.56,0.35]];
+
+
+// ===== NPg Active Network Management (ANM) + substation headroom (NPg Open Data heatmapdatatable, vintage 2026-06-03; ECR flexible connections) =====
+// CBHM row: [name,lat,lon,kV,firmMVA,maxDemandMW,demandHeadroomMW,demandConstraint,genConstraint,upstream]  — genHeadroom is 0 at EVERY primary
+const CBHM=[["Beverley 132/33kV",53.82101,-0.41565,33,104.3,78.01,23.63,"Red - Fault Level","Red - Fault Level","Creyke Beck"],["Driffield/Beverley Group",53.99928,-0.41722,66,147,97.33,46.2,"Red - Fault Level","Red - Fault Level","Creyke Beck"],["Endike Lane",53.77974,-0.3893,11,23,11.6,11.4,"Red - Fault Level","Red - Fault Level","Beverley 132/33kV"],["Hayton",53.90828,-0.76443,11,15,13.79,0.33,"Red - Fault Level","Red - Fault Level","Driffield/Beverley Group"],["Hessle Road 1",53.72899,-0.39597,11,23,3.34,19.66,"Green","Green","Hull South"],["Hessle Road 2",53.72899,-0.39597,11,23,5.83,17.17,"Green","Green","Hull West"],["Hull South",53.73308,-0.37894,33,117,70.45,43.75,"Green","Green","Creyke Beck"],["Hunmanby",54.18873,-0.32641,11,24,6.78,17.22,"Red - Fault Level","Red - Fault Level","Driffield/Beverley Group"],["Newport 1",53.76591,-0.69702,11,20,8.98,10.36,"Green","Green","Hull West"],["Saltshouse Road",53.77865,-0.29471,11,23,11.29,11.71,"Green","Green","Bransholme"],["Southwood Road",53.77651,-0.42557,11,23,12.51,9.49,"Red - Fault Level","Red - Fault Level","Beverley 132/33kV"],["Tiverton Road",53.78962,-0.32961,11,23,14.54,8.46,"Green","Green","Bransholme"],["Belthorpe Lane",53.98149,-0.7917,11,8,3.67,4.33,"Red - Fault Level","Red - Fault Level","Driffield/Beverley Group"],["Bransholme",53.78974,-0.30534,33,117,46.45,69.33,"Green","Green","Creyke Beck"],["Burton Pidsea",53.77373,-0.0956,11,9,3.91,5.09,"Red - Fault Level","Red - Fault Level","Driffield/Beverley Group"],["Clarendon Street",53.74584,-0.3532,11,23,13.41,9.59,"Amber - Fault Level","Amber - Fault Level","Hull South"],["Cornwall Street Direct",53.75627,-0.32685,11,39,17,17,"Green","Green","Cornwall Street"],["First Avenue",53.78145,-0.35948,11,24,18.29,4.96,"Red - Fault Level","Red - Fault Level","Beverley 132/33kV"],["Holderness",53.77404,-0.26594,11,23,11.42,11.58,"Green","Green","Bransholme"],["Hull West",53.72297,-0.46305,33,101.3,48.03,36.69,"Green","Green","Creyke Beck"],["Kirkburn",53.97801,-0.51489,11,8,7.25,0.75,"Red - Fault Level","Red - Fault Level","Driffield/Beverley Group"],["National Avenue",53.75508,-0.38325,11,24,6.59,17.41,"Green","Green","Hull South"],["Norwood",53.85073,-0.42484,11,23,15.31,6.98,"Red - Fault Level","Red - Fault Level","Beverley 132/33kV"],["Plangeo",53.73997,-0.376,11,24,13.55,10.45,"Green","Green","Hull South"],["Spark Mill Lane",53.83693,-0.41725,11,23,15.66,7.34,"Red - Fault Level","Red - Fault Level","Beverley 132/33kV"],["West Docks",53.73046,-0.37491,11,23,11.43,11.57,"Green","Green","Hull South"],["Alfred Gelder Street",53.74494,-0.33176,11,24,13.06,8.14,"Green","Green","Hull South"],["Brett Street",54.08908,-0.20439,11,24,18.6,5.12,"Red - Fault Level","Red - Fault Level","Driffield/Beverley Group"],["Butterwick",54.13164,-0.48944,11,6,4.65,1.35,"Red - Fault Level","Red - Fault Level","Driffield/Beverley Group"],["County Road North",53.75724,-0.39305,11,23,16.35,6.65,"Green","Green","Hull South"],["Creyke Beck",53.80118,-0.41376,132,720,370,316.51,"Green","Green","NGET"],["Driffield",53.99942,-0.41648,11,24,16.5,6.18,"Red - Fault Level","Red - Fault Level","Driffield/Beverley Group"],["Elgar Road",53.73526,-0.41751,11,23,16.06,6.94,"Green","Green","Hull West"],["Gibson Lane",53.72118,-0.53253,11,23,15.04,0.84,"Green","Green","Hull West"],["Holme Upon Spalding Moor",53.80145,-0.796,11,8,5.53,2.47,"Red - Fault Level","Red - Fault Level; Red - Voltage","Beverley 132/33kV"],["Martongate",54.10365,-0.18201,11,14,11.95,2.05,"Red - Fault Level","Red - Fault Level","Driffield/Beverley Group"],["Sandhill Lane",53.9179,-0.89872,11,8,3.35,4.65,"Red - Fault Level","Red - Fault Level","Driffield/Beverley Group"],["Sculcoates A Direct",53.76271,-0.34453,11,39,25,12.25,"Green","Green","Sculcoates A"],["Seaton",53.90533,-0.22114,11,20,16.07,2.93,"Red - Fault Level","Red - Fault Level","Driffield/Beverley Group"],["Skillings Lane",53.72522,-0.57407,11,24,9.48,7.47,"Green","Green","Hull West"],["Southgate",53.86181,-0.66127,11,8,5.49,2.3,"Red - Fault Level","Red - Fault Level; Red - Voltage","Beverley 132/33kV"],["Wawne Road",53.80285,-0.33233,11,24,9.59,14.41,"Green","Green","Bransholme"]];
+// SNHM row: [name,lat,lon,kV,firmMVA,maxDemandMW,demandConstraint,genConstraint,upstream]  — demand-headroom not populated for Saltend North group
+const SNHM=[["Ottringham Road",53.71004,-0.09964,11,15,0.32,"Green","Red - Voltage","Hull East 132/33kV"],["Easington",53.66055,0.1155,11,17,7,"Amber - Fault Level","Red - Voltage; Amber - Fault Level","Hull East 132/33kV"],["Hedon Road",53.74412,-0.24488,11,23,13.27,"Green","Green","Hull East 132/33kV"],["Saltend 132/33kV",53.74297,-0.23803,33,50.8,5.63,"Green","Green","Saltend North"],["Ellifoot Lane",53.73859,-0.13957,11,2,0.4,"Green","Green","Saltend 132/33kV"],["Hull East 132/33kV",53.74878,-0.25444,33,117,52.78,"Green","Green","Saltend North"],["Hull East 33/11kV",53.74866,-0.2549,11,23,12.97,"Green","Green","Hull East 132/33kV"],["King George Dock",53.74747,-0.27858,11,30,7.49,"Green","Green","Hull East 132/33kV"],["Patrington Road",53.69891,-0.06898,11,8,5.93,"Green","Red - Voltage","Hull East 132/33kV"],["Saltend North",53.74263,-0.23796,132,200,99,"Green","Green","NGET"],["Westcott Street",53.75949,-0.30585,11,23,13.41,"Green","Green","Hull East 132/33kV"],["Withernsea",53.72625,0.02901,11,10,4.77,"Green","Red - Voltage","Hull East 132/33kV"],["Yorkshire Water Hull Road",53.74443,-0.23742,11,23,6.82,"Green","Green","Saltend 132/33kV"]];
+// FLEX (ANM-managed / flexible-connection generators, connected): [name,lat,lon,exportMW,tech,kV,gspGroup]
+const FLEX=[["Lissett Airfield Wind Farm",54.0084,-0.25643,30,"Onshore wind",66,"Creyke Beck"],["Fraisthorpe Wind Farm",53.99928,-0.41722,30.6,"Onshore wind",66,"Creyke Beck"],["Harmony Energy Storage BESS",54.00272,-0.42852,30,"Battery",66,"Creyke Beck"],["Tansterne Biomass",53.81971,-0.14798,22,"Biomass steam",66,"Creyke Beck"],["Withernwick WF (Aldbrough Rd)",53.84722,-0.18326,18.07,"Onshore wind",66,"Creyke Beck"],["Roos Wind Farm",53.74843,-0.04759,17.1,"Onshore wind",33,"Saltend North"],["Manor Farm Wind",54.00272,-0.42852,4.2,"Onshore wind",11,"Creyke Beck"],["Kingspan Ltd",54.17996,-0.52654,3.85,"Solar PV",11,"Creyke Beck"],["Brocklesby Biogas",53.77876,-0.66588,3.56,"Biomass steam",11,"Creyke Beck"],["Sandhill",53.99187,-0.50105,3.13,"Gas engine",11,"Creyke Beck"],["Cranswick Country Foods",53.75699,-0.20541,2,"Gas steam",11,"Saltend North"],["Hull Waste Treatment Works",53.74488,-0.23932,1.0,"Gas steam",11,"Saltend North"],["Catfoss Industrial Estate PV",53.92466,-0.27995,0.5,"Solar PV",11,"Creyke Beck"],["Ashcourt Forster Street Wind",53.76042,-0.33246,0.25,"Onshore wind",11,"Creyke Beck"]];
+const CBHULL=[[53.9179,-0.89872],[53.80145,-0.796],[53.76591,-0.69702],[53.72522,-0.57407],[53.72118,-0.53253],[53.72297,-0.46305],[53.73046,-0.37491],[53.77373,-0.0956],[54.10365,-0.18201],[54.18873,-0.32641],[54.13164,-0.48944],[53.98149,-0.7917]];      // Creyke Beck GSP-group extent (convex hull of its primaries)
+const DRIFFHULL=[[53.9179,-0.89872],[53.80145,-0.796],[53.77651,-0.42557],[53.77373,-0.0956],[54.10365,-0.18201],[54.18873,-0.32641],[54.13164,-0.48944],[53.98149,-0.7917]];// Driffield/Beverley 66 kV ANM-scheme core
+const RAG=c=>/Green/.test(c)?'#2e9e4f':/Amber/.test(c)?'#e8a33d':'#c0392b';
+const ragW=c=>/Green/.test(c)?'Green':/Amber/.test(c)?'Amber':'Red';
+const diamond=(color,size)=>L.divIcon({className:'',iconSize:[size,size],iconAnchor:[size/2,size/2],html:'<div style=\"width:'+size+'px;height:'+size+'px;background:'+color+';border:1.5px solid #111;transform:rotate(45deg);box-shadow:0 0 2px rgba(0,0,0,.55)\"></div>'});
+const hdSize=kv=>kv>=132?15:kv>=66?13:kv>=33?11:9;
+
+const map=L.map('map');
+const sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles &copy; Esri, Maxar'}).addTo(map);
+const osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'});
+
+const rad=x=>x*Math.PI/180, lat0=53.826, mLat=111320, mLon=111320*Math.cos(rad(lat0));
+const xy=p=>[p[1]*mLon,p[0]*mLat];
+function nearestOnLines(P,polys){let best=1e12,bp=null;const p=xy(P);
+ for(const c of polys){for(let i=0;i<c.length-1;i++){const a=xy(c[i]),b=xy(c[i+1]);
+   const bx=b[0]-a[0],by=b[1]-a[1];let t=((p[0]-a[0])*bx+(p[1]-a[1])*by)/((bx*bx+by*by)||1e-9);t=Math.max(0,Math.min(1,t));
+   const cx=a[0]+t*bx,cy=a[1]+t*by,d=Math.hypot(p[0]-cx,p[1]-cy);
+   if(d<best){best=d;bp=[c[i],c[i+1],t];}}}
+ const a=bp[0],b=bp[1],t=bp[2];return {dist:best,pt:[a[0]+t*(b[0]-a[0]),a[1]+t*(b[1]-a[1])]};}
+const km=m=>m>=1000?(m/1000).toFixed(2)+' km':Math.round(m)+' m';
+const allPts=[];
+
+const linesLayer=L.layerGroup();
+lines33.forEach(c=>{L.polyline(c,{color:C.v33,weight:2.5,opacity:.85}).bindTooltip('33 kV (OSM)',{sticky:true}).addTo(linesLayer);});
+lines66.forEach(c=>{L.polyline(c,{color:C.v66,weight:3.5,opacity:.9}).bindTooltip('66 kV (OSM)',{sticky:true}).addTo(linesLayer);});
+lines11.forEach(c=>{L.polyline(c,{color:C.v11,weight:2.6,opacity:.95}).bindTooltip('11 kV distribution (OSM)',{sticky:true}).addTo(linesLayer);});
+links11.forEach(c=>{L.polyline(c,{color:C.v11,weight:2.2,opacity:.9,dashArray:'2,4'}).bindTooltip('11 kV — inferred link (closes a gap in OSM mapping)',{sticky:true}).addTo(linesLayer);});
+spurs.forEach(([id,a,b])=>{L.polyline([a,b],{color:C.dist,weight:1.6,opacity:.8,dashArray:'2,3'}).bindTooltip(id+' → nearest 11 kV (indicative service spur)',{sticky:true}).addTo(linesLayer);});
+subs.forEach(s=>{L.circleMarker([s.lat,s.lon],{radius:6,color:'#000',weight:1,fillColor:C.v66,fillOpacity:.95}).bindTooltip(s.name,{permanent:true,direction:'top',className:'lbl'}).bindPopup('<b>'+s.name+'</b><br>'+s.note).addTo(linesLayer);allPts.push([s.lat,s.lon]);});
+
+const sitesLayer=L.layerGroup();
+sites.forEach(s=>{const m=L.circleMarker([s.lat,s.lon],{radius:9,color:'#000',weight:1,fillColor:C[s.cat],fillOpacity:.95});
+ m.bindTooltip(s.name,{permanent:true,direction:'right',className:'lbl',offset:[8,0]});
+ m.bindPopup('<b>'+s.name+'</b><br>'+s.type+'<br><small>'+s.lat.toFixed(4)+', '+s.lon.toFixed(4)+'</small><br><br><b>Grid:</b> '+s.grid+'<br><br><b>Land:</b> '+s.land);
+ m.addTo(sitesLayer);allPts.push([s.lat,s.lon]);});
+
+const cpLayer=L.layerGroup();
+cps.forEach(c=>{const col=c.kv===66?C.v66:C.v11;const m=L.circleMarker([c.lat,c.lon],{radius:c.key?9:7,color:col,weight:c.key?4:3,fillColor:'#fff',fillOpacity:1});
+ if(c.key)m.bindTooltip('WNA 0.99 MW export (proposed)',{permanent:true,direction:'left',className:'lbl',offset:[-8,0]});
+ m.bindPopup('<b>'+c.name+'</b><br>'+c.kv+' kV connection point<br><br>'+c.note);m.addTo(cpLayer);allPts.push([c.lat,c.lon]);});
+
+const distLayer=L.layerGroup();
+const distRows=[];
+[['WNA'],['WNB'],['WND']].forEach(([id])=>{
+ const s=sites.find(x=>x.id===id);const P=[s.lat,s.lon];
+ const n11=nearestOnLines(P,lines11), n66=nearestOnLines(P,lines66);
+ L.polyline([P,n11.pt],{color:C.dist,weight:2,dashArray:'4,5'}).addTo(distLayer);
+ L.tooltip({permanent:true,direction:'bottom',className:'dlbl',offset:[0,16]}).setLatLng(P).setContent('→ 11 kV '+km(n11.dist)).addTo(distLayer);
+ distRows.push([id, km(n11.dist), km(n66.dist)]);
+});
+
+// Regional offshore-wind + GSP + constraint layer (OFF by default; zoom out to see)
+const regionLayer=L.layerGroup();
+cables.forEach(cb=>{L.polyline(cb.route,{color:C.owf,weight:2,opacity:.75,dashArray:'6,5'}).bindTooltip(cb.name,{sticky:true}).addTo(regionLayer);});
+owf.forEach(w=>{const col=w.ec==='context'?'#7fb3a6':C.owf;
+ L.polygon(w.poly,{color:col,weight:1.5,fillColor:col,fillOpacity:.35})
+  .bindTooltip(w.name+' — '+w.mw+' MW',{permanent:true,direction:'center',className:'lbl'})
+  .bindPopup('<b>'+w.name+'</b><br>'+w.mw+' MW &middot; '+w.st+'<br>→ '+w.gsp+' GSP &middot; offshore bdy '+w.ec+'<br><small>Array footprint (approx, from DCO / developer data).</small>').addTo(regionLayer);});
+gsps.forEach(g=>{L.circleMarker([g.lat,g.lon],{radius:8,color:'#fff',weight:2,fillColor:C.gsp,fillOpacity:1})
+ .bindTooltip(g.name,{permanent:true,direction:'top',className:'lbl'}).bindPopup('<b>'+g.name+'</b><br>'+g.note).addTo(regionLayer);});
+
+// Onshore boundary B8 (indicative) + offshore EC boundary labels — in the regional layer
+L.polyline(b8,{color:C.bnd,weight:3,opacity:.85,dashArray:'10,8'})
+ .bindTooltip('Boundary B8 (N. England → Midlands): the 11 GW thermal cap on the Keadby–West Burton 400 kV circuit — the ceiling on power flowing south. West Newton lies on the north (export) side with the offshore wind, so a turn-up load here eases the flow across it rather than adding to it. Indicative alignment.',{sticky:true}).addTo(regionLayer);
+L.tooltip({permanent:true,direction:'top',className:'lbl'}).setLatLng([53.56,-0.33]).setContent('Boundary B8 — 11 GW cap (indicative)').addTo(regionLayer);
+ecb.forEach(e=>L.tooltip({permanent:true,direction:'center',className:'dlbl'}).setLatLng([e.lat,e.lon]).setContent(e.t).addTo(regionLayer));
+
+
+// ---- ANM layer (OFF by default): GSP-group extent, Driffield 66 kV scheme core, and ANM-managed generators ----
+const anmLayer=L.layerGroup();
+L.polygon(CBHULL,{color:'#6a1b9a',weight:1.5,opacity:.8,dashArray:'8,6',fillColor:'#8e44ad',fillOpacity:.06})
+ .bindTooltip('Creyke Beck GSP group — one of NPg\'s four approved ANM rollout GSPs (Hull area). Every primary in this group has 0 MW generation headroom.',{sticky:true})
+ .bindPopup('<b>Creyke Beck GSP ANM group</b><br>NPg operates Active Network Management across this Grid Supply Point group. Generation export is curtailed on a <b>LIFO / shared pro-rata</b> basis when 66/132 kV flows would exceed design limits.<br><br><b>0 MW generation ("firm") headroom at all 42 primaries</b> in this group — the area is generation-saturated. Extent = convex hull of the group\'s primaries (indicative, not an official ANM boundary).').addTo(anmLayer);
+L.polygon(DRIFFHULL,{color:'#4a148c',weight:2,opacity:.9,dashArray:'4,4',fillColor:'#8e44ad',fillOpacity:.05})
+ .bindTooltip('Driffield ANM scheme — NPg\'s established 66 kV generation-export management scheme (Driffield/Beverley network).',{sticky:true}).addTo(anmLayer);
+FLEX.forEach(f=>{const [n,lat,lon,mw,t,kv,grp]=f;const r=Math.max(5,Math.min(15,4+Math.sqrt(mw)*2));
+ L.circleMarker([lat,lon],{radius:r,color:'#0b5345',weight:1.5,fillColor:'#16a085',fillOpacity:.85})
+  .bindTooltip(n+' — '+mw+' MW',{sticky:true})
+  .bindPopup('<b>'+n+'</b><br>ANM / flexible connection (curtailable)<br>'+mw+' MW · '+t+' · '+kv+' kV<br>'+grp+' GSP group<br><small>NPg Embedded Capacity Register — flexible_connection = Yes</small>').addTo(anmLayer);});
+
+// ---- Headroom layer (OFF by default): every primary as a RAG diamond (demand-side constraint colour) ----
+const hdLayer=L.layerGroup();
+function hdMarker(name,lat,lon,kv,firm,maxd,demhr,demc,genc,up,grp){
+ const col=RAG(demc);const m=L.marker([lat,lon],{icon:diamond(col,hdSize(kv))});
+ const hrTxt=demhr==null?'not published (NPg data gap)':demhr.toFixed(2)+' MW';
+ m.bindTooltip(name+' ('+kv+' kV) — demand HR '+(demhr==null?'n/p':demhr.toFixed(1)+' MW')+' · '+ragW(demc),{sticky:true});
+ m.bindPopup('<b>'+name+'</b> — '+kv+' kV primary<br>'+grp+' GSP group · fed from '+up+
+  '<br><br><b>Firm capacity:</b> '+firm+' MVA<br><b>Max demand:</b> '+maxd+' MW'+
+  '<br><b>Demand (import) headroom:</b> '+hrTxt+' — <b style=\"color:'+col+'\">'+demc+'</b>'+
+  '<br><b>Generation (export) headroom:</b> 0 MW — '+genc+
+  '<br><small>NPg Open Data network heat map, Jun 2026</small>');
+ return m;}
+CBHM.forEach(r=>hdMarker(r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8],r[9],'Creyke Beck').addTo(hdLayer));
+SNHM.forEach(r=>hdMarker(r[0],r[1],r[2],r[3],r[4],r[5],null,r[6],r[7],r[8],'Saltend North').addTo(hdLayer));
+// Highlight Burton Pidsea (West Newton's serving primary)
+L.circleMarker([53.77373,-0.0956],{radius:13,color:'#c0392b',weight:3,fill:false})
+ .bindTooltip('Burton Pidsea primary — West Newton\'s point of supply: 5.09 MW demand headroom, 0 MW generation headroom (RED: fault-level limited)',{permanent:true,direction:'bottom',className:'dlbl',offset:[0,10]}).addTo(hdLayer);
+
+sitesLayer.addTo(map);  // only Wellsites on by default — all other overlays via the layer control
+L.control.layers({'Satellite':sat,'Street':osm},
+ {'Wellsites':sitesLayer,'11 / 33 / 66 kV lines':linesLayer,'Connection points':cpLayer,'Nearest-line distances':distLayer,'ANM zone &amp; managed generators':anmLayer,'Substation headroom (RAG)':hdLayer,'Offshore wind, GSPs &amp; boundaries':regionLayer},{position:'topleft'}).addTo(map);
+map.fitBounds(L.latLngBounds(allPts).pad(0.18));
+
+document.getElementById('panel').innerHTML=
+ '<details class="sec" open><summary class="sh">West Newton connection points</summary><table class="d"><tr><th>Site</th><th>11 kV</th><th>66 kV</th></tr>'+
+ distRows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td></tr>').join('')+'</table>'+
+ '<div class="note" style="border:0;margin:4px 0 0;padding:0">11 kV now traced comprehensively (OSM): <b>76 line segments</b> joined by <b>52 inferred links</b> (dashed) into one continuous network — wells → Tansterne → Burton Pidsea primary.</div>'+
+ '</details><details class="sec"><summary class="sh">Active Network Management (ANM) <span style="font-weight:normal;text-transform:none;color:#888">(toggle layer)</span></summary><div class="note" style="border:0;margin:0 0 5px;padding:0">West Newton sits inside the <b>Creyke Beck GSP</b> group — one of NPg’s <b>four approved ANM rollout GSPs</b> (with Saltend North, Keadby, Grimsby West). NPg’s established <b>Driffield 66 kV ANM scheme</b> manages generator <b>export</b> here; curtailment is <b>LIFO / shared pro-rata</b> by connection order. Because West Newton A would <b>export</b> (a 0.99 MW generator), it sits <b>inside</b> this scheme — accepting ANM curtailment in exchange for a fast, non-firm connection. As a new entrant it joins at the <b>bottom of the LIFO stack</b> (curtailed first), but a gas peaker mainly runs at high-price / low-wind hours, when local export congestion — and so curtailment — is lowest.</div><table class="d"><tr><th>ANM-managed generator</th><th>MW</th><th>Type</th></tr><tr><td>Fraisthorpe Wind Farm</td><td>30.6</td><td>Wind</td></tr><tr><td>Lissett Airfield Wind Farm</td><td>30</td><td>Wind</td></tr><tr><td>Harmony Energy BESS (Pocklington)</td><td>30</td><td>Battery</td></tr><tr><td>Tansterne Biomass</td><td>22</td><td>Biomass</td></tr><tr><td>Withernwick Wind Farm</td><td>18.1</td><td>Wind</td></tr><tr><td>Roos Wind Farm</td><td>17.1</td><td>Wind</td></tr><tr><td colspan=2>+ 8 smaller (PV, engines, CHP)</td><td>~18</td></tr><tr><th>Total curtailable</th><th>~166</th><th></th></tr></table><div class="note" style="border:0;margin:4px 0 0;padding:0">Source: NPg Embedded Capacity Register (flexible-connection = Yes) + planning evidence (Little Crow, N. Lincs GEP grid offers). Zone outline on the map is the GSP-group hull — indicative, not an official NPg boundary.</div></details><details class="sec"><summary class="sh">Substation headroom — RAG <span style="font-weight:normal;text-transform:none;color:#888">(toggle layer)</span></summary><div class="note" style="border:0;margin:0 0 5px;padding:0"><b>Generation headroom = 0 MW at every one of the 42 Creyke Beck + 13 Saltend North primaries</b> — the area cannot take more export. <b>Demand</b> headroom is the opposite story.</div><table class="d"><tr><th>Primary</th><th>Firm</th><th>Dem HR</th><th>Limit</th></tr><tr><td><b>Burton Pidsea</b> (WN)</td><td>9 MVA</td><td>5.09 MW</td><td style="color:#c0392b">Red — fault</td></tr><tr><td>Holderness</td><td>23</td><td>11.6</td><td style="color:#2e9e4f">Green</td></tr><tr><td>Hedon Road</td><td>23</td><td>n/p</td><td style="color:#2e9e4f">Green</td></tr><tr><td>Seaton</td><td>20</td><td>2.9</td><td style="color:#c0392b">Red — fault</td></tr></table><div class="note" style="border:0;margin:4px 0 0;padding:0">Diamonds on the map are coloured by <b>demand</b>-side constraint: <span style="color:#2e9e4f">◆ green</span> = spare, <span style="color:#e8a33d">◆ amber</span>, <span style="color:#c0392b">◆ red</span> = constrained (mostly fault-level). Click any for firm capacity, max demand and both headrooms. Saltend North demand headroom is not populated in NPg’s data (shown n/p). Source: NPg Open Data network heat map, Jun 2026.</div></details><details class="sec"><summary class="sh">Grid connection status</summary>'+
+ '<div class="row"><span class="dot" style="background:#e8a33d"></span><div><b>WN A</b><span>Proposed <b>0.99 MW non-firm EXPORT</b> (gas peaker); on-site 11 kV ~19 m from the data-centre; ANM-curtailable</span></div></div>'+
+ '<div class="row"><span class="dot" style="background:#e8a33d"></span><div><b>WN B</b><span>Temporary NPg connection during 2020 drilling (service spur; likely since removed)</span></div></div>'+
+ '<div class="row"><span class="dot" style="background:#95a5a6"></span><div><b>WN D</b><span>Proposed only; 11 kV runs close by</span></div></div>'+
+ '</details><details class="sec"><summary class="sh">Offshore wind &amp; constraints <span style="font-weight:normal;text-transform:none;color:#888">(toggle layer)</span></summary>'+
+ '<table class="d"><tr><th>Wind farm</th><th>MW</th><th>GSP</th><th>Bdy</th></tr>'+
+ '<tr><td>Dogger Bank A</td><td>1,235</td><td>Creyke Beck</td><td>EC3/7</td></tr>'+
+ '<tr><td>Dogger Bank B</td><td>1,235</td><td>Creyke Beck</td><td>EC3/7</td></tr>'+
+ '<tr><td>Hornsea 1</td><td>1,218</td><td>Killingholme</td><td>EC1</td></tr>'+
+ '<tr><td>Hornsea 2</td><td>1,386</td><td>Killingholme</td><td>EC1</td></tr>'+
+ '<tr><td>Humber Gateway</td><td>219</td><td>Salt End</td><td>—</td></tr>'+
+ '<tr><td>Dogger Bank C*</td><td>1,218</td><td>Lackenby</td><td>—</td></tr><tr><td>Dogger Bank D†</td><td>1,220</td><td>Birkhill Wood</td><td>—</td></tr><tr><td>DB South East†</td><td>1,500</td><td>Birkhill Wood</td><td>—</td></tr><tr><td>DB South West†</td><td>1,500</td><td>Birkhill Wood</td><td>—</td></tr></table>'+
+ '<div class="note" style="border:0;margin:4px 0 0;padding:0">*Dogger Bank C → Lackenby (Teesside), commissioning 2026. †Dogger Bank D + South East + South West (4.22 GW) → new <b>Birkhill Wood</b> 400 kV GSP, consented 23 Jun 2026. <b>Hornsea 4 (~2.4 GW → Creyke Beck) was CANCELLED May 2025.</b> Array footprints from DCO / developer data (approx).</div>'+
+ '<div class="note"><b>Constraint (extracted from NESO + NPg data):</b> GB thermal-constraint cost <b>£1.96 bn in 2025/26</b> (~14 TWh turned down; up from £1.71 bn in 24/25). West Newton sits <b>behind boundary B8</b> (N. England→Midlands, <b>11 GW cap</b>, Keadby–West Burton 400 kV) and B7a (9.4 GW) — the <b>constrained export side, the same side Dogger Bank injects</b>. A 0.99 MW exporter is negligible at the GW-scale B8 boundary, but on the local 66/11 kV network it adds export where firm headroom is zero — which is exactly why the connection must be <b>non-firm / ANM-curtailable</b>. The Humber export group <b>NKILGRMO</b> was <b>binding ~38.5%</b> of 2026 (avg 2,135 vs 3,195 MW limit); the whole Creyke Beck GSP group shows <b>0 MW generation headroom at all 42 primaries</b> (NPg heat map, Jun 2026), with <b>~166 MW of ANM-managed generation</b> already curtailable across the two Hull-area GSP groups. <i>(The earlier “58 events / 182 GWh curtailed” figure is unverified — NPg’s curtailment-events dataset is access-restricted, and its energy field is in <b>MWh</b>, so any “GWh” reading is likely a 1000× unit error.)</i> Birkhill Wood adds another 4.22 GW connecting nearby. Import (demand) headroom at <b>Burton Pidsea = 5.09 MW</b> (NPg heat map Jun 2026; 4.79 MW on the NPg NDP, Apr 2026) — ample for any site import — but this is a peaker <b>EXPORT</b> project, so the binding local figure is the <b>0 MW generation headroom</b>, and the primary is <b>RED on fault level</b> — a separate hard limit that ANM does not solve.<br><span style="color:#888">Offshore boundary <b>EC1</b> = Hornsea→Killingholme (not us); Creyke Beck / Dogger Bank = <b>EC3 / EC7</b>.</span></div>'+
+ '</details><details class="sec"><summary class="sh">Peaker export — thesis &amp; route to market</summary><div class="note" style="border:0;margin:0 0 5px;padding:0"><b>0.99 MW non-firm export</b> from a ~1.3 MW wellhead-gas genset. Near-free wellhead gas + the sub-threshold exemptions below collapse marginal cost to <b>O&amp;M only (~£5–15/MWh)</b> vs a merchant peaker&#39;s £90–150 — in-merit in almost every positive-price hour, not just the top 10–20%. The co-located Bitcoin mine is the switchable offtake / hedge.</div><table class="d"><tr><th>Route</th><th>How it works here</th></tr><tr><td><b>Wholesale peak</b></td><td>Sell at high prices — 2025 had ~1,722 h &gt;£100/MWh (~20% of the year)</td></tr><tr><td><b>Balancing Mechanism</b></td><td>Via a Virtual Lead Party; 0.99 MW is just below the ~1 MW standalone unit min, so <b>aggregate</b> into a &ge;1 MW BMU</td></tr><tr><td><b>Capacity Market</b></td><td>Weak: 2 MW min, annual-emissions run-hour cap, firm-delivery vs a curtailable connection — optional only</td></tr></table><div class="note" style="border:0;margin:4px 0 0;padding:0"><b>Carbon &amp; levy exemptions — where they kick in:</b> genset &le;2 MW &rarr; <b>no Carbon Price Support</b> + CCL generation relief; ~3 MWth &rarr; <b>outside UK ETS</b> (20 MWth entry); exporter pays <b>no BSUoS</b> (demand-only since Apr 2023) and no consumption levies (RO/CfD/CM/FiT) on exported power; the mine self-supplies behind the meter, dodging the ~6 p/kWh grid stack.</div></details><details class="sec"><summary class="sh">Connection concept &amp; indicative cost</summary><div class="note" style="border:0;margin:0 0 5px;padding:0">The 11 kV cable runs <b>through WN A</b> (~19 m from the data-centre). NPg inserts a <b>switched point (RMU)</b> on the cable; on-site you build a <b>step-up substation</b> (0.4/11 kV) with G99 Type-B protection, an <b>export-limitation relay</b> (export &le;0.99 MW) and the <b>ANM interface</b> (RTU + comms). Sizing at 0.99 MW keeps it <b>below the 1 MW fault-level TIA floor</b> (no Transmission Impact Assessment at any GSP) and outside the NESO Gate-2 queue.</div><table class="d"><tr><th>Item</th><th>Indicative</th></tr><tr><td>Point of connection (RMU + ~19 m cable, own land)</td><td>£25–80k</td></tr><tr><td>Step-up substation (~2 MVA) + switchgear</td><td>£55–135k</td></tr><tr><td>G99 protection + ANM interface + HH metering</td><td>£45–120k</td></tr><tr><td>Design, PM, contingency (wayleaves &asymp; £0)</td><td>£25–70k</td></tr><tr><th>Total connection capex</th><th>~£150–410k (central ~£280k)</th></tr></table><div class="note" style="border:0;margin:4px 0 0;padding:0"><b>Timeline ~12–24 months</b> (central ~15–18) vs 5–10 yr for a firm connection. <b>Key check — fault level:</b> Burton Pidsea is <b>RED</b>, a separate hard constraint that <b>ANM does not solve</b> (ANM throttles power flow; fault level is the switchgear short-circuit limit). The step-up transformer impedance limits your fault contribution; confirm at NPg budget-estimate stage. Curtailment is <b>LIFO</b> — request NPg&#39;s indicative curtailment assessment.</div>'+
+ '</details><details class="sec"><summary class="sh">Land ownership</summary>'+
+ '<div class="note" style="border:0;margin:0;padding:0">WN A / B / D sit on <b>Norman Caley Ltd</b> (Caley family) farmland, bought from the <b>Burton Constable Estate in 1965</b>. Rathlin/Reabold <b>lease</b> the pads (do not own). Title numbers exist (HS122619; "105.58 ac at Low Fosham") — a £3 Land Registry title per pad confirms the proprietor. For the export tie-in, confirm the cable-easement / connection land rights against the title before assuming zero wayleave.</div>'+
+ '</details><h2>Legend</h2>'+
+ '<div class="row"><span class="ln" style="border-top-color:'+C.v11+'"></span><div><b>11 kV</b><span>OSM network (solid); inferred gap-links (dashed) — wells ↔ Tansterne ↔ Burton Pidsea primary</span></div></div>'+
+ '<div class="row"><span class="ln" style="border-top-color:'+C.v66+'"></span><div><b>66 kV</b><span>OSM: Withernwick–Tansterne–Burton Pidsea; west to Creyke Beck</span></div></div>'+
+ '<div class="row"><span class="ln" style="border-top-color:'+C.v33+'"></span><div><b>33 kV</b><span>OSM</span></div></div>'+
+ '<div class="row"><span class="dot" style="background:'+C.gsp+'"></span><div><b>GSP (400 kV)</b><span>Creyke Beck / Salt End / Killingholme / Lackenby</span></div></div>'+
+ '<div class="row"><span class="dot" style="background:'+C.owf+'"></span><div><b>Offshore wind</b><span>real array footprints + export cables → GSP</span></div></div>'+
+ '<div class="row"><span class="ln" style="border-top-color:'+C.bnd+'"></span><div><b>B8 boundary</b><span>indicative national boundary (see constraint note)</span></div></div>'+'<div class="row"><span class="dot" style="background:#8e44ad;opacity:.55"></span><div><b>ANM zone</b><span>Creyke Beck GSP-group hull; managed generators teal (sized by MW)</span></div></div>'+'<div class="row"><span class="dot" style="background:#2e9e4f;border-radius:2px;transform:rotate(45deg)"></span><div><b>Headroom (RAG)</b><span>demand-side: green spare / amber / red constrained</span></div></div>'+'<div class="row"><span class="dot" style="background:#fff;border:2px solid #f39c12"></span><div><b>0.99 MW export</b><span>proposed WN A tie-in (non-firm / ANM)</span></div></div>'+
+ '<div class="note">11 / 33 / 66 kV geometry from OpenStreetMap (Overpass); dashed 11 kV = inferred links closing OSM gaps. Offshore array footprints from DCO / developer data; cable routes indicative. GSPs OSM-verified. Confirm against NPg / NESO records before design.</div>';
+</script>
+</body>
+</html>
