@@ -187,8 +187,6 @@ If the LFS bandwidth budget gets tight (unlikely until you have many concurrent 
 - `client_atlas.html` — client-safe Leaflet map (internal scores / notes / target list stripped)
 - `app_investor_atlas.py` — RenewaBlox Investor Atlas (investor presentation; embeds `investor_atlas.html`)
 - `investor_atlas.html` — standalone Leaflet investor map (peaker + hydro, KPIs; deploy gated)
-- `app_wn_infrastructure.py` — West Newton Infrastructure Map (client deliverable for Reabold; embeds `wn_infrastructure_map.html`; deploy gated to the client)
-- `wn_infrastructure_map.html` — standalone Leaflet map of the West Newton electricity network (substations, GSPs, 11/33/66 kV lines + spurs, offshore wind, RAG grid headroom)
 - `ingest.py` — daily data + retrain pipeline (entrypoint for GitHub Actions)
 - `config.py` — region map, tariff product codes, API endpoints
 - `db.py` — SQLite schema + upserts
