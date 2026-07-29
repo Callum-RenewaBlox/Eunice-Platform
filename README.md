@@ -4,7 +4,7 @@
 
 Tech stack: Python · Streamlit · SQLite · scikit-learn (HistGradientBoosting quantile regression).
 
-## Eight apps, one repo
+## Seven apps, one repo
 
 | App | Entry file | Audience | Deploy as |
 | --- | --- | --- | --- |
@@ -15,7 +15,6 @@ Tech stack: Python · Streamlit · SQLite · scikit-learn (HistGradientBoosting 
 | **Eunice Atlas** | `app_atlas.py` | Public — UK renewable-site prospecting map: Hydro + Peaker / AD-BM layers, each site scored and sized by capacity, with live filters and click-through detail | Another Streamlit Cloud app, same repo |
 | **RenewaBlox Client Atlas** | `app_client_atlas.py` | Public — client-facing opportunity map: GB hydro stranded-capacity + peaker BM-revenue layers (client-safe — internal scores/notes/targeting stripped) | Another Streamlit Cloud app, same repo |
 | **RenewaBlox Investor Atlas** | `app_investor_atlas.py` | Investors (gated) — presentation map of the UK flexibility opportunity (peaker + hydro) with headline KPIs and site-level commercial detail | Another Streamlit Cloud app, same repo |
-| **SRV Atlas** | `app_srv_atlas.py` | Public — Scrivelsby (Home Farm AD) electrical site survey: geolocated assets, site photos and grid context for the LN9 6JB site | Another Streamlit Cloud app, same repo |
 
 The price apps read the same `data.sqlite` (updated by one daily ingest) and share the backend modules
 (`model.py`, `features.py`, `scenarios.py`, `db.py`, …). To run lite locally:
@@ -188,8 +187,6 @@ If the LFS bandwidth budget gets tight (unlikely until you have many concurrent 
 - `client_atlas.html` — client-safe Leaflet map (internal scores / notes / target list stripped)
 - `app_investor_atlas.py` — RenewaBlox Investor Atlas (investor presentation; embeds `investor_atlas.html`)
 - `investor_atlas.html` — standalone Leaflet investor map (peaker + hydro, KPIs; deploy gated)
-- `app_srv_atlas.py` — SRV Atlas (public — Scrivelsby / Home Farm AD electrical site survey; embeds `srv_atlas.html`)
-- `srv_atlas.html` — standalone Leaflet site-survey map (assets, geolocated photos, grid context; ~5 MB, photos embedded)
 - `ingest.py` — daily data + retrain pipeline (entrypoint for GitHub Actions)
 - `config.py` — region map, tariff product codes, API endpoints
 - `db.py` — SQLite schema + upserts
