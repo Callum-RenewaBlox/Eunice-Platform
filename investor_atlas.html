@@ -70,7 +70,14 @@ const TAMPAL={0:{c:'#2C3E50',n:'Scotland \u00b7 no BM revenue'},1:{c:'#7B1E1E',n
 const esc=v=>(v==null?'':String(v)).replace(/</g,'&lt;');
 const WHOLESALE=8.0, TAVG={1:29.6,2:25.3,3:21.7,4:18.0,5:16.0};
 const gbp0=v=>'£'+Math.round(v).toLocaleString('en-GB');
-const abbr=v=>{v=Math.round(v);if(v>=1e6)return '£'+(v/1e6).toFixed(1)+'M';if(v>=1e3)return '£'+(v/1e3).toFixed(0)+'k';return '£'+v;};
+const abbr=v=>{v=Math.round(v);if(v>=1e9)return '£'+(v/1e9).toFixed(2)+'bn';if(v>=1e6)return '£'+(v/1e6).toFixed(1)+'M';if(v>=1e3)return '£'+(v/1e3).toFixed(0)+'k';return '£'+v;};
+/* TCV economics lifted from the priced SAM sites so TAM inherits the model
+   rather than a hard-coded constant: TCV/kW-available is exactly flat within
+   each tier, and available-for-BM runs at AVRATIO of installed capacity. */
+const TCVRATE=(()=>{const g={},r={};PEAKER.forEach(d=>{if(d.tcv==null)return;g[d.t]=g[d.t]||[0,0];g[d.t][0]+=d.tcv;g[d.t][1]+=d.av;});
+  for(const t in g)r[t]=g[t][0]/g[t][1];return r;})();
+const AVRATIO=(()=>{let a=0,i=0;PEAKER.forEach(d=>{if(d.tcv==null)return;a+=d.av;i+=d.inst;});return a/i;})();
+const tcvPot=a=>a.reduce((x,d)=>x+(d.bt>0?(d.kw||0)*AVRATIO*(TCVRATE[d.bt]||0):0),0);
 let mode='peaker', scope='SAM';
 let hidden={peaker:new Set(),hydro:new Set(),tam:new Set(),fuel:new Set()};
 const map=L.map('map',{scrollWheelZoom:true,preferCanvas:true}).setView([54.5,-3],6);
@@ -138,7 +145,7 @@ function kpis(){
   if(c.view==='tam'){
     const v=TAM.filter(vis), kw=a=>Math.round(a.reduce((x,d)=>x+(d.kw||0),0)/1000).toLocaleString();
     items=[[v.length.toLocaleString(),'Sites'],[kw(v)+' MW','Capacity'],
-           [kw(v.filter(d=>d.bt>0))+' MW','In BM tiers'],[kw(v.filter(d=>!d.bt))+' MW','No BM \u00b7 Scotland']];
+           [kw(v.filter(d=>d.bt>0))+' MW','In BM tiers'],[abbr(tcvPot(v)),'TCV Potential']];
   } else {
     const vv=c.data.filter(d=>!c.hidden.has(d[c.key])&&d.tcv!=null), sum=f=>vv.reduce((a,d)=>a+d[f],0);
     const caplab=c.view==='sam'?'Avail. for BM':'Stranded';
@@ -155,7 +162,7 @@ function legend(){
     html=[1,2,3,4,5,0].map(t=>`<div class="row ${hidden.tam.has(t)?'off':''}" data-g="t" data-k="${t}"><span class="dot" style="background:${TAMPAL[t].c}"></span>${TAMPAL[t].n}<span class="c">${cnt[t]||0}</span></div>`).join('');
     html+='<div class="sub2">Technology \u00b7 circle ring</div>';
     html+=Object.keys(FUELC).filter(f=>fc[f]).map(f=>`<div class="row ${hidden.fuel.has(f)?'off':''}" data-g="f" data-k="${f}"><span class="ring" style="border-color:${FUELC[f]}"></span>${f}<span class="c">${fc[f]}</span></div>`).join('');
-    document.getElementById('baseNote').innerHTML='Circle <b>fill</b> = Balancing Mechanism tier, <b>ring</b> = technology, size = capacity. Tier is modelled from the nearest verified SAM sites (89% match on hold-out) \u2014 indicative, not a per-site valuation. Scotland sits outside the modelled BM tiers, so no BM revenue is attributed.';
+    document.getElementById('baseNote').innerHTML='Circle <b>fill</b> = Balancing Mechanism tier, <b>ring</b> = technology, size = capacity. Tier is modelled from the nearest verified SAM sites (89% match on hold-out) \u2014 indicative, not a per-site valuation. <b>TCV Potential</b> applies the priced SAM sites’ own Year-5 TCV per kW-available (by tier) to the tiered TAM capacity, at the SAM fleet’s available-for-BM ratio. Scotland sits outside the modelled BM tiers, so it carries no BM revenue and is excluded from TCV Potential.';
   } else if(c.view==='sam'){
     html=Object.keys(TIER).map(t=>{const up=Math.round((TAVG[t]/WHOLESALE-1)*100);
       return `<div class="row ${c.hidden.has(+t)?'off':''}" data-g="s" data-k="${t}"><span class="dot" style="background:${TIER[t].c}"></span>${TIER[t].n}<span class="c">${cnt[t]||0} &middot; <b class="up">+${up}%</b></span></div>`;}).join('');
