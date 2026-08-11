@@ -163,17 +163,20 @@ header .sub{font-size:11px;opacity:.82;margin-top:2px}
 @media (max-width:720px){ }
 
 #ppa{flex:1;overflow:auto;display:none;background:var(--plane,#f9f9f7)}
-.xtab{position:relative;margin-left:14px}
-.xtab:before{content:'';position:absolute;left:-8px;top:5px;bottom:5px;width:1px;background:rgba(255,255,255,.3)}
+.rightgrp{margin-left:auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:flex-end}
+.xtab{position:relative;margin-left:6px}
+.xtab:before{content:'';position:absolute;left:-12px;top:5px;bottom:5px;width:1px;background:rgba(255,255,255,.3)}
 .xtab button.on{background:#8FD14F;color:#0E3A2F}
 </style></head>
 <body><div id="app">
 <header>
   <div><h1>RenewaBlox Investor Atlas</h1><div class="sub" id="sub"></div></div>
   <div class="tabs" id="tabs"><button data-mode="peaker" class="on">Peaker plants</button><button data-mode="hydro">Hydro</button></div>
-  <div class="tabs xtab" id="xtabs"><button data-mode="ppa">PPA Benchmark</button></div>
   <div class="scope" id="scope"><button data-scope="TAM">TAM &middot; 1,309</button><button data-scope="SAM" class="on">SAM &middot; 129</button></div>
-  <div class="kpis" id="kpis"></div>
+  <div class="rightgrp">
+    <div class="kpis" id="kpis"></div>
+    <div class="tabs xtab" id="xtabs"><button data-mode="ppa">PPA Benchmark</button></div>
+  </div>
 </header>
 <div id="main">
   <div id="panel">
