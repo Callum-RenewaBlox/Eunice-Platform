@@ -44,11 +44,134 @@ header .sub{font-size:11px;opacity:.82;margin-top:2px}
 .ring{width:14px;height:14px;border-radius:50%;flex:none;background:#fff;border:2.5px solid #999;box-sizing:border-box}
 .sub2{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:15px 0 7px;font-weight:700;border-top:1px solid var(--line);padding-top:12px}
 .foot{font-size:10px;color:#9aa7ac;padding:6px 18px;border-top:1px solid var(--line);background:#fafbfb}
+/* ===== PPA Benchmark module (scoped) ===== */
+.rb-root{padding:16px 20px 0}
+
+.rb-root /* ============================================================
+   RenewaBlox Atlas — PPA & Price Benchmark module
+   Brand tokens drive chrome; validated data-viz palette drives marks.
+   ============================================================ */
+.rb-root{
+  color-scheme: light;
+  /* brand chrome (sampled from Client Atlas) */
+  --brand-deep:#16323a;
+  --brand-deep-2:#1F6F78;
+  --brand-lime:#1F6F78;
+  --brand-ink-on-deep:#ffffff;
+  /* chart surfaces & ink */
+  --surface-1:#fcfcfb;
+  --plane:#f9f9f7;
+  --text-primary:#0b0b0b;
+  --text-secondary:#52514e;
+  --muted:#898781;
+  --grid:#e1e0d9;
+  --baseline:#c3c2b7;
+  --border:rgba(11,11,11,0.10);
+  /* validated categorical slots */
+  --series-1:#2a78d6;   /* realised — Elexon */
+  --series-2:#eb6834;   /* forward — Montel/EEX */
+  --status-good:#0ca30c;
+  --status-warning:#fab219;
+  --status-critical:#d03b3b;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--text-primary);
+  background: var(--plane);
+}
+
+.rb-root *{box-sizing:border-box}
+.rb-root .rb-wrap{max-width:1340px;margin:0 auto;padding:0 0 48px}
+
+.rb-root h2.rb-h{font-size:20px;margin:26px 0 4px;font-weight:700}
+.rb-root p.rb-sub{margin:0 0 16px;color:var(--text-secondary);font-size:13.5px;max-width:78ch}
+
+.rb-root /* ---- stat tiles ---- */
+.rb-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:10px;margin:16px 0 22px}
+.rb-root .rb-tile{background:var(--surface-1);border:1px solid var(--border);border-radius:8px;padding:13px 15px}
+.rb-root .rb-tile .lab{font-size:11px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.rb-root .rb-tile .val{font-size:25px;font-weight:700;line-height:1.05}
+.rb-root .rb-tile .val small{font-size:13px;font-weight:600;color:var(--text-secondary)}
+.rb-root .rb-tile .note{font-size:11.5px;color:var(--text-secondary);margin-top:5px}
+
+.rb-root /* ---- panels ---- */
+.rb-panel{background:var(--surface-1);border:1px solid var(--border);border-radius:8px;padding:18px 18px 14px;margin-bottom:18px}
+.rb-root .rb-panel h3{margin:0 0 3px;font-size:15px;font-weight:700}
+.rb-root .rb-panel .cap{margin:0 0 14px;font-size:12.5px;color:var(--text-secondary)}
+
+.rb-root /* ---- filters (one row above the charts) ---- */
+.rb-filters{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin:0 0 18px}
+.rb-root .rb-field{display:flex;flex-direction:column;gap:4px}
+.rb-root .rb-field label{font-size:11px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase}
+.rb-root .rb-field select, .rb-root .rb-field input{font:inherit;font-size:13px;padding:7px 10px;border-radius:6px;
+  border:1px solid var(--baseline);background:var(--surface-1);color:var(--text-primary);min-width:172px}
+.rb-root .rb-reset{font:inherit;font-size:12.5px;font-weight:600;padding:8px 14px;border-radius:6px;
+  border:1px solid var(--baseline);background:transparent;color:var(--text-secondary);cursor:pointer}
+
+.rb-root /* ---- legend ---- */
+.rb-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary);margin-bottom:6px}
+.rb-root .rb-legend i{display:inline-block;width:14px;height:0;border-top-width:3px;border-top-style:solid;
+  vertical-align:middle;margin-right:6px;border-radius:2px}
+
+.rb-root /* ---- chart ---- */
+.rb-chart{position:relative}
+.rb-root svg{display:block;width:100%;height:auto;overflow:visible}
+.rb-root .tick{font-size:11px;fill:var(--muted)}
+.rb-root .axlab{font-size:11px;fill:var(--muted)}
+.rb-root .dlab{font-size:11.5px;font-weight:700}
+.rb-root .rb-tip{position:absolute;pointer-events:none;opacity:0;transition:opacity .09s;
+  background:var(--text-primary);color:var(--surface-1);border-radius:6px;padding:8px 11px;
+  font-size:12px;line-height:1.45;white-space:nowrap;z-index:20;box-shadow:0 3px 14px rgba(0,0,0,.2)}
+.rb-root .rb-tip b{font-weight:700}
+
+.rb-root /* ---- callout ---- */
+.rb-call{border-left:3px solid var(--brand-lime);background:rgba(31,111,120,.07);
+  border-radius:0 8px 8px 0;padding:14px 16px;margin:4px 0 18px;font-size:13.5px;line-height:1.55}
+.rb-root .rb-call b{font-weight:700}
+
+.rb-root /* ---- table ---- */
+.rb-tablewrap{overflow:auto;max-height:520px;border:1px solid var(--border);border-radius:8px}
+.rb-root table.rb-t{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+.rb-root table.rb-t th{position:sticky;top:0;background:var(--surface-1);text-align:left;padding:9px 11px;
+  font-size:11px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--baseline);cursor:pointer;white-space:nowrap;z-index:2}
+.rb-root table.rb-t th[data-sort]:after{content:"";opacity:.4;margin-left:5px}
+.rb-root table.rb-t th.asc:after{content:"\2191";opacity:1}
+.rb-root table.rb-t th.desc:after{content:"\2193";opacity:1}
+.rb-root table.rb-t td{padding:8px 11px;border-bottom:1px solid var(--grid);white-space:nowrap}
+.rb-root table.rb-t tbody tr:hover{background:rgba(31,111,120,.08)}
+.rb-root .num{text-align:right}
+.rb-root .chip{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;
+  border:1px solid var(--border)}
+.rb-root .chip-neg{background:rgba(42,120,214,.13);color:#1c5cab}
+.rb-root .chip-std{background:rgba(250,178,25,.18);color:#7a5300}
+.rb-root .chip-bhd{background:rgba(11,11,11,.07);color:var(--text-secondary)}
+.rb-root .chip-unk{background:rgba(11,11,11,.05);color:var(--muted)}
+.rb-root .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.rb-root .dot-a{background:var(--status-good)}
+.rb-root .dot-w{background:var(--status-warning)}
+.rb-root .dot-c{background:var(--status-critical)}
+.rb-root .dot-n{background:var(--muted)}
+
+.rb-root .rb-foot{font-size:11.5px;color:var(--text-secondary);line-height:1.6;margin-top:8px}
+.rb-root .rb-foot b{color:var(--text-primary)}
+.rb-root .rb-toggle{font:inherit;font-size:12px;font-weight:600;color:var(--text-secondary);background:none;
+  border:1px solid var(--baseline);border-radius:6px;padding:5px 11px;cursor:pointer;margin-top:10px}
+.rb-root .rb-datatable{display:none;margin-top:12px}
+.rb-root .rb-datatable.show{display:block}
+.rb-root .rb-datatable table{border-collapse:collapse;font-size:12px;width:100%;font-variant-numeric:tabular-nums}
+.rb-root .rb-datatable th, .rb-root .rb-datatable td{border:1px solid var(--grid);padding:5px 9px;text-align:left}
+.rb-root .rb-count{font-size:12.5px;color:var(--text-secondary);margin:0 0 8px}
+@media (max-width:720px){ }
+
+#ppa{flex:1;overflow:auto;display:none;background:var(--plane,#f9f9f7)}
+.xtab{position:relative;margin-left:14px}
+.xtab:before{content:'';position:absolute;left:-8px;top:5px;bottom:5px;width:1px;background:rgba(255,255,255,.3)}
+.xtab button.on{background:#8FD14F;color:#0E3A2F}
 </style></head>
 <body><div id="app">
 <header>
   <div><h1>RenewaBlox Investor Atlas</h1><div class="sub" id="sub"></div></div>
   <div class="tabs" id="tabs"><button data-mode="peaker" class="on">Peaker plants</button><button data-mode="hydro">Hydro</button></div>
+  <div class="tabs xtab" id="xtabs"><button data-mode="ppa">PPA Benchmark</button></div>
   <div class="scope" id="scope"><button data-scope="TAM">TAM &middot; 1,309</button><button data-scope="SAM" class="on">SAM &middot; 129</button></div>
   <div class="kpis" id="kpis"></div>
 </header>
@@ -60,6 +183,130 @@ header .sub{font-size:11px;opacity:.82;margin-top:2px}
   </div>
   <div id="map"></div>
 </div>
+<div id="ppa"><div class="rb-root"><div class="rb-wrap">
+
+  <!-- ============ brand bar ============ -->
+  <h2 class="rb-h">PPA &amp; Price Benchmark</h2>
+  <p class="rb-sub">Where each SAM site's export sits against the GB market. Realised prices are settlement
+  data; the forward curve is exchange settlement; the FiT export tariff is a published statutory rate.
+  No contracted PPA price is shown anywhere — those are private bilateral contracts and are not
+  obtainable from any source.</p>
+
+  <!-- ============ stat tiles ============ -->
+  <div class="rb-tiles">
+    <div class="rb-tile"><div class="lab">Realised baseload · 12m</div>
+      <div class="val">8.52<small> p/kWh</small></div>
+      <div class="note">Elexon MID, Aug 25 – Jul 26</div></div>
+    <div class="rb-tile"><div class="lab">Winter 2026 forward</div>
+      <div class="val">12.50<small> p/kWh</small></div>
+      <div class="note">+47% vs last 12 months</div></div>
+    <div class="rb-tile"><div class="lab">Cal-2028 forward</div>
+      <div class="val">7.74<small> p/kWh</small></div>
+      <div class="note">below the CPI-linked FiT tariff</div></div>
+    <div class="rb-tile"><div class="lab">FiT standard export</div>
+      <div class="val">7.64<small> p/kWh</small></div>
+      <div class="note">statutory, CPI-linked, guaranteed</div></div>
+    <div class="rb-tile"><div class="lab">Winter / summer spread</div>
+      <div class="val">49<small>%</small></div>
+      <div class="note">Win-26 vs Sum-27 — AD runs flat</div></div>
+  </div>
+
+  <!-- ============ price chart ============ -->
+  <div class="rb-panel">
+    <h3>GB baseload: realised, forward, and the guaranteed alternative</h3>
+    <p class="cap">Monthly realised day-ahead baseload against exchange-settled forward blocks, both in
+    p/kWh. The dashed rule is the FiT standard export tariff every FiT site can fall back to.</p>
+    <div class="rb-legend">
+      <span><i style="border-top-color:var(--series-1)"></i>Realised — Elexon MID (EPEX)</span>
+      <span><i style="border-top-color:var(--series-2);border-top-style:dashed"></i>Forward blocks — Montel / EEX, 11 Aug 2026</span>
+      <span><i style="border-top-color:var(--muted);border-top-style:dashed"></i>FiT standard export tariff (7.64p, CPI-linked)</span>
+    </div>
+    <div class="rb-chart"><svg id="svgPrice" viewBox="0 0 1100 400" role="img"
+      aria-label="GB baseload realised and forward prices in pence per kilowatt hour against the FiT standard export tariff"></svg>
+      <div class="rb-tip" id="tipPrice"></div></div>
+    <button class="rb-toggle" data-target="dtPrice">Show data table</button>
+    <div class="rb-datatable" id="dtPrice"></div>
+  </div>
+
+  <div class="rb-call">
+    <b>The crossover.</b> The FiT standard export tariff is 39% below the Winter-2026 forward — badly out of
+    the money this winter. But it rises with CPI while the curve falls away: at 3% inflation it reaches
+    ~8.11 p/kWh by 2028 against a Cal-2028 forward of 7.74 p/kWh, about <b>5% above market</b>. On today's
+    curve, a long fixed PPA signed now at any discount to Cal-2028 is worse than the guaranteed fallback.
+    The CPI rate is an assumption, not a forecast — the crossover date moves with it.
+  </div>
+
+  <!-- ============ filters ============ -->
+  <div class="rb-filters">
+    <div class="rb-field"><label for="fClass">Export arrangement</label>
+      <select id="fClass"><option value="">All</option></select></div>
+    <div class="rb-field"><label for="fOff">Certificate counterparty</label>
+      <select id="fOff"><option value="">All</option></select></div>
+    <div class="rb-field"><label for="fStatus">Generating status</label>
+      <select id="fStatus"><option value="">All</option></select></div>
+    <div class="rb-field"><label for="fSearch">Find a site</label>
+      <input id="fSearch" type="search" placeholder="operator, town, postcode"></div>
+    <button class="rb-reset" id="fReset">Reset</button>
+  </div>
+
+  <!-- ============ counterparty chart ============ -->
+  <div class="rb-panel">
+    <h3>Who holds the certificates</h3>
+    <p class="cap">Capacity by the largest <em>external</em> certificate holder for each site, from Ofgem certificate
+    history. A supplier holding a site&rsquo;s REGOs is strong evidence it buys the power &mdash; but
+    certificates can trade separately, so treat this as inference, not proof. Most generators also retain
+    a share of their own certificates alongside a supplier relationship; that retention is shown as
+    &ldquo;+self&rdquo; in the register rather than replacing the supplier. &ldquo;Generator is sole
+    holder&rdquo; means no external party appears at all &mdash; genuinely unbundled.</p>
+    <p class="rb-count" id="offCount"></p>
+    <div class="rb-chart"><svg id="svgOff" viewBox="0 0 1100 380" role="img"
+      aria-label="Installed capacity by REGO certificate holder"></svg>
+      <div class="rb-tip" id="tipOff"></div></div>
+    <button class="rb-toggle" data-target="dtOff">Show data table</button>
+    <div class="rb-datatable" id="dtOff"></div>
+  </div>
+
+  <!-- ============ site table ============ -->
+  <div class="rb-panel">
+    <h3>Site register</h3>
+    <p class="cap">Every SAM site with its observed export arrangement, counterparty, current FiT
+    generation tariff and subsidy end date. Click a column to sort.</p>
+    <p class="rb-count" id="tblCount"></p>
+    <div class="rb-tablewrap">
+      <table class="rb-t" id="tbl">
+        <thead><tr>
+          <th data-sort="rank" class="asc">#</th>
+          <th data-sort="operator">Operator</th>
+          <th data-sort="town">Town</th>
+          <th data-sort="installed_kw" class="num">kW</th>
+          <th data-sort="commissioned" class="num">Comm.</th>
+          <th data-sort="ppa_class">Export arrangement</th>
+          <th data-sort="offtaker">Supplier (largest external REGO holder)</th>
+          <th data-sort="gen_tariff_p_kwh_2026_27" class="num">FiT gen p/kWh</th>
+          <th data-sort="fit_end_date">FiT ends</th>
+          <th data-sort="yrs_subsidy_left" class="num">Yrs left</th>
+          <th data-sort="rego_status">Status</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="rb-foot">
+    <b>Provenance.</b>
+    Realised prices — Elexon BMRS Market Index Data, APXMIDP feed, 70,085 half-hourly settlement records
+    Aug 2024–Jul 2026 (the N2EX feed reports zero volume and is excluded).
+    Forward curve — Montel, EEX UK power futures, previous-settlement column, snapshot 11 Aug 2026.
+    Export arrangement and FiT tariffs — Ofgem Feed-in Tariff Installation Report, March 2026;
+    128 of 129 sites matched on outcode, capacity, commissioning date and local authority.
+    Counterparty — Ofgem Renewable Energy Register, REGO Accredited Stations and REGO Certificates
+    (159 MB, 777,188 rows), current-holder field for the most recent output period.
+    <b>Not shown, because it does not exist publicly:</b> contracted PPA prices for the 108 negotiated
+    sites. Sourcing a discount-to-baseload benchmark is the remaining gap.
+    Forward curve and counterparty data are point-in-time snapshots and need re-pulling to stay current.
+  </p>
+
+</div></div></div>
 <div class="foot" id="foot"></div>
 </div>
 <script>
@@ -86,6 +333,259 @@ const bmKw=d=>d.bm!=null?d.bm:(d.kw||0)*AVRATIO;
 const tcvPot=a=>a.reduce((x,d)=>x+(d.bt>0?bmKw(d)*(TCVRATE[d.bt]||0):0),0);
 let mode='peaker', scope='SAM';
 let hidden={peaker:new Set(),hydro:new Set(),tam:new Set(),fuel:new Set(),shape:new Set()};
+const PPA=(function(){
+function ppaChips(nSites,mw,nOff){
+  if(mode!=='ppa')return;
+  document.getElementById('kpis').innerHTML=[[nSites,'Sites shown'],[mw.toFixed(1)+' MW','Capacity shown'],
+    [nOff,'Counterparties'],[DATA.kpi.base12.toFixed(2)+'p','Realised 12m'],[DATA.kpi.win26.toFixed(2)+'p','Winter-26 fwd']]
+    .map(k=>`<div class="kpi"><b>${k[0]}</b><span>${k[1]}</span></div>`).join('');}
+const DATA = {"realised":[{"m":"2024-08","p":5.75},{"m":"2024-09","p":7.72},{"m":"2024-10","p":8.22},{"m":"2024-11","p":9.54},{"m":"2024-12","p":8.77},{"m":"2025-01","p":11.41},{"m":"2025-02","p":10.26},{"m":"2025-03","p":8.97},{"m":"2025-04","p":7.67},{"m":"2025-05","p":6.95},{"m":"2025-06","p":6.76},{"m":"2025-07","p":7.95},{"m":"2025-08","p":7.14},{"m":"2025-09","p":6.53},{"m":"2025-10","p":7.26},{"m":"2025-11","p":7.58},{"m":"2025-12","p":7.47},{"m":"2026-01","p":9.7},{"m":"2026-02","p":7.97},{"m":"2026-03","p":9.55},{"m":"2026-04","p":8.22},{"m":"2026-05","p":10.49},{"m":"2026-06","p":9.62},{"m":"2026-07","p":10.62}],"sites":[{"rank":1,"operator":"Agrivert Limited (JV with Grundon)","site":"Trumps Farm AD plant, Kitsmead Lane, Longcross, Chertsey","town":"CHERTSEY","postcode":"KT16 0EF","installed_kw":2378,"commissioned":2014,"gspc":"J South East","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":null,"supplier_1_certs":27601.0,"self_certs":42658.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2034-01-31","yrs_subsidy_left":7.5,"rego_status":"active","accred_ref":"G01516BWEN","lat":51.39579,"lon":-0.54007},{"rank":2,"operator":"Bio Collectors Ltd","site":"Riverside / South London AD plant, Osier Way, Mitcham","town":"Mitcham","postcode":"CR4 4NA","installed_kw":1700,"commissioned":2013,"gspc":"J South East","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":null,"supplier_1_certs":4514.0,"self_certs":13069.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2033-06-15","yrs_subsidy_left":6.8,"rego_status":"active","accred_ref":"G01493BWEN","lat":51.39245,"lon":-0.16759},{"rank":3,"operator":"St Nicholas Court Farms Ltd / The Farm Energy Co","site":"Petbows","town":"SANDWICH","postcode":"CT13 9NL","installed_kw":499,"commissioned":2013,"gspc":"J South East","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2033-03-05","yrs_subsidy_left":6.6,"rego_status":"no REGO certs","accred_ref":null,"lat":51.31175,"lon":1.34917},{"rank":4,"operator":"St Nicholas Court Farms Ltd","site":"St. Nicholas Court Farm","town":"BIRCHINGTON","postcode":"CT7 0PT","installed_kw":249,"commissioned":2014,"gspc":"J South East","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Generator is sole holder","supplier_1":null,"supplier_2":null,"supplier_1_certs":0.0,"self_certs":4865.0,"n_external":0.0,"gen_tariff_p_kwh_2026_27":17.94,"fit_end_date":"2034-10-31","yrs_subsidy_left":8.2,"rego_status":"lagging/winding down","accred_ref":"G01592BWEN","lat":51.35673,"lon":1.24376},{"rank":5,"operator":"SEVERN TRENT GREEN POWER LIMITED","site":"DATA NOT AVAILABLE","town":"WALLINGFORD","postcode":"OX10 6SL","installed_kw":2378,"commissioned":2012,"gspc":"H Southern","archetype":"Water utility","ppa_class":"Negotiated export PPA","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":"Drax Energy Solutions Limited (Participant)","supplier_1_certs":22570.0,"self_certs":41728.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2032-11-28","yrs_subsidy_left":6.3,"rego_status":"active","accred_ref":"G01473BWEN","lat":51.614,"lon":-1.11224},{"rank":6,"operator":"Tamar Renewable Power (Basingstoke) Ltd t/a Biogen","site":"Basingstoke AD Facility, Kennel Farm, Dummer","town":null,"postcode":"RG23 7LW","installed_kw":1487,"commissioned":2013,"gspc":"H Southern","archetype":"Fund / platform-owned","ppa_class":"FiT standard export tariff (no PPA)","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":null,"supplier_1_certs":76653.0,"self_certs":1331.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2033-12-10","yrs_subsidy_left":7.3,"rego_status":"active","accred_ref":"G01518BWEN","lat":51.22284,"lon":-1.13567},{"rank":7,"operator":"RAINBARROW FARM AD LLP (fka JV Energen; Engie)","site":"RAINBARROW FARM","town":"DORCHESTER","postcode":"DT2 9JF","installed_kw":1398,"commissioned":2010,"gspc":"H Southern","archetype":"Fund / platform-owned","ppa_class":"Negotiated export PPA","offtaker":"SmartestEnergy Ltd - Supplier - SUP0008573","supplier_1":"SmartestEnergy Ltd - Supplier - SUP0008573","supplier_2":"ENGIE POWER LIMITED","supplier_1_certs":1649.0,"self_certs":0.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":21.5,"fit_end_date":"2030-07-26","yrs_subsidy_left":4.0,"rego_status":"active","accred_ref":"G01465BWEN","lat":50.70527,"lon":-2.48232},{"rank":8,"operator":"TAMAR RENEWABLE POWER (BASINGSTOKE) LIMITED (Biogen)","site":"FARLEIGH WALLOP AD PLANT","town":"BASINGSTOKE","postcode":"RG25 2HR","installed_kw":1200,"commissioned":2013,"gspc":"H Southern","archetype":"Fund / platform-owned","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2033-12-19","yrs_subsidy_left":7.4,"rego_status":"no REGO certs","accred_ref":null,"lat":51.21686,"lon":-1.12568},{"rank":9,"operator":"WESSEX WATER SERVICES LIMITED","site":"DATA NOT AVAILABLE","town":"DORCHESTER","postcode":"DT2 8PE","installed_kw":1100,"commissioned":2015,"gspc":"H Southern","archetype":"Water utility","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":14.42,"fit_end_date":"2035-02-24","yrs_subsidy_left":8.5,"rego_status":"no REGO certs","accred_ref":null,"lat":50.68924,"lon":-2.37884},{"rank":10,"operator":"YELSPA LIMITED","site":"BIOGAS FAULKNERS DOWN FARM","town":"ANDOVER","postcode":"SP11 6LZ","installed_kw":1099,"commissioned":2012,"gspc":"H Southern","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Brook Green Trading Limited","supplier_1":"Brook Green Trading Limited","supplier_2":null,"supplier_1_certs":5000.0,"self_certs":14045.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2032-10-11","yrs_subsidy_left":6.2,"rego_status":"active","accred_ref":"G01469BWEN","lat":51.22345,"lon":-1.41214},{"rank":11,"operator":"Stowell Farms Ltd (Stowell Estates)","site":"Sharcott Pennings Farm, nr Pewsey","town":null,"postcode":"SN9 5NL","installed_kw":499,"commissioned":2012,"gspc":"H Southern","archetype":"Farm / owner-operator","ppa_class":"Unknown — no FiT match","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":null,"fit_end_date":null,"yrs_subsidy_left":null,"rego_status":"no REGO certs","accred_ref":null,"lat":51.34334,"lon":-1.77993},{"rank":12,"operator":"TAYLOR FARMS (SWALCLIFFE) (partnership; t/a Stour Energy)","site":"Stourwell barn ad plant","town":"Banbury","postcode":"OX15 5EX","installed_kw":499,"commissioned":2014,"gspc":"H Southern","archetype":"Farm / owner-operator","ppa_class":"FiT standard export tariff (no PPA)","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":"Green Energy (UK) Limited","supplier_1_certs":6763.0,"self_certs":0.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":18.42,"fit_end_date":"2034-09-29","yrs_subsidy_left":8.1,"rego_status":"active","accred_ref":"G01569BWEN","lat":52.02984,"lon":-1.45833},{"rank":13,"operator":"BIOMETHANE (CASTLE EATON) LIMITED","site":"CASTLE EATON FARM","town":"SWINDON","postcode":"SN6 6JX","installed_kw":498,"commissioned":2013,"gspc":"H Southern","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Holt Global Group Internatinal AG","supplier_1":"Holt Global Group Internatinal AG","supplier_2":null,"supplier_1_certs":1667.0,"self_certs":2102.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2033-09-27","yrs_subsidy_left":7.1,"rego_status":"active","accred_ref":"G01494BWEN","lat":51.65856,"lon":-1.79106},{"rank":14,"operator":"MARSTON POWER LIMITED","site":"Marston power","town":"Banbury","postcode":"OX17 2DQ","installed_kw":498,"commissioned":2012,"gspc":"H Southern","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Ovo Energy","supplier_1":"Ovo Energy","supplier_2":"NFPAS Limited","supplier_1_certs":3828.0,"self_certs":0.0,"n_external":3.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2032-09-19","yrs_subsidy_left":6.1,"rego_status":"lagging/winding down","accred_ref":"G01470BWEN","lat":52.08847,"lon":-1.1879},{"rank":15,"operator":"Gaunts Estate (Glyn family)","site":"Gaunts Estate AD plant (1 of 3), nr Wimborne","town":null,"postcode":"BH21 4","installed_kw":338,"commissioned":2014,"gspc":"H Southern","archetype":"Farm / owner-operator","ppa_class":"FiT standard export tariff (no PPA)","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":17.94,"fit_end_date":"2034-12-05","yrs_subsidy_left":8.3,"rego_status":"no REGO certs","accred_ref":null,"lat":50.81216,"lon":-1.97454},{"rank":16,"operator":"GIPPS ENERGY LIMITED","site":"Banbury ad plant","town":"Calthorpe","postcode":"OX16 4RN","installed_kw":260,"commissioned":2013,"gspc":"H Southern","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2033-02-20","yrs_subsidy_left":6.5,"rego_status":"no REGO certs","accred_ref":null,"lat":52.05878,"lon":-1.32659},{"rank":17,"operator":"VALENCIA WASTE MANAGEMENT LIMITED (fka Viridor)","site":"LANDFILL GAS GENERATOR","town":"DORCHESTER","postcode":"DT2 8BS","installed_kw":249,"commissioned":2014,"gspc":"H Southern","archetype":"Waste / municipal","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":19.92,"fit_end_date":"2034-06-25","yrs_subsidy_left":7.9,"rego_status":"no REGO certs","accred_ref":null,"lat":50.69522,"lon":-2.32525},{"rank":18,"operator":"ADAM BALCH","site":"DATA NOT AVAILABLE","town":"SHAFTESBURY","postcode":"SP7 8PX","installed_kw":190,"commissioned":2011,"gspc":"H Southern","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":21.5,"fit_end_date":"2031-01-01","yrs_subsidy_left":4.4,"rego_status":"no REGO certs","accred_ref":null,"lat":51.00882,"lon":-2.18886},{"rank":19,"operator":"WEST BERKSHIRE COUNCIL (local authority)","site":"DATA NOT AVAILABLE","town":"READING","postcode":"RG7 3XJ","installed_kw":190,"commissioned":2013,"gspc":"H Southern","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":24.9,"fit_end_date":"2033-06-18","yrs_subsidy_left":6.9,"rego_status":"no REGO certs","accred_ref":null,"lat":51.39644,"lon":-1.07044},{"rank":20,"operator":"Gaunts Estate (Glyn family)","site":"Gaunts House AD plant, Petersham Lane, Wimborne","town":null,"postcode":"BH21 4JQ","installed_kw":125,"commissioned":2014,"gspc":"H Southern","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Generator is sole holder","supplier_1":null,"supplier_2":null,"supplier_1_certs":0.0,"self_certs":0.0,"n_external":0.0,"gen_tariff_p_kwh_2026_27":17.94,"fit_end_date":"2034-11-25","yrs_subsidy_left":8.3,"rego_status":"no REGO certs","accred_ref":"G01594BWEN","lat":50.83834,"lon":-1.97216},{"rank":21,"operator":"STAPLES (VEGETABLES) LIMITED","site":"Station farm","town":"Boston","postcode":"PE22 0SE","installed_kw":5936,"commissioned":2011,"gspc":"A Eastern (East England)","archetype":"Corporate host (private wire likely)","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":"Opus Energy Renewables Ltd","supplier_1_certs":19001.0,"self_certs":0.0,"n_external":3.0,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2034-03-26","yrs_subsidy_left":7.6,"rego_status":"active","accred_ref":"G01487BWEN","lat":53.03395,"lon":0.03487},{"rank":22,"operator":"Agri-Gen Limited","site":"Agri-Gen AD plant, Bentwaters Parks, Rendlesham","town":"Woodbridge","postcode":"IP12 2TW","installed_kw":4498,"commissioned":2012,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Generator is sole holder","supplier_1":null,"supplier_2":null,"supplier_1_certs":0.0,"self_certs":7007.0,"n_external":0.0,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2032-11-21","yrs_subsidy_left":6.3,"rego_status":"likely ceased","accred_ref":"G01314BWEN","lat":52.13047,"lon":1.42818},{"rank":23,"operator":"East London Biogas Ltd (mgd Bio Capital)","site":"East London Biogas (TEG Biogas), Choats Rd, Dagenham","town":null,"postcode":"RM9 6LF","installed_kw":3560,"commissioned":2013,"gspc":"A Eastern (East England)","archetype":"Waste / municipal","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":"Npower Commercial Gas Ltd","supplier_1_certs":22473.0,"self_certs":29451.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2033-11-28","yrs_subsidy_left":7.3,"rego_status":"active","accred_ref":"G01515BWEN","lat":51.52119,"lon":0.13693},{"rank":24,"operator":"SHANKS WASTE MANAGEMENT LIMITED","site":"WESTCOTT VENTURE PARK","town":"AYLESBURY","postcode":"HP18 0NX","installed_kw":3200,"commissioned":2013,"gspc":"A Eastern (East England)","archetype":"Waste / municipal","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2033-10-07","yrs_subsidy_left":7.2,"rego_status":"no REGO certs","accred_ref":null,"lat":51.84428,"lon":-0.95771},{"rank":25,"operator":"Shropshire Energy (UK) Ltd / Barway Farms","site":"May Farm AD plant, Littleport","town":"Ely","postcode":"CB7 4TF","installed_kw":3142,"commissioned":2013,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"So Energy Trading Limited","supplier_1":"So Energy Trading Limited","supplier_2":"British Gas Trading Ltd - Supplier - SUP0008543","supplier_1_certs":14984.0,"self_certs":77620.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2033-08-15","yrs_subsidy_left":7.0,"rego_status":"active","accred_ref":"G01501BWEN","lat":52.45922,"lon":0.35085},{"rank":26,"operator":"Biogen (UK) Limited","site":"BYGRAVE LODGE FM","town":"BALDOCK","postcode":"SG7 6QX","installed_kw":2676,"commissioned":2014,"gspc":"A Eastern (East England)","archetype":"Fund / platform-owned","ppa_class":"Negotiated export PPA","offtaker":"Npower Commercial Gas Ltd","supplier_1":"Npower Commercial Gas Ltd","supplier_2":null,"supplier_1_certs":98494.0,"self_certs":5688.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":14.42,"fit_end_date":"2034-10-27","yrs_subsidy_left":8.2,"rego_status":"active","accred_ref":"G01575BWEN","lat":52.00369,"lon":-0.14384},{"rank":27,"operator":"Attleborough Eco Electric Ltd (op. Eco Verde Energy)","site":"CROWS HALL FARM/LANE","town":"Attleborogh","postcode":"NR17 1AD","installed_kw":1560,"commissioned":2014,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Inspired Energy Solutions","supplier_1":"Inspired Energy Solutions","supplier_2":"Holt Global Group Internatinal AG","supplier_1_certs":7259.0,"self_certs":8091.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2034-02-11","yrs_subsidy_left":7.5,"rego_status":"active","accred_ref":"G01651BWEN","lat":52.52049,"lon":0.99893},{"rank":28,"operator":"STAFFORD RENEWABLE ENERGY LIMITED","site":"H G BLAKES","town":"Norwich","postcode":"NR10 4DU","installed_kw":1560,"commissioned":2012,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":"EDF Energy Customers Ltd","supplier_1_certs":28098.0,"self_certs":4148.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2032-04-02","yrs_subsidy_left":5.6,"rego_status":"active","accred_ref":"G01450BWEN","lat":52.70068,"lon":1.20031},{"rank":29,"operator":"WILDMORE RENEWABLES LIMITED","site":"Ad plant main road langrick","town":"Boston","postcode":"PE22 7AN","installed_kw":1524,"commissioned":2013,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"FiT standard export tariff (no PPA)","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":"Opus Energy Limited - Supplier","supplier_1_certs":11782.0,"self_certs":2102.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2033-04-04","yrs_subsidy_left":6.7,"rego_status":"active","accred_ref":"G01623BWEN","lat":53.02637,"lon":-0.11969},{"rank":30,"operator":"HOLBEACH BIOGAS LIMITED (Biogen)","site":"Manor farm","town":"Spalding","postcode":"PE12 8LR","installed_kw":1487,"commissioned":2013,"gspc":"A Eastern (East England)","archetype":"Fund / platform-owned","ppa_class":"FiT standard export tariff (no PPA)","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":null,"supplier_1_certs":40947.0,"self_certs":8160.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2033-12-17","yrs_subsidy_left":7.4,"rego_status":"active","accred_ref":"G01521BWEN","lat":52.83526,"lon":0.08279},{"rank":31,"operator":"O Arnold Renewables Ltd","site":"SPRING FARM","town":"Norwich","postcode":"NR10 4DT","installed_kw":1415,"commissioned":2011,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":"TEM-ENERGY LIMITED","supplier_1_certs":52399.0,"self_certs":0.0,"n_external":3.0,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2031-08-19","yrs_subsidy_left":5.0,"rego_status":"active","accred_ref":"G01405BWEN","lat":52.69067,"lon":1.21127},{"rank":32,"operator":"A E L BIOGAS LIMITED","site":"East kirkby , east kirkby airfield","town":"Spilsby","postcode":"PE23 4BX","installed_kw":1200,"commissioned":2013,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2033-11-21","yrs_subsidy_left":7.3,"rego_status":"no REGO certs","accred_ref":null,"lat":53.14176,"lon":0.00454},{"rank":33,"operator":"Holton Renewable Power Ltd (op. Eco Verde Energy)","site":"BERNARD MATTHEWS","town":"HALESWORTH","postcode":"IP19 8NH","installed_kw":1136,"commissioned":2013,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"No export — behind the meter","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2033-07-15","yrs_subsidy_left":6.9,"rego_status":"no REGO certs","accred_ref":null,"lat":52.35231,"lon":1.5295},{"rank":34,"operator":"Barley Brigg Biogas Ltd (Rattlerow Farms)","site":"EXPORT","town":"STRADBROKE","postcode":"IP21 5NQ","installed_kw":1099,"commissioned":2014,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"TotalEnergies Gas & Power Limited","supplier_1":"TotalEnergies Gas & Power Limited","supplier_2":"British Gas Trading Ltd - Supplier - SUP0008543","supplier_1_certs":55915.0,"self_certs":4415.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-12-10","yrs_subsidy_left":8.3,"rego_status":"active","accred_ref":"G01599BWEN","lat":52.31251,"lon":1.30753},{"rank":35,"operator":"Hallwick Energy (Hallwick Ltd)","site":"STATION WORKS","town":"Thaxted","postcode":"CM6 2NG","installed_kw":1067,"commissioned":2012,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Good Energy Ltd","supplier_1":"Good Energy Ltd","supplier_2":null,"supplier_1_certs":1417.0,"self_certs":0.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2032-10-22","yrs_subsidy_left":6.2,"rego_status":"active","accred_ref":"G01468BWEN","lat":51.94494,"lon":0.33185},{"rank":36,"operator":"Hallwick Energy (Hallwick Ltd)","site":"TRINITY HALL FARM","town":"Sundon","postcode":"LU7 9PY","installed_kw":1067,"commissioned":2012,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"SHELL ENERGY UK LIMITED","supplier_1":"SHELL ENERGY UK LIMITED","supplier_2":null,"supplier_1_certs":6332.0,"self_certs":7594.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2032-07-18","yrs_subsidy_left":5.9,"rego_status":"likely ceased","accred_ref":"G01461BWEN","lat":51.91916,"lon":-0.56308},{"rank":37,"operator":"Hallwick Energy (Hallwick Ltd)","site":"BUTTERMILK HALL FARM","town":"BUNTINGFORD","postcode":"SG9 9RH","installed_kw":1067,"commissioned":2012,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Good Energy Ltd","supplier_1":"Good Energy Ltd","supplier_2":null,"supplier_1_certs":7064.0,"self_certs":0.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2032-05-01","yrs_subsidy_left":5.7,"rego_status":"active","accred_ref":"G01443BWEN","lat":51.94576,"lon":-0.04978},{"rank":38,"operator":"Energy and System Technical Limited","site":"White Hall Farm","town":"Wymondham","postcode":"NR18 9EP","installed_kw":703,"commissioned":2015,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":"EPG Energy Limited","supplier_1_certs":25326.0,"self_certs":31581.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":13.66,"fit_end_date":"2035-12-10","yrs_subsidy_left":9.3,"rego_status":"active","accred_ref":"G01574BWEN","lat":52.59,"lon":1.08175},{"rank":39,"operator":"Biocow Ltd (now Adapt Biogas Ltd)","site":"IMPORT METER","town":"WISBECH","postcode":"PE13 4HN","installed_kw":500,"commissioned":2012,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Corona Energy Retail 4 Ltd","supplier_1":"Corona Energy Retail 4 Ltd","supplier_2":null,"supplier_1_certs":11490.0,"self_certs":10431.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2032-12-06","yrs_subsidy_left":6.3,"rego_status":"lagging/winding down","accred_ref":"G01480BWEN","lat":52.62501,"lon":0.02756},{"rank":40,"operator":"Attleborough Eco Electric Ltd (op. Eco Verde Energy)","site":"IMPORT AD PLANT","town":"NORWICH","postcode":"NR16 2LA","installed_kw":499,"commissioned":2014,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":"SmartestEnergy Ltd - Supplier - SUP0008573","supplier_1_certs":9358.0,"self_certs":0.0,"n_external":3.0,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-12-22","yrs_subsidy_left":8.4,"rego_status":"active","accred_ref":"G01627BWEN","lat":52.48772,"lon":0.94274},{"rank":41,"operator":"AVOCET RENEWABLES LIMITED (site op.; Powersystems was contractor)","site":"Coston Hall","town":"NORWICH","postcode":"NR9 4DT","installed_kw":499,"commissioned":2014,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":null,"supplier_1_certs":12925.0,"self_certs":0.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-12-18","yrs_subsidy_left":8.4,"rego_status":"active","accred_ref":"G01618BWEN","lat":52.61488,"lon":1.04443},{"rank":42,"operator":"Ellough AD Plant Limited (op. Eco Verde Energy)","site":"COPLAND WAY AD PLANT","town":"BECCLES","postcode":"NR34 7SP","installed_kw":499,"commissioned":2014,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-12-13","yrs_subsidy_left":8.3,"rego_status":"no REGO certs","accred_ref":null,"lat":52.43937,"lon":1.60912},{"rank":43,"operator":"FULLCIRCLE ENERGY LTD","site":"Data not available","town":"COLCHESTER","postcode":"CO7 7BN","installed_kw":499,"commissioned":2014,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":"EDF Energy Customers Ltd","supplier_1_certs":9282.0,"self_certs":9504.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":18.42,"fit_end_date":"2034-08-01","yrs_subsidy_left":8.0,"rego_status":"active","accred_ref":"G01565BWEN","lat":51.89364,"lon":0.98116},{"rank":44,"operator":"HAIN CELESTIAL UK LIMITED (fka Histon Sweet Spreads)","site":"PREMIER FOODS (CHIVERS)","town":"CAMBRIDGE","postcode":"CB24 9NR","installed_kw":249,"commissioned":2014,"gspc":"A Eastern (East England)","archetype":"Corporate host (private wire likely)","ppa_class":"No export — behind the meter","offtaker":"Generator is sole holder","supplier_1":null,"supplier_2":null,"supplier_1_certs":0.0,"self_certs":2776.0,"n_external":0.0,"gen_tariff_p_kwh_2026_27":19.92,"fit_end_date":"2034-08-15","yrs_subsidy_left":8.0,"rego_status":"likely ceased","accred_ref":"G01561BWEN","lat":52.24686,"lon":0.10401},{"rank":45,"operator":"J.F. Temple & Son Ltd (Dr Stephen Temple)","site":"Data not available","town":"WELLS-NEXT-THE-SEA","postcode":"NR23 1NY","installed_kw":170,"commissioned":2010,"gspc":"A Eastern (East England)","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Green Energy (UK) Limited","supplier_1":"Green Energy (UK) Limited","supplier_2":null,"supplier_1_certs":9697.0,"self_certs":0.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":21.5,"fit_end_date":"2030-06-21","yrs_subsidy_left":3.9,"rego_status":"active","accred_ref":"G01377BWEN","lat":52.9168,"lon":0.89046},{"rank":46,"operator":"Swancote Energy Limited","site":"Swancote Energy AD plant, Swancote Farm, Bridgnorth","town":null,"postcode":"WV15 5HB","installed_kw":3420,"commissioned":2012,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"UC Energy Ltd","supplier_1":"UC Energy Ltd","supplier_2":"Bridgnorth Aluminium Account","supplier_1_certs":11483.0,"self_certs":48437.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":24.9,"fit_end_date":"2032-11-15","yrs_subsidy_left":6.3,"rego_status":"active","accred_ref":"G01437BWEN","lat":52.54327,"lon":-2.38118},{"rank":47,"operator":"LONGNER ENERGY LIMITED","site":"Longner energy ltd","town":"Shrewsbury","postcode":"SY4 4UD","installed_kw":3378,"commissioned":2012,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2032-11-07","yrs_subsidy_left":6.2,"rego_status":"no REGO certs","accred_ref":null,"lat":52.69951,"lon":-2.64777},{"rank":48,"operator":"Herefordshire biogas limited","site":"Herefordshire Biogas AD plant, Pembridge Ind. Estate","town":"Pembridge","postcode":"HR6 9LA","installed_kw":2495,"commissioned":2014,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"SmartestEnergy Ltd - Supplier - SUP0008573","supplier_1":"SmartestEnergy Ltd - Supplier - SUP0008573","supplier_2":"VERSA ENERGY LIMITED","supplier_1_certs":3659.0,"self_certs":5665.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-10-28","yrs_subsidy_left":8.2,"rego_status":"lagging/winding down","accred_ref":"G01579BWEN","lat":52.23354,"lon":-2.89078},{"rank":49,"operator":"SEVERN TRENT WATER LIMITED (AD via ST Green Power)","site":"Coleshill stw food","town":"Curdworth","postcode":"B46 1NX","installed_kw":2400,"commissioned":2014,"gspc":"E West Midlands","archetype":"Water utility","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":14.42,"fit_end_date":"2034-12-11","yrs_subsidy_left":8.3,"rego_status":"no REGO certs","accred_ref":null,"lat":52.51966,"lon":-1.71863},{"rank":50,"operator":"BITTERLEY BIOGAS AD LIMITED","site":"Bitterley warthill farm","town":"Ludlow","postcode":"SY8 3HL","installed_kw":1598,"commissioned":2013,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":"ENGIE POWER LIMITED","supplier_1_certs":4930.0,"self_certs":0.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2033-11-05","yrs_subsidy_left":7.2,"rego_status":"likely ceased","accred_ref":"G01798BWEN","lat":52.39586,"lon":-2.62933},{"rank":51,"operator":"DWR CYMRU CYFYNGEDIG (Welsh Water)","site":"Eign wwtw","town":"Hereford","postcode":"HR1 2RX","installed_kw":1570,"commissioned":2011,"gspc":"E West Midlands","archetype":"Water utility","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2031-10-10","yrs_subsidy_left":5.2,"rego_status":"no REGO certs","accred_ref":null,"lat":52.05171,"lon":-2.70423},{"rank":52,"operator":"Suckley Rednall Ltd","site":"Abbotsmoor Farm AD, Haughton, West Felton, Oswestry","town":null,"postcode":"SY11 4HF","installed_kw":1067,"commissioned":2013,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":"Ovo Energy","supplier_1_certs":23943.0,"self_certs":0.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2033-10-17","yrs_subsidy_left":7.2,"rego_status":"active","accred_ref":"G01459BWEN","lat":52.83642,"lon":-2.93094},{"rank":53,"operator":"Vale Green Energy Ltd","site":"Rotherdale Farm AD plant, Throckmorton, Pershore","town":null,"postcode":"WR10 2JH","installed_kw":998,"commissioned":2013,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"TotalEnergies Gas & Power Limited","supplier_1":"TotalEnergies Gas & Power Limited","supplier_2":null,"supplier_1_certs":6069.0,"self_certs":1047.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2033-08-14","yrs_subsidy_left":7.0,"rego_status":"likely ceased","accred_ref":"G01660BWEN","lat":52.14645,"lon":-2.04313},{"rank":54,"operator":"Bagley Biogas Ltd","site":"Bagley Biogas AD plant, Oaklands, Bagley, Ellesmere","town":null,"postcode":"SY12 9BW","installed_kw":849,"commissioned":2014,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":"VERSA ENERGY LIMITED","supplier_1_certs":11230.0,"self_certs":0.0,"n_external":3.0,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-11-24","yrs_subsidy_left":8.3,"rego_status":"lagging/winding down","accred_ref":"G01586BWEN","lat":52.84917,"lon":-2.89552},{"rank":55,"operator":"POOL WHARF ENERGY LIMITED","site":"Ad plant","town":"Hereford","postcode":"HR2 8DR","installed_kw":748,"commissioned":2011,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":21.5,"fit_end_date":"2031-08-25","yrs_subsidy_left":5.0,"rego_status":"no REGO certs","accred_ref":null,"lat":51.97228,"lon":-2.78069},{"rank":56,"operator":"J L Jones & Co","site":"Manor Farm AD plant, Wistanstow, Craven Arms","town":null,"postcode":"SY7 8DG","installed_kw":550,"commissioned":2012,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Octopus Energy Limited","supplier_1":"Octopus Energy Limited","supplier_2":"VERSA ENERGY LIMITED","supplier_1_certs":1170.0,"self_certs":2058.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2032-10-16","yrs_subsidy_left":6.2,"rego_status":"lagging/winding down","accred_ref":"G01698BWEN","lat":52.4638,"lon":-2.83762},{"rank":57,"operator":"CHANNING DIGESTER LIMITED","site":"Bretford road brandon","town":"Coventry","postcode":"CV8 3GE","installed_kw":499,"commissioned":2014,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"ENGIE POWER LIMITED","supplier_1":"ENGIE POWER LIMITED","supplier_2":null,"supplier_1_certs":2341.0,"self_certs":7975.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-11-25","yrs_subsidy_left":8.3,"rego_status":"active","accred_ref":"G01588BWEN","lat":52.38768,"lon":-1.38387},{"rank":58,"operator":"D J & H M MORGAN (partnership)","site":"Penilan","town":"Hereford","postcode":"HR2 0SU","installed_kw":499,"commissioned":2014,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"TotalEnergies Gas & Power Limited","supplier_1":"TotalEnergies Gas & Power Limited","supplier_2":"ENGIE POWER LIMITED","supplier_1_certs":37314.0,"self_certs":474.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":18.42,"fit_end_date":"2034-08-14","yrs_subsidy_left":8.0,"rego_status":"active","accred_ref":"G01621BWEN","lat":52.03483,"lon":-2.96143},{"rank":59,"operator":"GAMBER GENERATION LIMITED (fka MFG Generation)","site":"Pengethley ad plant mfg generation","town":"Peterstow","postcode":"HR9 6NB","installed_kw":499,"commissioned":2014,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Generator is sole holder","supplier_1":null,"supplier_2":null,"supplier_1_certs":0.0,"self_certs":4896.0,"n_external":0.0,"gen_tariff_p_kwh_2026_27":18.42,"fit_end_date":"2034-05-28","yrs_subsidy_left":7.8,"rego_status":"active","accred_ref":"G01541BWEN","lat":51.92613,"lon":-2.67018},{"rank":60,"operator":"SHED FIELD GROWERS LTD","site":"Pembridge the leen dairy","town":"Leominster","postcode":"HR6 9HN","installed_kw":499,"commissioned":2014,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"VERSA ENERGY LIMITED","supplier_1":"VERSA ENERGY LIMITED","supplier_2":"TEM-ENERGY LIMITED","supplier_1_certs":6140.0,"self_certs":1474.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-10-28","yrs_subsidy_left":8.2,"rego_status":"active","accred_ref":"G01604BWEN","lat":52.22622,"lon":-2.90448},{"rank":61,"operator":"Stretton Energy Ltd","site":"Home Farm AD plant, Leebotwood, Church Stretton","town":null,"postcode":"SY6 6LX","installed_kw":499,"commissioned":2014,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":"F & S Energy Ltd","supplier_1_certs":6140.0,"self_certs":0.0,"n_external":3.0,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-11-06","yrs_subsidy_left":8.2,"rego_status":"lagging/winding down","accred_ref":"G01576BWEN","lat":52.58159,"lon":-2.77242},{"rank":62,"operator":"DAVID DAVIES RESOURCES LTD","site":"Wytheford poultry units","town":"Shrewsbury","postcode":"SY4 4JJ","installed_kw":490,"commissioned":2012,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2032-05-22","yrs_subsidy_left":5.8,"rego_status":"no REGO certs","accred_ref":null,"lat":52.76849,"lon":-2.63707},{"rank":63,"operator":"Stockton Energy Ltd","site":"Stockton Grange AD plant, Stockton, Newport","town":null,"postcode":"TF10 9BA","installed_kw":439,"commissioned":2014,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Good Energy Ltd","supplier_1":"Good Energy Ltd","supplier_2":"VERSA ENERGY LIMITED","supplier_1_certs":75552.0,"self_certs":0.0,"n_external":3.0,"gen_tariff_p_kwh_2026_27":13.66,"fit_end_date":"2035-09-28","yrs_subsidy_left":9.1,"rego_status":"likely ceased","accred_ref":"G01758BWEN","lat":52.74731,"lon":-2.34146},{"rank":64,"operator":"P T BAKER (FARMS) LIMITED","site":"Eardisley eardisley park farm","town":"Eardisley","postcode":"HR3 6NT","installed_kw":400,"commissioned":2013,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":"TEM-ENERGY LIMITED","supplier_1_certs":14431.0,"self_certs":0.0,"n_external":3.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2033-08-12","yrs_subsidy_left":7.0,"rego_status":"active","accred_ref":"G01504BWEN","lat":52.12916,"lon":-3.02467},{"rank":65,"operator":"WHARTON FARMS LTD","site":"Unit 1 wharton court","town":"Leominster","postcode":"HR6 0NX","installed_kw":249,"commissioned":2014,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":"British Gas Trading Ltd - Supplier - SUP0008543","supplier_1_certs":955.0,"self_certs":2474.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":17.94,"fit_end_date":"2034-12-11","yrs_subsidy_left":8.3,"rego_status":"active","accred_ref":"G00830BGEN","lat":52.1991,"lon":-2.71737},{"rank":66,"operator":"J & L RENEWABLES LIMITED","site":"Priors halton farm","town":"Ludlow","postcode":"SY8 2JN","installed_kw":125,"commissioned":2014,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"F & S Energy Ltd","supplier_1":"F & S Energy Ltd","supplier_2":"GetVolter Ltd","supplier_1_certs":855.0,"self_certs":1665.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":17.94,"fit_end_date":"2034-10-07","yrs_subsidy_left":8.2,"rego_status":"active","accred_ref":"G01570BWEN","lat":52.37362,"lon":-2.74816},{"rank":67,"operator":"Agrogen Ltd (op. BioG UK)","site":"Batchacre Hall AD plant, Shebdon, Stafford","town":null,"postcode":"ST20 0PX","installed_kw":100,"commissioned":2014,"gspc":"E West Midlands","archetype":"Farm / owner-operator","ppa_class":"FiT standard export tariff (no PPA)","offtaker":"Good Energy Ltd","supplier_1":"Good Energy Ltd","supplier_2":null,"supplier_1_certs":2141.0,"self_certs":256.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":19.92,"fit_end_date":"2034-07-25","yrs_subsidy_left":8.0,"rego_status":"active","accred_ref":"G00906BGEN","lat":52.82662,"lon":-2.35481},{"rank":68,"operator":"Bio Dynamic (UK) Ltd","site":"Bio Dynamic AD plant, Colwick Industrial Estate, Nottingham","town":"data not available","postcode":"NG4 2JT","installed_kw":4949,"commissioned":2014,"gspc":"B East Midlands","archetype":"Farm / owner-operator","ppa_class":"FiT standard export tariff (no PPA)","offtaker":"Generator is sole holder","supplier_1":null,"supplier_2":null,"supplier_1_certs":0.0,"self_certs":40978.0,"n_external":0.0,"gen_tariff_p_kwh_2026_27":18.42,"fit_end_date":"2034-09-19","yrs_subsidy_left":8.1,"rego_status":"lagging/winding down","accred_ref":"G01656BWEN","lat":52.95205,"lon":-1.05778},{"rank":69,"operator":"A.C. SHROPSHIRE LIMITED","site":"Greens lodge farm, huncote engine no 2","town":"data not available","postcode":"LE9 3LE","installed_kw":3200,"commissioned":2013,"gspc":"B East Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"TotalEnergies Gas & Power Limited","supplier_1":"TotalEnergies Gas & Power Limited","supplier_2":null,"supplier_1_certs":183990.0,"self_certs":0.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":14.42,"fit_end_date":"2034-12-22","yrs_subsidy_left":8.4,"rego_status":"active","accred_ref":"G01484BWEN","lat":52.58131,"lon":-1.23422},{"rank":70,"operator":"SEVERN TRENT WIND POWER LIMITED (site run by ST Green Power)","site":"Stoke lane, stoke bardolph","town":"Burton joyce","postcode":"NG14 5HL","installed_kw":2130,"commissioned":2010,"gspc":"B East Midlands","archetype":"Water utility","ppa_class":"No export — behind the meter","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":null,"supplier_1_certs":21358.0,"self_certs":76303.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2030-08-01","yrs_subsidy_left":4.0,"rego_status":"active","accred_ref":"G01380BWEN","lat":52.97208,"lon":-1.06321},{"rank":71,"operator":"DYSON FARMING LIMITED (fka Beeswax Dyson Farming)","site":"Nocton fen adj unit","town":"Lincoln","postcode":"LN4 2AY","installed_kw":2066,"commissioned":2011,"gspc":"B East Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":null,"supplier_1_certs":30604.0,"self_certs":0.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2031-12-20","yrs_subsidy_left":5.4,"rego_status":"active","accred_ref":"G01430BWEN","lat":53.17708,"lon":-0.36938},{"rank":72,"operator":"Fernbrook Bio Ltd (now Generate Upcycle)","site":"Fernbrook Bio AD plant, Rothwell Lodge Farm, Kettering","town":null,"postcode":"NN16 8XF","installed_kw":1566,"commissioned":2010,"gspc":"B East Midlands","archetype":"Fund / platform-owned","ppa_class":"Negotiated export PPA","offtaker":"TotalEnergies Gas & Power Limited","supplier_1":"TotalEnergies Gas & Power Limited","supplier_2":"VERSA ENERGY LIMITED","supplier_1_certs":38374.0,"self_certs":8061.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":21.5,"fit_end_date":"2030-09-13","yrs_subsidy_left":4.1,"rego_status":"active","accred_ref":"G01382BWEN","lat":52.41319,"lon":-0.77008},{"rank":73,"operator":"MCCAIN FOODS (G.B.) LIMITED","site":"Easton","town":"Grantham","postcode":"NG33 5AY","installed_kw":1489,"commissioned":2012,"gspc":"B East Midlands","archetype":"Corporate host (private wire likely)","ppa_class":"Negotiated export PPA","offtaker":"McCain Foods (GB) Ltd","supplier_1":"McCain Foods (GB) Ltd","supplier_2":"EDF Energy Customers Ltd","supplier_1_certs":24322.0,"self_certs":0.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2032-09-12","yrs_subsidy_left":6.1,"rego_status":"likely ceased","accred_ref":"G01466BWEN","lat":52.83064,"lon":-0.60694},{"rank":74,"operator":"SCRIVELSBY BIOMASS LIMITED","site":"Scrivelsby home farm rectory lane ln9 6jc","town":"Horncastle","postcode":"LN9 6JB","installed_kw":998,"commissioned":2014,"gspc":"B East Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":null,"supplier_1_certs":25295.0,"self_certs":437.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":18.42,"fit_end_date":"2034-09-04","yrs_subsidy_left":8.1,"rego_status":"lagging/winding down","accred_ref":"G01616BWEN","lat":53.17666,"lon":-0.10979},{"rank":75,"operator":"GRANGE BIOPOWER LIMITED","site":"Medbourne grange farm","town":"Market harborough","postcode":"LE16 8EF","installed_kw":499,"commissioned":2014,"gspc":"B East Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"British Gas Trading Ltd - Supplier - SUP0008543","supplier_1":"British Gas Trading Ltd - Supplier - SUP0008543","supplier_2":"EDF Energy Customers Ltd","supplier_1_certs":5180.0,"self_certs":18987.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2034-03-14","yrs_subsidy_left":7.6,"rego_status":"active","accred_ref":"G01533BWEN","lat":52.54272,"lon":-0.79877},{"rank":76,"operator":"GRANGE FARM ENERGY LIMITED (Future Biogas/JLEN)","site":"Scampton AD, Grange Cliff Farm","town":"Spridlington","postcode":"LN8 2DN","installed_kw":499,"commissioned":2014,"gspc":"B East Midlands","archetype":"Fund / platform-owned","ppa_class":"Negotiated export PPA","offtaker":"VERSA ENERGY LIMITED","supplier_1":"VERSA ENERGY LIMITED","supplier_2":"TEM-ENERGY LIMITED","supplier_1_certs":477.0,"self_certs":4802.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-12-03","yrs_subsidy_left":8.3,"rego_status":"active","accred_ref":"G01598BWEN","lat":53.34367,"lon":-0.53348},{"rank":77,"operator":"MANOR FARM COMMUNITY ENERGY LIMITED","site":"Biogas Generator, Manor Farm, Brigg Road, Clixby, Market Rasen","town":"Market Rasen","postcode":"LN7 6RT","installed_kw":499,"commissioned":2014,"gspc":"B East Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":"GetVolter Ltd","supplier_1_certs":10160.0,"self_certs":1992.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":18.42,"fit_end_date":"2034-08-13","yrs_subsidy_left":8.0,"rego_status":"active","accred_ref":"G01558BWEN","lat":53.52467,"lon":-0.34049},{"rank":78,"operator":"PYTCHLEY RENEWABLES LIMITED","site":"Weldon turbine","town":"Weldon","postcode":"NN17 3JQ","installed_kw":360,"commissioned":2010,"gspc":"B East Midlands","archetype":"Farm / owner-operator","ppa_class":"No export — behind the meter","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":null,"fit_end_date":"2030-03-11","yrs_subsidy_left":3.6,"rego_status":"no REGO certs","accred_ref":null,"lat":52.48501,"lon":-0.65271},{"rank":79,"operator":"Blisworth Hill Properties Ltd","site":"Blisworth Hill Farm, Stoke Rd, Blisworth","town":null,"postcode":"NN7 3DB","installed_kw":249,"commissioned":2014,"gspc":"B East Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Generator is sole holder","supplier_1":null,"supplier_2":null,"supplier_1_certs":0.0,"self_certs":2778.0,"n_external":0.0,"gen_tariff_p_kwh_2026_27":17.94,"fit_end_date":"2034-11-21","yrs_subsidy_left":8.3,"rego_status":"active","accred_ref":"G01593BWEN","lat":52.16112,"lon":-0.93108},{"rank":80,"operator":"SEVERN TRENT WATER LIMITED (AD via ST Green Power)","site":"Alfreton sewage treatment works","town":"Alfreton","postcode":"DE55 5AH","installed_kw":249,"commissioned":2014,"gspc":"B East Midlands","archetype":"Water utility","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":19.92,"fit_end_date":"2034-09-19","yrs_subsidy_left":8.1,"rego_status":"no REGO certs","accred_ref":null,"lat":53.10481,"lon":-1.38302},{"rank":81,"operator":"Cranford A.D. Limited","site":"Home Farm, Duck End, Cranford, Kettering","town":null,"postcode":"NN14 4AL","installed_kw":248,"commissioned":2013,"gspc":"B East Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":24.9,"fit_end_date":"2033-12-05","yrs_subsidy_left":7.3,"rego_status":"no REGO certs","accred_ref":null,"lat":52.38625,"lon":-0.64284},{"rank":82,"operator":"HONEYPOT ENERGY LIMITED","site":"Honeypot energy, honeypot lane, colsterworth","town":"Grantham","postcode":"NG33 5LY","installed_kw":165,"commissioned":2014,"gspc":"B East Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":17.94,"fit_end_date":"2034-11-26","yrs_subsidy_left":8.3,"rego_status":"no REGO certs","accred_ref":null,"lat":52.78702,"lon":-0.59777},{"rank":83,"operator":"Agrivert Limited (orig Oxon Renewables)","site":"Manor Farm, Pury Rd, Alderton, Towcester","town":null,"postcode":"NN12 7LS","installed_kw":125,"commissioned":2014,"gspc":"B East Midlands","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":"TEM-ENERGY LIMITED","supplier_1_certs":5426.0,"self_certs":1983.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":17.94,"fit_end_date":"2034-12-04","yrs_subsidy_left":8.3,"rego_status":"active","accred_ref":"G00865BGEN","lat":52.11152,"lon":-0.92968},{"rank":84,"operator":"GP Biotec Ltd","site":"Great Porthamel Farm AD, Talgarth, Brecon","town":null,"postcode":"LD3 0DL","installed_kw":1029,"commissioned":2013,"gspc":"K South Wales","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":"Evolve Energy Supply Limited","supplier_1_certs":6485.0,"self_certs":19429.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2033-02-14","yrs_subsidy_left":6.5,"rego_status":"likely ceased","accred_ref":"G00691BWWA","lat":52.01333,"lon":-3.22167},{"rank":85,"operator":"VALE BIO-ENERGY LIMITED","site":"Vale bio energy, pancross farm, llancarfan, barry, cf61 1uh","town":"Barry","postcode":"CF62 3AJ","installed_kw":500,"commissioned":2012,"gspc":"K South Wales","archetype":"Farm / owner-operator","ppa_class":"FiT standard export tariff (no PPA)","offtaker":"Good Energy Ltd","supplier_1":"Good Energy Ltd","supplier_2":null,"supplier_1_certs":27849.0,"self_certs":0.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2032-12-19","yrs_subsidy_left":6.4,"rego_status":"active","accred_ref":"G00689BWWA","lat":51.41886,"lon":-3.36939},{"rank":86,"operator":"TESCO STORES LIMITED","site":"Tesco magor distribution centre","town":"Caldicot","postcode":"NP26 3TS","installed_kw":360,"commissioned":2011,"gspc":"K South Wales","archetype":"Corporate host (private wire likely)","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":21.5,"fit_end_date":"2031-06-24","yrs_subsidy_left":4.9,"rego_status":"no REGO certs","accred_ref":null,"lat":51.57282,"lon":-2.85848},{"rank":87,"operator":"Cannington Enterprises Ltd (t/a Cannington Bio-Energy)","site":"Cannington Bio-Energy AD plant, Bridgwater","town":"Bridgwater","postcode":"TA5 2NJ","installed_kw":3100,"commissioned":2009,"gspc":"L South West","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Npower Commercial Gas Ltd","supplier_1":"Npower Commercial Gas Ltd","supplier_2":null,"supplier_1_certs":16685.0,"self_certs":0.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":null,"fit_end_date":"2029-07-29","yrs_subsidy_left":3.0,"rego_status":"active","accred_ref":"G00825BGEN","lat":51.14382,"lon":-3.09952},{"rank":88,"operator":"SECOND GENERATION YARDWALL LIMITED (Foresight)","site":"Mark yardwall manor farm solar park","town":"Highbridge","postcode":"TA9 4QE","installed_kw":2120,"commissioned":2013,"gspc":"L South West","archetype":"Fund / platform-owned","ppa_class":"FiT standard export tariff (no PPA)","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2033-10-28","yrs_subsidy_left":7.2,"rego_status":"no REGO certs","accred_ref":null,"lat":51.21792,"lon":-2.91298},{"rank":89,"operator":"Biogen Weston Super Mare Ltd (orig Cory/Enovert)","site":"Waste transfer station, aisecombe way, hutton moor, weston-super-mare","town":"Weston-super-mare","postcode":"BS22 8NA","installed_kw":1099,"commissioned":2013,"gspc":"L South West","archetype":"Fund / platform-owned","ppa_class":"Negotiated export PPA","offtaker":"Npower Commercial Gas Ltd","supplier_1":"Npower Commercial Gas Ltd","supplier_2":null,"supplier_1_certs":32130.0,"self_certs":2110.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2034-09-25","yrs_subsidy_left":8.1,"rego_status":"active","accred_ref":"G01503BWEN","lat":51.34295,"lon":-2.94388},{"rank":90,"operator":"RESILIENT ENERGY GREAT DUNKILNS LIMITED","site":"Great dunkilns farm","town":"Lydney","postcode":"GL15 6QY","installed_kw":998,"commissioned":2013,"gspc":"L South West","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2033-12-23","yrs_subsidy_left":7.4,"rego_status":"no REGO certs","accred_ref":null,"lat":51.73234,"lon":-2.61654},{"rank":91,"operator":"Snowdon Energy Limited","site":"Snowdon Hill Farm, Wambrook, Chard","town":null,"postcode":"TA20 3PS","installed_kw":996,"commissioned":2013,"gspc":"L South West","archetype":"Farm / owner-operator","ppa_class":"FiT standard export tariff (no PPA)","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":"VERSA ENERGY LIMITED","supplier_1_certs":19989.0,"self_certs":1446.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":18.42,"fit_end_date":"2034-09-29","yrs_subsidy_left":8.1,"rego_status":"active","accred_ref":"G01486BWEN","lat":50.87658,"lon":-2.98813},{"rank":92,"operator":"F W S CARTER & SONS LIMITED (landowner; AD op. Ixora/ENGIE)","site":"Exeter, greendale, woodbury salterton","town":"Exeter","postcode":"EX5 1EW","installed_kw":834,"commissioned":2015,"gspc":"L South West","archetype":"Fund / platform-owned","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":14.42,"fit_end_date":"2035-03-08","yrs_subsidy_left":8.6,"rego_status":"no REGO certs","accred_ref":null,"lat":50.69799,"lon":-3.3891},{"rank":93,"operator":"SOUTHWESTERN SUSTAINABILITY LIMITED","site":"Hartnollfarm ad plant, halberton","town":"Tiverton","postcode":"EX16 7AY","installed_kw":800,"commissioned":2015,"gspc":"L South West","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":"Opus Energy Limited - Supplier","supplier_1_certs":34217.0,"self_certs":8936.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":13.66,"fit_end_date":"2035-09-03","yrs_subsidy_left":9.1,"rego_status":"active","accred_ref":"G01690BWEN","lat":50.9059,"lon":-3.4313},{"rank":94,"operator":"GREEN PUFFIN LIMITED","site":"Crewkerne rushywood farm","town":"Crewkerne","postcode":"TA18 7PH","installed_kw":749,"commissioned":2014,"gspc":"L South West","archetype":"Farm / owner-operator","ppa_class":"FiT standard export tariff (no PPA)","offtaker":"British Gas Trading Ltd - Supplier - SUP0008543","supplier_1":"British Gas Trading Ltd - Supplier - SUP0008543","supplier_2":"Good Energy Ltd","supplier_1_certs":544.0,"self_certs":2613.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":14.36,"fit_end_date":"2035-11-26","yrs_subsidy_left":9.3,"rego_status":"lagging/winding down","accred_ref":"G01682BWEN","lat":50.9016,"lon":-2.76507},{"rank":95,"operator":"Buddleford broadoak limited","site":"Broadoak Farm AD plant, Clyst Hydon, Cullompton","town":"Clyst hydon","postcode":"EX15 2NH","installed_kw":581,"commissioned":2012,"gspc":"L South West","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"VERSA ENERGY LIMITED","supplier_1":"VERSA ENERGY LIMITED","supplier_2":"TEM-ENERGY LIMITED","supplier_1_certs":4079.0,"self_certs":0.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":24.9,"fit_end_date":"2032-07-17","yrs_subsidy_left":5.9,"rego_status":"active","accred_ref":"G01620BWEN","lat":50.79346,"lon":-3.35309},{"rank":96,"operator":"LANGAGE AD (UK) LLP (BioticNRG)","site":"Plymouth higher challonsleigh smithaleigh","town":"Plymouth","postcode":"PL7 5AY","installed_kw":500,"commissioned":2011,"gspc":"L South West","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":null,"supplier_1_certs":6630.0,"self_certs":4433.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":21.5,"fit_end_date":"2031-04-18","yrs_subsidy_left":4.7,"rego_status":"active","accred_ref":"G96825BGEN","lat":50.38694,"lon":-3.98217},{"rank":97,"operator":"ASTON MANOR LIMITED","site":"Aston manor cider","town":"Tiverton","postcode":"EX16 5NU","installed_kw":499,"commissioned":2014,"gspc":"L South West","archetype":"Corporate host (private wire likely)","ppa_class":"FiT standard export tariff (no PPA)","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":14.73,"fit_end_date":"2035-09-21","yrs_subsidy_left":9.1,"rego_status":"no REGO certs","accred_ref":null,"lat":50.90118,"lon":-3.49774},{"rank":98,"operator":"DISTGEN WANSTROW LGC LTD","site":"LANDMARK FARM","town":"SHEPTON MALLET","postcode":"BA4 4TQ","installed_kw":499,"commissioned":2013,"gspc":"L South West","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2033-07-19","yrs_subsidy_left":6.9,"rego_status":"no REGO certs","accred_ref":null,"lat":51.17786,"lon":-2.4078},{"rank":99,"operator":"Ixora Energy Ltd (now ENGIE); FWS Carter & Sons","site":"Hogsbrook Farm AD, Woodbury Salterton (Greendale)","town":null,"postcode":"EX5 1PY","installed_kw":499,"commissioned":2014,"gspc":"L South West","archetype":"Fund / platform-owned","ppa_class":"Negotiated export PPA","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":"British Gas Trading Ltd - Supplier - SUP0008543","supplier_1_certs":27121.0,"self_certs":18203.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-12-04","yrs_subsidy_left":8.3,"rego_status":"active","accred_ref":"G01608BWEN","lat":50.69278,"lon":-3.38411},{"rank":100,"operator":"WYKE FARMS LTD (site owner; SSE was contractor)","site":"BRUTON WHITE HOUSE FARM BIOMASS CHP","town":"BRUTON","postcode":"BA10 0PU","installed_kw":499,"commissioned":2013,"gspc":"L South West","archetype":"Corporate host (private wire likely)","ppa_class":"Negotiated export PPA","offtaker":"Good Energy Ltd","supplier_1":"Good Energy Ltd","supplier_2":null,"supplier_1_certs":32892.0,"self_certs":25.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2033-08-29","yrs_subsidy_left":7.1,"rego_status":"likely ceased","accred_ref":"G01507BWEN","lat":51.11167,"lon":-2.4819},{"rank":101,"operator":"PMF POULTRY LIMITED","site":"Hill farm lydney","town":"Lydney","postcode":"GL15 4LR","installed_kw":250,"commissioned":2014,"gspc":"L South West","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Ovo Energy","supplier_1":"Ovo Energy","supplier_2":null,"supplier_1_certs":1293.0,"self_certs":7512.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":19.92,"fit_end_date":"2034-06-11","yrs_subsidy_left":7.8,"rego_status":"active","accred_ref":"G01527BWEN","lat":51.7423,"lon":-2.49137},{"rank":102,"operator":"FRADDON BIOGAS LIMITED (owned Material Change)","site":"Greener for life energy biogas plant","town":"St columb","postcode":"TR9 6NL","installed_kw":249,"commissioned":2014,"gspc":"L South West","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Corona Energy Retail 4 Ltd","supplier_1":"Corona Energy Retail 4 Ltd","supplier_2":"British Gas Trading Ltd - Supplier - SUP0008543","supplier_1_certs":1664.0,"self_certs":5550.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":17.94,"fit_end_date":"2034-12-03","yrs_subsidy_left":8.3,"rego_status":"active","accred_ref":"G01606BWEN","lat":50.3859,"lon":-4.92919},{"rank":103,"operator":"EVERCREECH RENEWABLE ENERGY LIMITED (op. Adapt Biogas)","site":"Evercreech renewable energy","town":"Shepton mallet","postcode":"BA4 6NB","installed_kw":124,"commissioned":2014,"gspc":"L South West","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":17.94,"fit_end_date":"2034-12-01","yrs_subsidy_left":8.3,"rego_status":"no REGO certs","accred_ref":null,"lat":51.14717,"lon":-2.5101},{"rank":104,"operator":"Biogen Waen Ltd (JV Biogen/Iona); op Biogen UK","site":"Waen AD plant (former abattoir), St Asaph","town":null,"postcode":"LL17","installed_kw":1064,"commissioned":2014,"gspc":"D Merseyside & North Wale","archetype":"Fund / platform-owned","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2034-06-09","yrs_subsidy_left":7.8,"rego_status":"no REGO certs","accred_ref":null,"lat":53.25223,"lon":-3.43697},{"rank":105,"operator":"Biogen Gwyriad Ltd","site":"Llwyn Isaf AD plant (GwyriAD), Clynnog Fawr, Caernarfon","town":null,"postcode":"LL54 5DF","installed_kw":499,"commissioned":2013,"gspc":"D Merseyside & North Wale","archetype":"Fund / platform-owned","ppa_class":"Negotiated export PPA","offtaker":"Npower Commercial Gas Ltd","supplier_1":"Npower Commercial Gas Ltd","supplier_2":null,"supplier_1_certs":15579.0,"self_certs":2985.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2033-09-07","yrs_subsidy_left":7.1,"rego_status":"active","accred_ref":"G00693BWWA","lat":53.01308,"lon":-4.30892},{"rank":106,"operator":"Lodge Farm Biogas Ltd (fre-energy)","site":"Lodge Farm AD plant, Commonwood, Holt, Wrexham","town":null,"postcode":"LL13 9TE","installed_kw":176,"commissioned":2010,"gspc":"D Merseyside & North Wale","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Good Energy Ltd","supplier_1":"Good Energy Ltd","supplier_2":null,"supplier_1_certs":3507.0,"self_certs":0.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":21.5,"fit_end_date":"2030-07-06","yrs_subsidy_left":3.9,"rego_status":"likely ceased","accred_ref":"G01389BWEN","lat":53.08163,"lon":-2.92285},{"rank":107,"operator":"SARIA LIMITED (fka Prosper De Mulder; ReFood)","site":"Prosper De Mulder Ltd","town":"Doncaster","postcode":"DN5 9SW","installed_kw":4964,"commissioned":2011,"gspc":"M Yorkshire","archetype":"Corporate host (private wire likely)","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2031-11-08","yrs_subsidy_left":5.2,"rego_status":"no REGO certs","accred_ref":null,"lat":53.53827,"lon":-1.12168},{"rank":108,"operator":"GWE BIOGAS LTD (EDL)","site":"Sandhill Add Biogas","town":"Driffield","postcode":"YO25 9DR","installed_kw":4526,"commissioned":2011,"gspc":"M Yorkshire","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":"British Gas Trading Ltd - Supplier - SUP0008543","supplier_1_certs":14288.0,"self_certs":33603.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2031-01-11","yrs_subsidy_left":4.4,"rego_status":"active","accred_ref":"G01392BWEN","lat":53.99187,"lon":-0.50105},{"rank":109,"operator":"SUTTON GRANGE AD LIMITED (Biogen)","site":"Low farm","town":"Retford","postcode":"DN22 8SB","installed_kw":2974,"commissioned":2014,"gspc":"M Yorkshire","archetype":"Fund / platform-owned","ppa_class":"FiT standard export tariff (no PPA)","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":null,"supplier_1_certs":150963.0,"self_certs":5441.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2034-03-17","yrs_subsidy_left":7.6,"rego_status":"active","accred_ref":"G01519BWEN","lat":53.3605,"lon":-0.95052},{"rank":110,"operator":"Castillium Ltd (developer; SPV TBC)","site":"Prospect Farm, Bigby Rd, Barnetby le Wold","town":null,"postcode":"DN38 6EL","installed_kw":1993,"commissioned":2014,"gspc":"M Yorkshire","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2035-03-27","yrs_subsidy_left":8.6,"rego_status":"no REGO certs","accred_ref":null,"lat":53.56397,"lon":-0.39754},{"rank":111,"operator":"Clayton Hall Farm Bioenergy LLP (Neil Gemmell)","site":"Clayton Hall Farm, Clayton West, Huddersfield","town":"Clayton West","postcode":"HD8 9QE","installed_kw":1000,"commissioned":2011,"gspc":"M Yorkshire","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":null,"supplier_1_certs":25488.0,"self_certs":0.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2032-08-29","yrs_subsidy_left":6.1,"rego_status":"active","accred_ref":"G01403BWEN","lat":53.59837,"lon":-1.59641},{"rank":112,"operator":"BOOTH BROTHERS ENERGY LIMITED","site":"Smeathalls Farm","town":"Knottingley","postcode":"WF11 9LZ","installed_kw":499,"commissioned":2014,"gspc":"M Yorkshire","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Generator is sole holder","supplier_1":null,"supplier_2":null,"supplier_1_certs":0.0,"self_certs":7132.0,"n_external":0.0,"gen_tariff_p_kwh_2026_27":18.42,"fit_end_date":"2034-09-24","yrs_subsidy_left":8.1,"rego_status":"lagging/winding down","accred_ref":"G01567BWEN","lat":53.7218,"lon":-1.22593},{"rank":113,"operator":"EVERGREEN GARDEN CARE UK LTD","site":"Evergreen Garden Care CHP","town":"Howdendyke","postcode":"DN14 7UF","installed_kw":499,"commissioned":2014,"gspc":"M Yorkshire","archetype":"Corporate host (private wire likely)","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-10-31","yrs_subsidy_left":8.2,"rego_status":"no REGO certs","accred_ref":null,"lat":53.73324,"lon":-0.85138},{"rank":114,"operator":"KANADEVIA INOVA BIOGAS WESTHOLME FARM LTD (fka JFS)","site":"Westholme Farm, Islebeck, Thirsk, North Yorkshire","town":"Thirsk","postcode":"YO7 3BP","installed_kw":499,"commissioned":2014,"gspc":"M Yorkshire","archetype":"Fund / platform-owned","ppa_class":"Negotiated export PPA","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":"Opus Energy Limited - Supplier","supplier_1_certs":5153.0,"self_certs":1245.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-11-03","yrs_subsidy_left":8.2,"rego_status":"active","accred_ref":"G01583BWEN","lat":54.19327,"lon":-1.32495},{"rank":115,"operator":"MERLIN RENEWABLES LIMITED (Future Biogas/JLEN)","site":"Hibalstow Airfield","town":"Brigg","postcode":"DN20 9NN","installed_kw":499,"commissioned":2014,"gspc":"M Yorkshire","archetype":"Fund / platform-owned","ppa_class":"Negotiated export PPA","offtaker":"Good Energy Ltd","supplier_1":"Good Energy Ltd","supplier_2":"F & S Energy Ltd","supplier_1_certs":2445.0,"self_certs":3255.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":18.42,"fit_end_date":"2034-09-10","yrs_subsidy_left":8.1,"rego_status":"active","accred_ref":"G01554BWEN","lat":53.49786,"lon":-0.52977},{"rank":116,"operator":"VULCAN RENEWABLES LIMITED (Future Biogas)","site":"Lindholme Gas Generator","town":"Doncaster","postcode":"DN7 6BY","installed_kw":499,"commissioned":2013,"gspc":"M Yorkshire","archetype":"Fund / platform-owned","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2033-09-23","yrs_subsidy_left":7.1,"rego_status":"no REGO certs","accred_ref":null,"lat":53.55057,"lon":-0.98699},{"rank":117,"operator":"J.E.HARTLEY LIMITED","site":"J E Hartley Limited, Roth Hill Lane, Thorganby","town":"Selby","postcode":"YO19 6DJ","installed_kw":249,"commissioned":2014,"gspc":"M Yorkshire","archetype":"Farm / owner-operator","ppa_class":"FiT standard export tariff (no PPA)","offtaker":"Generator is sole holder","supplier_1":null,"supplier_2":null,"supplier_1_certs":0.0,"self_certs":0.0,"n_external":0.0,"gen_tariff_p_kwh_2026_27":17.94,"fit_end_date":"2034-11-26","yrs_subsidy_left":8.3,"rego_status":"no REGO certs","accred_ref":"G01597BWEN","lat":53.8614,"lon":-0.99058},{"rank":118,"operator":"UNITED UTILITIES WATER LIMITED (Lancaster WwTW sludge AD)","site":"AD site LA2 0AG","town":"LANCASTER","postcode":"LA2 0AG","installed_kw":1099,"commissioned":2014,"gspc":"G North West","archetype":"Water utility","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":13.66,"fit_end_date":"2035-12-22","yrs_subsidy_left":9.4,"rego_status":"no REGO certs","accred_ref":null,"lat":54.02548,"lon":-2.8229},{"rank":119,"operator":"R-GROUP OF COMPANIES LIMITED (in liquidation; site=Farmgen, Warton — verify owner)","site":"CARR FARM","town":"LYTHAM ST. ANNES","postcode":"FY8 5RP","installed_kw":800,"commissioned":2011,"gspc":"G North West","archetype":"Farm / owner-operator","ppa_class":"FiT standard export tariff (no PPA)","offtaker":"Generator is sole holder","supplier_1":null,"supplier_2":null,"supplier_1_certs":0.0,"self_certs":0.0,"n_external":0.0,"gen_tariff_p_kwh_2026_27":16.78,"fit_end_date":"2031-05-20","yrs_subsidy_left":4.8,"rego_status":"no REGO certs","accred_ref":"G01398BWEN","lat":53.75085,"lon":-2.92845},{"rank":120,"operator":"LINSTOCK CASTLE AD LIMITED","site":"AD site CA6 4PZ","town":"CARLISLE","postcode":"CA6 4PZ","installed_kw":600,"commissioned":2013,"gspc":"G North West","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Generator is sole holder","supplier_1":null,"supplier_2":null,"supplier_1_certs":0.0,"self_certs":22325.0,"n_external":0.0,"gen_tariff_p_kwh_2026_27":15.18,"fit_end_date":"2033-12-13","yrs_subsidy_left":7.3,"rego_status":"likely ceased","accred_ref":"G01436BWEN","lat":54.91857,"lon":-2.89122},{"rank":121,"operator":"FYLDE FRESH AND FABULOUS LIMITED","site":"STANLEY VILLA FARM","town":"PRESTON","postcode":"PR4 3HN","installed_kw":500,"commissioned":2014,"gspc":"G North West","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"TotalEnergies Gas & Power Limited","supplier_1":"TotalEnergies Gas & Power Limited","supplier_2":null,"supplier_1_certs":9361.0,"self_certs":17674.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-10-17","yrs_subsidy_left":8.2,"rego_status":"active","accred_ref":"G01578BWEN","lat":53.81164,"lon":-2.91668},{"rank":122,"operator":"T G & K FISHER LIMITED","site":"AD site CA6 6EZ","town":"CARLISLE","postcode":"CA6 6EZ","installed_kw":500,"commissioned":2012,"gspc":"G North West","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":null,"supplier_1_certs":669.0,"self_certs":0.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":23.04,"fit_end_date":"2032-05-16","yrs_subsidy_left":5.8,"rego_status":"likely ceased","accred_ref":"G00908BGEN","lat":54.97746,"lon":-2.80103},{"rank":123,"operator":"JUSTICETOWN FARM LIMITED","site":"JUSTICE TOWN FARM, WESTLINTON, CARLISLE","town":"CARLISLE","postcode":"CA6 6AH","installed_kw":100,"commissioned":2014,"gspc":"G North West","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"SHELL ENERGY UK LIMITED","supplier_1":"SHELL ENERGY UK LIMITED","supplier_2":"Limejump Energy Limited","supplier_1_certs":782.0,"self_certs":0.0,"n_external":3.0,"gen_tariff_p_kwh_2026_27":19.92,"fit_end_date":"2034-08-19","yrs_subsidy_left":8.0,"rego_status":"likely ceased","accred_ref":"G01551BWEN","lat":54.97252,"lon":-2.97899},{"rank":124,"operator":"EGGER (UK) LIMITED","site":"Egger, Anick Road, Hexham - Kit Replacement","town":"Hexham","postcode":"NE46 4JS","installed_kw":1099,"commissioned":2014,"gspc":"F North East","archetype":"Corporate host (private wire likely)","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-11-13","yrs_subsidy_left":8.3,"rego_status":"no REGO certs","accred_ref":null,"lat":54.97737,"lon":-2.08641},{"rank":125,"operator":"GENERATION X ENERGY LIMITED (acq. Allium Energy 2020)","site":"Rotary Way","town":"Consett","postcode":"DH8 7ND","installed_kw":1067,"commissioned":2014,"gspc":"F North East","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"F & S Energy Ltd","supplier_1":"F & S Energy Ltd","supplier_2":null,"supplier_1_certs":1092.0,"self_certs":6851.0,"n_external":1.0,"gen_tariff_p_kwh_2026_27":14.42,"fit_end_date":"2034-12-15","yrs_subsidy_left":8.3,"rego_status":"active","accred_ref":"G01612BWEN","lat":54.85461,"lon":-1.81553},{"rank":126,"operator":"HIGH HEDLEY BIOGAS LIMITED (fka WJ Drennan Ltd)","site":"East Hedley Hope Farm, East Hedley Hope, Bishop Auckland, Durham","town":"Bishop Auckland","postcode":"DL13 4PR","installed_kw":499,"commissioned":2014,"gspc":"F North East","archetype":"Farm / owner-operator","ppa_class":"FiT standard export tariff (no PPA)","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":"Good Energy Ltd","supplier_1_certs":12058.0,"self_certs":0.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":16.6,"fit_end_date":"2034-12-10","yrs_subsidy_left":8.3,"rego_status":"likely ceased","accred_ref":"G01582BWEN","lat":54.76011,"lon":-1.77088},{"rank":127,"operator":"Kanadevia Inova Biogas Howla Hay Ltd (Iona Capital)","site":"Howla Hay Farm, Guisborough","town":"Guisborough","postcode":"TS14 6QB","installed_kw":374,"commissioned":2014,"gspc":"F North East","archetype":"Fund / platform-owned","ppa_class":"Negotiated export PPA","offtaker":"Drax Energy Solutions Limited (Supplier)","supplier_1":"Drax Energy Solutions Limited (Supplier)","supplier_2":"EDF Energy Customers Ltd","supplier_1_certs":2886.0,"self_certs":229.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":19.92,"fit_end_date":"2034-08-13","yrs_subsidy_left":8.0,"rego_status":"active","accred_ref":"G01563BWEN","lat":54.55431,"lon":-1.01986},{"rank":128,"operator":"BLENKIRON FARMING COMPANY","site":"Lark Hall","town":"Romanby","postcode":"DL7 0PF","installed_kw":200,"commissioned":2014,"gspc":"F North East","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":null,"supplier_1":null,"supplier_2":null,"supplier_1_certs":null,"self_certs":null,"n_external":null,"gen_tariff_p_kwh_2026_27":19.92,"fit_end_date":"2034-09-03","yrs_subsidy_left":8.1,"rego_status":"no REGO certs","accred_ref":null,"lat":54.33063,"lon":-1.47151},{"rank":129,"operator":"METCALFE FARMS LTD","site":"Washfold Farm","town":"Leyburn","postcode":"DL8 5JZ","installed_kw":200,"commissioned":2014,"gspc":"F North East","archetype":"Farm / owner-operator","ppa_class":"Negotiated export PPA","offtaker":"EDF Energy Customers Ltd","supplier_1":"EDF Energy Customers Ltd","supplier_2":"Drax Energy Solutions Limited (Supplier)","supplier_1_certs":307.0,"self_certs":203.0,"n_external":2.0,"gen_tariff_p_kwh_2026_27":17.94,"fit_end_date":"2034-10-08","yrs_subsidy_left":8.2,"rego_status":"active","accred_ref":"G00912BGEN","lat":54.32462,"lon":-1.8515}],"kpi":{"base12":8.52,"win26":12.5,"cal28":7.74,"fit":7.64,"asOf":"2026-08-11"}};
+
+/* ---------------- helpers ---------------- */
+const $ = s => document.querySelector(s);
+const svgNS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, parent){
+  const n = document.createElementNS(svgNS, tag);
+  for(const k in attrs) n.setAttribute(k, attrs[k]);
+  if(parent) parent.appendChild(n);
+  return n;
+}
+const mIdx = m => { const [y,mo] = m.split('-').map(Number); return y*12 + (mo-1); };
+const mLabel = m => { const [y,mo]=m.split('-').map(Number);
+  return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][mo-1]+" "+String(y).slice(2); };
+
+/* ---------------- price chart ---------------- */
+const FWD_BLOCKS = [
+  {k:'Q4-2026', from:'2026-10', to:'2026-12', p:12.601},
+  {k:'Q1-2027', from:'2027-01', to:'2027-03', p:12.391},
+  {k:'Q2-2027', from:'2027-04', to:'2027-06', p:8.605},
+  {k:'H2-2027*',from:'2027-07', to:'2027-12', p:8.25},
+  {k:'Cal-2028',from:'2028-01', to:'2028-12', p:7.744}
+];
+const FIT = 7.64, CPI = 0.03;
+
+function drawPrice(){
+  const svg = $('#svgPrice'); svg.innerHTML = '';
+  const W=1100,H=400,L=52,R=118,T=18,B=46;
+  const iw=W-L-R, ih=H-T-B;
+  const real = DATA.realised;
+  const x0 = mIdx(real[0].m), x1 = mIdx('2028-12');
+  const X = m => L + (mIdx(m)-x0)/(x1-x0)*iw;
+  const yMax=14, yMin=5;
+  const Y = v => T + (yMax-v)/(yMax-yMin)*ih;
+
+  // gridlines + y ticks
+  for(let v=6; v<=yMax; v+=2){
+    el('line',{x1:L,x2:L+iw,y1:Y(v),y2:Y(v),stroke:'var(--grid)','stroke-width':1},svg);
+    const t=el('text',{x:L-9,y:Y(v)+4,class:'tick','text-anchor':'end'},svg); t.textContent=v;
+  }
+  const yl=el('text',{x:L-9,y:T-6,class:'axlab','text-anchor':'end'},svg); yl.textContent='p/kWh';
+
+  // x ticks — every 6 months
+  for(let i=x0;i<=x1;i++){
+    const mo=i%12;
+    if(mo!==0 && mo!==6) continue;
+    const m = Math.floor(i/12)+"-"+String(mo+1).padStart(2,'0');
+    const t=el('text',{x:X(m),y:H-B+20,class:'tick','text-anchor':'middle'},svg);
+    t.textContent=mLabel(m);
+  }
+  el('line',{x1:L,x2:L+iw,y1:Y(yMin),y2:Y(yMin),stroke:'var(--baseline)','stroke-width':1},svg);
+
+  // "today" divider
+  const tx = X('2026-08');
+  el('line',{x1:tx,x2:tx,y1:T,y2:Y(yMin),stroke:'var(--baseline)','stroke-width':1,'stroke-dasharray':'2 4'},svg);
+  const td=el('text',{x:tx-6,y:T+11,class:'axlab','text-anchor':'end'},svg); td.textContent='realised';
+  const tf=el('text',{x:tx+6,y:T+11,class:'axlab','text-anchor':'start'},svg); tf.textContent='forward';
+
+  // FiT reference line + CPI path
+  el('line',{x1:L,x2:L+iw,y1:Y(FIT),y2:Y(FIT),stroke:'var(--muted)','stroke-width':2,'stroke-dasharray':'6 4'},svg);
+  const fl=el('text',{x:L+iw+8,y:Y(FIT)+4,class:'dlab',fill:'var(--text-secondary)'},svg);
+  fl.textContent='FiT 7.64p';
+  const cpiPts=[];
+  for(let y=2026;y<=2028;y++){ cpiPts.push([X(y+"-07"), Y(FIT*Math.pow(1+CPI,y-2026))]); }
+  el('polyline',{points:cpiPts.map(p=>p.join(',')).join(' '),fill:'none',stroke:'var(--muted)',
+    'stroke-width':1.5,'stroke-dasharray':'2 4',opacity:.85},svg);
+  const cl=el('text',{x:L+iw+8,y:Y(FIT*Math.pow(1+CPI,2))+4,class:'dlab',fill:'var(--muted)'},svg);
+  cl.textContent='FiT +CPI 8.11p';
+
+  // realised line
+  const pts = real.map(d=>[X(d.m), Y(d.p)]);
+  el('polyline',{points:pts.map(p=>p.join(',')).join(' '),fill:'none',
+    stroke:'var(--series-1)','stroke-width':2,'stroke-linejoin':'round'},svg);
+  real.forEach((d,i)=>{ el('circle',{cx:pts[i][0],cy:pts[i][1],r:2.6,fill:'var(--series-1)'},svg); });
+
+  // forward blocks
+  FWD_BLOCKS.forEach(b=>{
+    const xa=X(b.from), xb=X(b.to), y=Y(b.p);
+    el('line',{x1:xa,x2:xb,y1:y,y2:y,stroke:'var(--series-2)','stroke-width':3,
+      'stroke-linecap':'round','stroke-dasharray':'7 4'},svg);
+    el('line',{x1:xa,x2:xa,y1:y-5,y2:y+5,stroke:'var(--series-2)','stroke-width':2},svg);
+    el('line',{x1:xb,x2:xb,y1:y-5,y2:y+5,stroke:'var(--series-2)','stroke-width':2},svg);
+    const lab=el('text',{x:(xa+xb)/2,y:y-12,class:'dlab',fill:'var(--series-2)','text-anchor':'middle'},svg);
+    lab.textContent=b.p.toFixed(2);
+    const k=el('text',{x:(xa+xb)/2,y:y-26,class:'tick','text-anchor':'middle'},svg);
+    k.textContent=b.k;
+  });
+
+  // hover crosshair over realised series
+  const tip=$('#tipPrice');
+  const hit=el('rect',{x:L,y:T,width:iw,height:ih,fill:'transparent'},svg);
+  const cross=el('line',{x1:0,x2:0,y1:T,y2:Y(yMin),stroke:'var(--baseline)','stroke-width':1,opacity:0},svg);
+  hit.addEventListener('mousemove',ev=>{
+    const r=svg.getBoundingClientRect(), sx=(ev.clientX-r.left)/r.width*W;
+    let best=null,bd=1e9;
+    real.forEach((d,i)=>{const dx=Math.abs(pts[i][0]-sx); if(dx<bd){bd=dx;best={d,i}}});
+    let fb=null;
+    FWD_BLOCKS.forEach(b=>{ if(sx>=X(b.from)&&sx<=X(b.to)) fb=b; });
+    if(fb){
+      cross.setAttribute('x1',sx); cross.setAttribute('x2',sx); cross.setAttribute('opacity',1);
+      tip.style.opacity=1;
+      tip.style.left=Math.min(ev.clientX-r.left+14, r.width-190)+'px';
+      tip.style.top=(ev.clientY-r.top-10)+'px';
+      tip.innerHTML=`<b>${fb.k}</b> forward<br>${fb.p.toFixed(2)} p/kWh<br>
+        <span style="opacity:.8">FiT tariff is ${((FIT/fb.p-1)*100).toFixed(0)}% vs this block</span>`;
+    } else if(best && bd<26){
+      cross.setAttribute('x1',pts[best.i][0]); cross.setAttribute('x2',pts[best.i][0]); cross.setAttribute('opacity',1);
+      tip.style.opacity=1;
+      tip.style.left=Math.min(ev.clientX-r.left+14, r.width-190)+'px';
+      tip.style.top=(ev.clientY-r.top-10)+'px';
+      tip.innerHTML=`<b>${mLabel(best.d.m)}</b> realised<br>${best.d.p.toFixed(2)} p/kWh<br>
+        <span style="opacity:.8">FiT tariff is ${((FIT/best.d.p-1)*100).toFixed(0)}% vs this month</span>`;
+    } else { tip.style.opacity=0; cross.setAttribute('opacity',0); }
+  });
+  hit.addEventListener('mouseleave',()=>{tip.style.opacity=0;cross.setAttribute('opacity',0);});
+
+  // data table
+  let rows = DATA.realised.map(d=>`<tr><td>${mLabel(d.m)}</td><td>Realised</td><td>${d.p.toFixed(2)}</td></tr>`).join('');
+  rows += FWD_BLOCKS.map(b=>`<tr><td>${b.k}</td><td>Forward</td><td>${b.p.toFixed(2)}</td></tr>`).join('');
+  $('#dtPrice').innerHTML = `<table><thead><tr><th>Period</th><th>Basis</th><th>p/kWh</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+/* ---------------- counterparty chart ---------------- */
+function drawOff(rows){
+  const svg=$('#svgOff'); svg.innerHTML='';
+  const agg={};
+  rows.forEach(r=>{ const k=r.offtaker||'Not identified';
+    if(!agg[k]) agg[k]={c:0,mw:0}; agg[k].c++; agg[k].mw+=(r.installed_kw||0)/1000; });
+  const list=Object.entries(agg).map(([name,v])=>({name,c:v.c,mw:v.mw})).sort((a,b)=>b.mw-a.mw);
+  $('#offCount').textContent = `${list.length} counterparties across ${rows.length} sites`;
+  if(!list.length){ svg.innerHTML=''; $('#dtOff').innerHTML=''; return; }
+
+  const W=1100, rowH=27, T=10, L=290, R=70;
+  const H=T+list.length*rowH+18; svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const max=Math.max(...list.map(d=>d.mw)), iw=W-L-R;
+  const defs=el('defs',{},svg);
+  const pat=el('pattern',{id:'hatch',width:6,height:6,patternTransform:'rotate(45)',
+    patternUnits:'userSpaceOnUse'},defs);
+  el('rect',{width:6,height:6,fill:'var(--surface-1)'},pat);
+  el('line',{x1:0,y1:0,x2:0,y2:6,stroke:'var(--series-1)','stroke-width':3.4},pat);
+
+  const tip=$('#tipOff');
+  list.forEach((d,i)=>{
+    const y=T+i*rowH, w=Math.max(2,d.mw/max*iw), isSelf=/sole holder/i.test(d.name);
+    const nm=el('text',{x:L-11,y:y+rowH/2+4,class:'tick','text-anchor':'end',
+      fill:'var(--text-primary)'},svg);
+    nm.textContent = d.name.length>34?d.name.slice(0,33)+'…':d.name;
+    const bar=el('rect',{x:L,y:y+4,width:w,height:rowH-10,rx:4,
+      fill:isSelf?'url(#hatch)':'var(--series-1)',
+      stroke:isSelf?'var(--series-1)':'none','stroke-width':isSelf?1.4:0},svg);
+    const v=el('text',{x:L+w+9,y:y+rowH/2+4,class:'dlab',fill:'var(--text-secondary)'},svg);
+    v.textContent=d.mw.toFixed(1)+' MW';
+    bar.addEventListener('mousemove',ev=>{
+      const r=svg.getBoundingClientRect();
+      tip.style.opacity=1;
+      tip.style.left=Math.min(ev.clientX-r.left+14,r.width-210)+'px';
+      tip.style.top=(ev.clientY-r.top-10)+'px';
+      tip.innerHTML=`<b>${d.name}</b><br>${d.mw.toFixed(1)} MW · ${d.c} site${d.c===1?'':'s'}`;
+    });
+    bar.addEventListener('mouseleave',()=>tip.style.opacity=0);
+  });
+  $('#dtOff').innerHTML = `<table><thead><tr><th>Counterparty</th><th>Sites</th><th>MW</th></tr></thead><tbody>`+
+    list.map(d=>`<tr><td>${d.name}</td><td>${d.c}</td><td>${d.mw.toFixed(1)}</td></tr>`).join('')+
+    `</tbody></table>`;
+}
+
+/* ---------------- table ---------------- */
+let sortKey='rank', sortDir=1;
+const CLS = {'Negotiated export PPA':'chip-neg','FiT standard export tariff (no PPA)':'chip-std',
+             'No export — behind the meter':'chip-bhd'};
+const CLS_SHORT = {'Negotiated export PPA':'Negotiated PPA',
+  'FiT standard export tariff (no PPA)':'FiT standard','No export — behind the meter':'Behind meter'};
+const DOT = {'active':'dot-a','lagging/winding down':'dot-w','likely ceased':'dot-c','no REGO certs':'dot-n'};
+
+function current(){
+  const c=$('#fClass').value, o=$('#fOff').value, s=$('#fStatus').value,
+        q=$('#fSearch').value.trim().toLowerCase();
+  return DATA.sites.filter(r=>{
+    if(c && r.ppa_class!==c) return false;
+    if(o && (r.offtaker||'Not identified')!==o) return false;
+    if(s && r.rego_status!==s) return false;
+    if(q){ const hay=[r.operator,r.town,r.postcode,r.site,r.offtaker].join(' ').toLowerCase();
+      if(!hay.includes(q)) return false; }
+    return true;
+  });
+}
+function render(){
+  const rows=current().slice().sort((a,b)=>{
+    let x=a[sortKey], y=b[sortKey];
+    if(x==null) return 1; if(y==null) return -1;
+    if(typeof x==='number') return (x-y)*sortDir;
+    return String(x).localeCompare(String(y))*sortDir;
+  });
+  $('#tbody').innerHTML = rows.map(r=>`<tr>
+    <td>${r.rank??''}</td>
+    <td>${(r.operator||'').slice(0,40)}</td>
+    <td>${r.town||''}</td>
+    <td class="num">${r.installed_kw!=null?r.installed_kw.toLocaleString():''}</td>
+    <td class="num">${r.commissioned??''}</td>
+    <td><span class="chip ${CLS[r.ppa_class]||'chip-unk'}">${CLS_SHORT[r.ppa_class]||'Unknown'}</span></td>
+    <td>${r.offtaker? (/sole holder/i.test(r.offtaker)?'<i style="color:var(--text-secondary)">sole holder</i>':r.offtaker.slice(0,32)+(r.self_certs>0?' <span style="color:var(--muted)">+self</span>':'')) : '<i style="color:var(--muted)">not identified</i>'}</td>
+    <td class="num">${r.gen_tariff_p_kwh_2026_27!=null?r.gen_tariff_p_kwh_2026_27.toFixed(2):''}</td>
+    <td>${r.fit_end_date||''}</td>
+    <td class="num">${r.yrs_subsidy_left!=null?r.yrs_subsidy_left.toFixed(1):''}</td>
+    <td><span class="dot ${DOT[r.rego_status]||'dot-n'}"></span>${r.rego_status||'—'}</td>
+  </tr>`).join('');
+  const mw=rows.reduce((s,r)=>s+(r.installed_kw||0),0)/1000;
+  $('#tblCount').textContent=`${rows.length} of ${DATA.sites.length} sites · ${mw.toFixed(1)} MW`;
+  const nOff=new Set(rows.map(r=>r.offtaker||'Not identified')).size;
+  ppaChips(rows.length, mw, nOff);
+  drawOff(rows);
+}
+
+/* ---------------- wiring ---------------- */
+(function init(){
+  const uniq=(k,f)=>[...new Set(DATA.sites.map(f||(r=>r[k])).filter(Boolean))].sort();
+  uniq('ppa_class').forEach(v=>$('#fClass').insertAdjacentHTML('beforeend',`<option>${v}</option>`));
+  uniq(null,r=>r.offtaker||'Not identified').forEach(v=>$('#fOff').insertAdjacentHTML('beforeend',`<option>${v}</option>`));
+  uniq('rego_status').forEach(v=>$('#fStatus').insertAdjacentHTML('beforeend',`<option>${v}</option>`));
+  ['#fClass','#fOff','#fStatus'].forEach(s=>$(s).addEventListener('change',render));
+  $('#fSearch').addEventListener('input',render);
+  $('#fReset').addEventListener('click',()=>{
+    ['#fClass','#fOff','#fStatus'].forEach(s=>$(s).value=''); $('#fSearch').value=''; render();
+  });
+  document.querySelectorAll('th[data-sort]').forEach(th=>{
+    th.addEventListener('click',()=>{
+      const k=th.dataset.sort;
+      if(k===sortKey) sortDir*=-1; else {sortKey=k;sortDir=1;}
+      document.querySelectorAll('th[data-sort]').forEach(o=>o.classList.remove('asc','desc'));
+      th.classList.add(sortDir===1?'asc':'desc');
+      render();
+    });
+  });
+  document.querySelectorAll('.rb-toggle').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const t=document.getElementById(b.dataset.target);
+      t.classList.toggle('show');
+      b.textContent = t.classList.contains('show')?'Hide data table':'Show data table';
+    });
+  });
+  drawPrice(); render();
+  window.addEventListener('resize',()=>{drawPrice();});
+})();
+
+return {refresh:render, redraw:drawPrice, sites:()=>DATA.sites};
+})();
+
 const map=L.map('map',{scrollWheelZoom:true,preferCanvas:true}).setView([54.5,-3],6);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(map);
 let layer=L.layerGroup().addTo(map);
@@ -98,6 +598,10 @@ function cfg(){
     sub:'Total Contract Value \u00b7 Year 5 \u00b7 129 AD-peaker sites in the GB Balancing Mechanism'};
 }
 const SHSVG={tri:'<svg width="13" height="13" viewBox="0 0 100 100"><polygon points="50,10 93,86 7,86" fill="none" stroke="#16242b" stroke-width="13" stroke-linejoin="round"/></svg>',cir:'<svg width="13" height="13" viewBox="0 0 100 100"><circle cx="50" cy="50" r="41" fill="none" stroke="#16242b" stroke-width="13"/></svg>'};
+const PPACLS={'Negotiated export PPA':'Negotiated PPA','FiT standard export tariff (no PPA)':'FiT standard','No export \u2014 behind the meter':'Behind meter','Unknown \u2014 no FiT match':'Unknown'};
+const _pcn=p=>(p||'').replace(/\s/g,'').toUpperCase();
+const SAMPPA=(()=>{const m={};PPA.sites().forEach(x=>{m[_pcn(x.postcode)]=x;});return m;})();
+const samPpa=d=>SAMPPA[_pcn(d.pc)];
 function vis(d){const c=cfg();
   if(c.view==='tam')return !hidden.tam.has(d.bt)&&!hidden.fuel.has(d.f)&&!hidden.shape.has(d.ro?'ro':'fit');
   return !c.hidden.has(d[c.key]);}
@@ -129,9 +633,16 @@ function popup(d){
     const body=(d.tcv==null)
       ? `<tr><td>Installed capacity</td><td class="v">${d.inst!=null?d.inst.toLocaleString()+' kW':'<i>unknown</i>'}</td></tr><tr class="hl"><td>Status</td><td class="v">Awaiting BM figure</td></tr>`
       : `<tr><td>Installed capacity</td><td class="v">${d.inst.toLocaleString()} kW</td></tr><tr><td>Available for BM</td><td class="v">${d.av.toLocaleString()} kW</td></tr><tr><td>BTC mined (Yr 5)</td><td class="v">${d.btc.toFixed(3)}</td></tr><tr class="hl"><td>TCV \u00b7 no treasury</td><td class="v">${gbp0(d.tcv)}</td></tr><tr class="hl"><td>TCV \u00b7 treasury</td><td class="v">${gbp0(d.tcvT)}</td></tr>`;
+    const pp=samPpa(d), offt=pp?(pp.offtaker||''):'';
+    /* drop the register's supplier suffixes so the name fits:
+       "Drax Energy Solutions Limited (Supplier)" -> "Drax Energy Solutions Limited" */
+    const offClean=(offt||'').replace(/\s*\(Supplier\)\s*$/i,'').replace(/\s*-\s*Supplier\s*-\s*SUP\d+\s*$/i,'').trim();
+    const offLab=!pp?'':(/sole holder/i.test(offt)?'Sole holder \u00b7 unbundled':(offClean||'Not identified'));
     return `<div class="pp"><h3 style="background:${hd}">${d.n}</h3>
     <div class="meta">${TIER[d.t].n}${meta?' &nbsp;|&nbsp; '+meta:''}</div><table>${body}
     ${d.dev?'<tr><td>Operator</td><td class="v" style="font-weight:500">'+d.dev.slice(0,28)+'</td></tr>':''}
+    ${pp?`<tr><td>Offtaker</td><td class="v" style="font-weight:500">${esc(offLab).slice(0,30)}</td></tr>`:''}
+    ${pp?`<tr><td>Export</td><td class="v" style="font-weight:500">${esc(PPACLS[pp.ppa_class]||'Unknown')}</td></tr>`:''}
     </table></div>`;}
   return `<div class="pp"><h3 style="background:${col}">${d.n}</h3>
   <div class="meta">Stranded hydro \u00b7 ${HCAT[d.exp].n} \u00b7 ${d.conf} confidence</div><table>
@@ -199,7 +710,7 @@ function legend(){
   } else if(c.view==='sam'){
     html=Object.keys(TIER).map(t=>{const up=Math.round((TAVG[t]/WHOLESALE-1)*100);
       return `<div class="row ${c.hidden.has(+t)?'off':''}" data-g="s" data-k="${t}"><span class="dot" style="background:${TIER[t].c}"></span>${TIER[t].n}<span class="c">${cnt[t]||0} &middot; <b class="up">+${up}%</b></span></div>`;}).join('');
-    document.getElementById('baseNote').innerHTML='+% = average BM revenue per tier vs a wholesale market baseline. TCV is per kW of available-for-BM; 24 sites (grey) await a figure.';
+    document.getElementById('baseNote').innerHTML='+% = average BM revenue per tier vs a wholesale market baseline. TCV is per kW of available-for-BM; 24 sites (grey) await a figure. Popup <b>offtaker</b> is inferred from the largest external REGO certificate holder \u2014 strong evidence of who buys the power, not contractual proof. Full detail on the <b>PPA Benchmark</b> tab.';
   } else {
     html=Object.keys(HCAT).map(k=>`<div class="row ${c.hidden.has(k)?'off':''}" data-g="s" data-k="${k}"><span class="dot" style="background:${HCAT[k].c}"></span>${HCAT[k].n}<span class="c">${cnt[k]||0}</span></div>`).join('');
     document.getElementById('baseNote').innerHTML='Stranded generation runs Bitcoin mining 24/7 \u2014 no grid export and no BM revenue, so TCV = mined BTC value.';
@@ -217,15 +728,28 @@ function foot(){
   document.getElementById('foot').textContent = c.view==='tam'
     ? 'RenewaBlox Investor Atlas \u00b7 TAM \u2014 every subsidised biogas, biomass, EfW, landfill and sewage-gas CHP holding an RO or FiT accreditation. Sources: DNO Embedded Capacity Registers (NGED, NPG, SPEN, SSEN Jul-2026, UKPN) + Ofgem FiT, RO and REGO registers (Aug-2026). Co-located records are collapsed to one marker per site with capacity capped at the DNO connection figure (194 MW of double-counting removed across 87 sites); 8 transmission-connected thermal stations >100 MW are excluded. 220 sites are plotted at postcode-district centroid (dashed). BM tier is indicative, modelled from the 129 verified SAM sites; Scotland sits outside the modelled tiers.'
     : 'RenewaBlox Investor Atlas · Year-5 Total Contract Values modelled from the Scrivelsby peaker and 1,000 kW stranded-hydro client cases, scaled across the portfolio. Sources: RenewaBlox_AD_BM_CRM & RenewaBlox_Hydro_Stranded (16 Jun 2026). Indicative; not investment advice.';}
-function render(){legend();kpis();draw();foot();document.getElementById('sub').innerHTML=cfg().sub;
-  document.getElementById('scope').style.display=(mode==='peaker')?'flex':'none';}
-document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('#tabs button').forEach(x=>x.classList.remove('on'));
+function render(){
+  const isPpa=mode==='ppa';
+  document.getElementById('main').style.display=isPpa?'none':'flex';
+  document.getElementById('ppa').style.display=isPpa?'block':'none';
+  document.getElementById('scope').style.display=(mode==='peaker')?'flex':'none';
+  if(isPpa){
+    document.getElementById('sub').innerHTML='PPA &amp; price benchmark \u00b7 129 SAM sites \u00b7 applies across peakers and hydro';
+    document.getElementById('foot').textContent='RenewaBlox Investor Atlas \u00b7 PPA & Price Benchmark \u2014 Elexon BMRS Market Index (APXMIDP) settlement data, Montel/EEX forward curve snapshot 11 Aug 2026, Ofgem Feed-in Tariff and REGO registers. Contracted PPA prices are private bilateral terms and are not shown anywhere; the counterparty is inferred from REGO certificate holdings.';
+    PPA.refresh(); return;
+  }
+  /* the map was display:none while the PPA tab was up, so Leaflet's cached
+     size can be stale if the window changed size in the meantime */
+  map.invalidateSize(false);
+  legend();kpis();draw();foot();document.getElementById('sub').innerHTML=cfg().sub;}
+document.querySelectorAll('#tabs button,#xtabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#tabs button,#xtabs button').forEach(x=>x.classList.remove('on'));
   b.classList.add('on'); mode=b.dataset.mode; render();
 });
 document.querySelectorAll('#scope button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('#scope button').forEach(x=>x.classList.remove('on'));
   b.classList.add('on'); scope=b.dataset.scope; mode='peaker';
+  document.querySelectorAll('#xtabs button').forEach(x=>x.classList.remove('on'));
   document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x.dataset.mode==='peaker'));
   render();
 });
