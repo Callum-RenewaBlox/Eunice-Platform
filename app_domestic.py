@@ -40,6 +40,7 @@ from db import conn
 from octopus import fetch_agile_rates
 from region_lookup import lookup_region
 from scenarios import apply_load_shift, compute_scenario, get_mean_agile_by_hour, get_profile
+import staged_flags
 
 DISPLAY_TZ = "Europe/London"
 PRODUCT = "AGILE"                   # domestic only
@@ -289,11 +290,20 @@ def load_data(region, product):
             "SELECT valid_from, value_inc_vat FROM tariff WHERE region = ? AND product = ? ORDER BY valid_from",
             c, params=(region, product),
         )
-        preds_all = pd.read_sql_query(
-            "SELECT valid_from, predicted_price, p05, p10, p90, generated_at, model_version "
-            "FROM prediction WHERE region = ? AND product = ?",
-            c, params=(region, product),
-        )
+        try:
+            preds_all = pd.read_sql_query(
+                "SELECT valid_from, predicted_price, p05, p10, p25, p50, p75, p90, p95, "
+                "p_neg, p_sub5, p_sub10, p_hi40, lead_days, generated_at, model_version "
+                "FROM prediction WHERE region = ? AND product = ?",
+                c, params=(region, product),
+            )
+        except Exception:
+            # Deployed DB predates the rebuilt-engine schema (no p_neg/p_sub5/... columns yet).
+            preds_all = pd.read_sql_query(
+                "SELECT valid_from, predicted_price, p05, p10, p90, generated_at, model_version "
+                "FROM prediction WHERE region = ? AND product = ?",
+                c, params=(region, product),
+            )
     if not tariff.empty:
         tariff["valid_from"] = pd.to_datetime(tariff["valid_from"], utc=True)
     if not preds_all.empty:
@@ -471,6 +481,11 @@ if rate > 0:
         "sits below it, the half-hourly RenewaBlox Solution is cheaper than what you pay now — and you can "
         "run flexible loads (dishwasher, EV, etc.) in those cheaper windows."
     )
+
+# === Staged low-price flags (rebuilt engine) ===
+if not predicted.empty and staged_flags.has_flag_data(predicted):
+    _flag_xs = ([*known["x"]] if not known.empty else []) + [*predicted["x"]]
+    staged_flags.render(predicted, x_range=[min(_flag_xs), max(_flag_xs)] if _flag_xs else None)
 _latest = to_local_one(tariff["valid_from"].iloc[-1])
 st.caption(f"📡 Latest published slot: **{_latest.strftime('%a %d %b %H:%M')}** (London) · live prices update automatically.")
 

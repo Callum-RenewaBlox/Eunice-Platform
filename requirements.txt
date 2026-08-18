@@ -11,6 +11,11 @@ plotly>=5.18,<7
 scikit-learn>=1.4,<2
 holidays>=0.45,<1
 
+# Eunice rebuild engine (rebuild/): LightGBM quantile model, DuckDB as-of joins, parquet feature store
+lightgbm>=4.3,<5
+duckdb>=1.0,<2
+pyarrow>=15,<25
+
 # Pin starlette below 1.4.0.
 # starlette 1.4.0 made `thread_minimum_size` a required keyword-only argument of
 # GZipResponder.__init__. Streamlit's gzip middleware (_MediaAwareGZipResponder)

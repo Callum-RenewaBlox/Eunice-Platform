@@ -34,7 +34,8 @@ DST = ROOT / "data_lite.sqlite"
 PRODUCTS = ("AGILE", "SHAPE_SHIFTERS")   # both — one slim DB serves lite + full
 TARIFF_DAYS = 21                         # recent tariff window kept (fallback + accuracy actuals)
 PRED_VALID_DAYS = 10                     # keep predictions whose TARGET slot is within this window
-COPY_WHOLE = ("weather_forecast", "grid_forecast")   # small forecast tables, copied entire
+COPY_WHOLE = ("weather_forecast", "grid_forecast", "scorecard")   # small tables, copied entire
+OPTIONAL_TABLES = {"scorecard"}                      # skipped if the source DB predates them
 HOURLY_AVG_DDL = (
     "CREATE TABLE tariff_hourly_avg ("
     "region TEXT NOT NULL, product TEXT NOT NULL, hour INTEGER NOT NULL, "
@@ -45,8 +46,11 @@ HOURLY_AVG_DDL = (
 def _copy_ddl(src, dst, table):
     ddl = src.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone()
     if not ddl:
+        if table in OPTIONAL_TABLES:
+            return False
         raise SystemExit(f"Table '{table}' missing from source DB.")
     dst.execute(ddl[0])
+    return True
 
 
 def main():
@@ -62,8 +66,7 @@ def main():
     tariff_cut = (now - timedelta(days=TARIFF_DAYS)).strftime("%Y-%m-%dT%H:%M:%SZ")
     pred_cut = (now - timedelta(days=PRED_VALID_DAYS)).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    for tbl in ("tariff", "prediction", *COPY_WHOLE):
-        _copy_ddl(src, dst, tbl)
+    present = {tbl: _copy_ddl(src, dst, tbl) for tbl in ("tariff", "prediction", *COPY_WHOLE)}
 
     # Tariff: both products, recent window (chart fallback if live API down + accuracy actuals + stats).
     trows = src.execute(
@@ -110,15 +113,16 @@ def main():
     if set_a:
         dst.executemany(insert_pred, set_a)
 
-    # (B) earliest forward prediction per recent past slot
+    # (B) earliest forward prediction per recent past slot, PER MODEL VERSION — the accuracy
+    # tabs compare each engine's own vintages while old + new run side by side
     set_b = src.execute(
         f"""
         SELECT p.* FROM prediction p
-        JOIN (SELECT valid_from, region, product, MIN(generated_at) AS mg FROM prediction
+        JOIN (SELECT valid_from, region, product, model_version, MIN(generated_at) AS mg FROM prediction
               WHERE product IN ({ph}) AND valid_from >= ? AND generated_at < valid_from
-              GROUP BY valid_from, region, product) m
+              GROUP BY valid_from, region, product, model_version) m
           ON p.valid_from = m.valid_from AND p.region = m.region
-             AND p.product = m.product AND p.generated_at = m.mg
+             AND p.product = m.product AND p.model_version = m.model_version AND p.generated_at = m.mg
         WHERE p.product IN ({ph})
         """,
         (*PRODUCTS, pred_cut, *PRODUCTS),
@@ -126,8 +130,10 @@ def main():
     if set_b:
         dst.executemany(insert_pred, set_b)
 
-    # Small forecast tables — copied whole for the full app's weather + grid panels.
+    # Small tables — copied whole (weather/grid panels + the live scorecard).
     for tbl in COPY_WHOLE:
+        if not present.get(tbl):
+            continue
         rows = src.execute(f"SELECT * FROM {tbl}").fetchall()
         if rows:
             dst.executemany(f"INSERT INTO {tbl} VALUES ({','.join('?' * len(rows[0]))})", rows)

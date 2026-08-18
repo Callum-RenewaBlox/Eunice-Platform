@@ -12,11 +12,17 @@ name: Daily refresh
 #   - Only data_lite.sqlite (≈2 MB, a normal git file) is committed each day. Streamlit Cloud
 #     reads that reliably (it cannot read Git LFS), and the daily diff is tiny.
 #
-# Trigger: 16:35 UTC daily (Octopus publishes day-ahead rates ~16:00 UK). Manual run allowed.
+# Triggers:
+#   16:35 UTC — full ingest (legacy engine) + rebuilt engine's 16:35-London origin (targets D+2..D+7).
+#               Octopus publishes day-ahead rates ~16:00 UK, so D+1 prices are known by then.
+#   09:45 UTC — rebuilt engine's 10:00-London "tomorrow" origin only (targets D+1..D+7); the
+#               legacy ingest is skipped (no new Agile prices at that hour).
+# Manual run allowed (behaves like the 16:35 run).
 
 on:
   schedule:
     - cron: "35 16 * * *"
+    - cron: "45 9 * * *"
   workflow_dispatch:
 
 permissions:
@@ -30,7 +36,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90   # normal runs take minutes; the one-off rebuild-store seed can take ~1 h
 
     steps:
       - name: Checkout (no LFS — the big DB comes from cache, not git)
@@ -44,9 +50,23 @@ jobs:
           path: data.sqlite
           # Unique key each run + prefix restore-keys = a rolling cache: restore the most
           # recent prior DB, then save an updated one at job end for tomorrow.
+          # (Kept as a single-path cache so existing eunice-db-* caches keep restoring —
+          # actions/cache versions caches by their path list.)
           key: eunice-db-${{ github.run_id }}
           restore-keys: |
             eunice-db-
+
+      - name: Restore rebuild stores + model bundle from cache
+        uses: actions/cache@v4
+        with:
+          # The rebuilt engine's feature stores, live-issue stores and persisted model bundle
+          # (all regenerable, none in git). Separate cache so the DB cache above is untouched.
+          path: |
+            rebuild/data
+            rebuild/out
+          key: eunice-rebuild-${{ github.run_id }}
+          restore-keys: |
+            eunice-rebuild-
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
@@ -66,7 +86,8 @@ jobs:
             git lfs pull --include data.sqlite || echo "LFS seed unavailable; will full-rebuild."
           fi
 
-      - name: Ingest + retrain + predict
+      - name: Ingest + retrain + predict (legacy engine — 16:35 runs only)
+        if: github.event.schedule != '45 9 * * *'
         env:
           # Optional — Open-Meteo is the canonical weather source, so the model trains fine
           # without this. Add it in repo Settings → Secrets to enable the Met Office sanity check.
@@ -79,6 +100,39 @@ jobs:
           else
             python ingest.py
           fi
+
+      - name: Seed rebuild feature stores if the cache missed (one-off cold start)
+        run: |
+          if [ ! -f rebuild/data/features_1635.parquet ] || [ ! -f rebuild/data/features_1000.parquet ]; then
+            echo "Rebuild feature stores missing — regenerating from source archives (~1 h, one-off)."
+            echo "NOTE: the archive scripts have hard-coded end dates (Aug 2026); origins between"
+            echo "that and today are filled forward by the daily pipeline's live stores."
+            python rebuild/fetch_neso.py
+            python rebuild/fetch_octopus.py AGILE-24-10-01 K
+            python rebuild/fetch_octopus.py AGILE-BUS-25-02-05 K
+            python rebuild/fetch_elexon.py WINDFOR
+            python rebuild/build_asof_embedded.py
+            python rebuild/build_features.py 1635
+            python rebuild/add_lastknown_feats.py 1635
+            python rebuild/build_features.py 1000
+            python rebuild/add_lastknown_feats.py 1000
+          fi
+
+      - name: Rebuilt engine — origin features, region-K prediction, all-region write
+        id: rebuilt
+        # continue-on-error so a rebuilt-engine failure (e.g. late Octopus publication) cannot
+        # block the legacy refresh + lite-DB commit below; the failure is re-raised after the
+        # commit so the alert issue still fires.
+        continue-on-error: true
+        run: |
+          if [ "${{ github.event.schedule }}" = "45 9 * * *" ]; then
+            python rebuild/write_predictions.py 1000
+          else
+            python rebuild/write_predictions.py 1635
+          fi
+
+      - name: Compute the live scorecard from stored vintages
+        run: python compute_scorecard.py
 
       - name: Rebuild slim deploy database
         run: python build_lite_db.py
@@ -94,6 +148,12 @@ jobs:
           else
             echo "No change to data_lite.sqlite — skipping commit."
           fi
+
+      - name: Fail the job if the rebuilt engine failed (commit above is already safe)
+        if: steps.rebuilt.outcome == 'failure'
+        run: |
+          echo "Rebuilt-engine step failed — see its log. Failing the job so the alert fires."
+          exit 1
 
       - name: Alert on failure (open/append a GitHub issue, assigned to you)
         if: failure()

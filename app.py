@@ -31,6 +31,7 @@ from config import ALL_REGIONS, DEFAULT_PRODUCT, PRODUCTS, REGION, REGION_NAMES
 from db import conn
 from octopus import fetch_agile_rates
 from region_lookup import lookup_region
+import staged_flags
 
 DISPLAY_TZ = "Europe/London"
 
@@ -155,10 +156,26 @@ def load_data(region, product):
         forecast = pd.read_sql_query(
             "SELECT timestamp, temperature_c, wind_speed_kmh, cloud_cover_pct FROM weather_forecast ORDER BY timestamp", c
         )
-        preds_all = pd.read_sql_query(
-            "SELECT valid_from, predicted_price, p05, p10, p90, p_spike, p_trough, generated_at, model_version FROM prediction WHERE region = ? AND product = ?",
-            c, params=(region, product),
-        )
+        try:
+            preds_all = pd.read_sql_query(
+                "SELECT valid_from, predicted_price, p05, p10, p25, p50, p75, p90, p95, p_spike, p_trough, "
+                "p_neg, p_sub5, p_sub10, p_hi40, lead_days, generated_at, model_version "
+                "FROM prediction WHERE region = ? AND product = ?",
+                c, params=(region, product),
+            )
+        except Exception:
+            # Deployed DB predates the rebuilt-engine schema (no p_neg/p_sub5/... columns yet).
+            preds_all = pd.read_sql_query(
+                "SELECT valid_from, predicted_price, p05, p10, p90, p_spike, p_trough, generated_at, model_version FROM prediction WHERE region = ? AND product = ?",
+                c, params=(region, product),
+            )
+        try:
+            scorecard = pd.read_sql_query(
+                "SELECT * FROM scorecard WHERE product = ? ORDER BY model_version, lead_d",
+                c, params=(product,),
+            )
+        except Exception:
+            scorecard = pd.DataFrame()
     if not tariff.empty:
         tariff["valid_from"] = pd.to_datetime(tariff["valid_from"], utc=True)
     if not forecast.empty:
@@ -166,7 +183,7 @@ def load_data(region, product):
     if not preds_all.empty:
         preds_all["valid_from"] = pd.to_datetime(preds_all["valid_from"], utc=True)
         preds_all["generated_at"] = pd.to_datetime(preds_all["generated_at"], utc=True)
-    return tariff, forecast, preds_all
+    return tariff, forecast, preds_all, scorecard
 
 
 @st.cache_data(ttl=1800)
@@ -198,7 +215,7 @@ def fmt_local(ts):
     return to_local_one(ts).strftime("%a %d %b %H:%M")
 
 
-tariff, forecast, preds_all = load_data(region, product)
+tariff, forecast, preds_all, scorecard = load_data(region, product)
 
 # Merge live published rates over the slim-DB snapshot so the published line + Now/Next are
 # always current, regardless of when the deploy database was last rebuilt.
@@ -416,36 +433,43 @@ if stats_rows:
         md += f"| **{r['Source']}** | {r['Cheapest']} | {r['Most expensive']} |\n"
     st.markdown(md)
 
-# === Spike risk: likely expensive periods ===
-if "p_spike" in predicted.columns and predicted["p_spike"].notna().any():
-    high_risk = predicted[predicted["p_spike"] > 0.25].nlargest(8, "p_spike")
-    if not high_risk.empty:
-        st.markdown("**🚨 Likely expensive periods (P(price > 25p) ≥ 25% — next 7 days)**")
-        spike_md = "| Slot (Europe/London) | Spike probability | Predicted median |\n| --- | --- | --- |\n"
-        for _, r in high_risk.iterrows():
-            spike_md += f"| {fmt_local(r['valid_from'])} | **{r['p_spike'] * 100:.0f}%** | {r['predicted_price']:.2f} p |\n"
-        st.markdown(spike_md)
-    else:
-        st.caption("✅ No high-spike-risk slots (P > 25%) in the next 7 days.")
+# === Staged low-price flags (rebuilt engine) — replaces the spike/trough tables ===
+# Falls back to the legacy tables while the displayed model's rows lack the probability
+# columns (e.g. SHAPE_SHIFTERS, still served by the legacy engine).
+if staged_flags.has_flag_data(predicted):
+    _flag_xs = ([*known["x"]] if not known.empty else []) + [*predicted["x"]]
+    staged_flags.render(predicted, x_range=[min(_flag_xs), max(_flag_xs)] if _flag_xs else None)
+else:
+    # === Spike risk: likely expensive periods (legacy engine) ===
+    if "p_spike" in predicted.columns and predicted["p_spike"].notna().any():
+        high_risk = predicted[predicted["p_spike"] > 0.25].nlargest(8, "p_spike")
+        if not high_risk.empty:
+            st.markdown("**🚨 Likely expensive periods (P(price > 25p) ≥ 25% — next 7 days)**")
+            spike_md = "| Slot (Europe/London) | Spike probability | Predicted median |\n| --- | --- | --- |\n"
+            for _, r in high_risk.iterrows():
+                spike_md += f"| {fmt_local(r['valid_from'])} | **{r['p_spike'] * 100:.0f}%** | {r['predicted_price']:.2f} p |\n"
+            st.markdown(spike_md)
+        else:
+            st.caption("✅ No high-spike-risk slots (P > 25%) in the next 7 days.")
 
-# === Trough risk: likely very-cheap / negative-price periods ===
-# Mirror of the spike signal. The classifier ranks negative-price slots far better than the
-# point forecast can (it doesn't need the median to cross zero), so it's the primary signal
-# for "load up here". Driven by high renewables + low demand (sunny, breezy, low-load hours).
-if "p_trough" in predicted.columns and predicted["p_trough"].notna().any():
-    low_risk = predicted[predicted["p_trough"] > 0.15].nlargest(8, "p_trough")
-    if not low_risk.empty:
-        st.markdown("**🟢 Likely very cheap / possible negative-price periods (high renewables — next 7 days)**")
-        trough_md = "| Slot (Europe/London) | Negative-price probability | Predicted median |\n| --- | --- | --- |\n"
-        for _, r in low_risk.iterrows():
-            trough_md += f"| {fmt_local(r['valid_from'])} | **{r['p_trough'] * 100:.0f}%** | {r['predicted_price']:.2f} p |\n"
-        st.markdown(trough_md)
-        st.caption(
-            "Best windows to shift flexible load into / charge batteries. Probability is the "
-            "model's estimated chance the half-hour settles below 0p (you get paid to consume)."
-        )
-    else:
-        st.caption("✅ No elevated negative-price windows (P > 15%) in the next 7 days.")
+    # === Trough risk: likely very-cheap / negative-price periods (legacy engine) ===
+    # Mirror of the spike signal. The classifier ranks negative-price slots far better than the
+    # point forecast can (it doesn't need the median to cross zero), so it's the primary signal
+    # for "load up here". Driven by high renewables + low demand (sunny, breezy, low-load hours).
+    if "p_trough" in predicted.columns and predicted["p_trough"].notna().any():
+        low_risk = predicted[predicted["p_trough"] > 0.15].nlargest(8, "p_trough")
+        if not low_risk.empty:
+            st.markdown("**🟢 Likely very cheap / possible negative-price periods (high renewables — next 7 days)**")
+            trough_md = "| Slot (Europe/London) | Negative-price probability | Predicted median |\n| --- | --- | --- |\n"
+            for _, r in low_risk.iterrows():
+                trough_md += f"| {fmt_local(r['valid_from'])} | **{r['p_trough'] * 100:.0f}%** | {r['predicted_price']:.2f} p |\n"
+            st.markdown(trough_md)
+            st.caption(
+                "Best windows to shift flexible load into / charge batteries. Probability is the "
+                "model's estimated chance the half-hour settles below 0p (you get paid to consume)."
+            )
+        else:
+            st.caption("✅ No elevated negative-price windows (P > 15%) in the next 7 days.")
 
 if not forward.empty:
     st.caption(f"Model: `{latest_model}` · Latest run: {fmt_local(forward['generated_at'].iloc[0])}")
@@ -704,16 +728,19 @@ try:
 except Exception as e:
     st.warning(f"Couldn't compute scenarios: {e}")
 
-# === Prediction vs actual ===
+# === Prediction vs actual — sourced from stored forecast vintages ===
 st.markdown("---")
 st.subheader("Prediction vs actual")
 
-if not preds.empty:
-    forecasts = (
-        preds[preds["generated_at"] < preds["valid_from"]]
-        .sort_values("generated_at")
-        .drop_duplicates("valid_from", keep="first")
-    )
+acc_src_model = latest_model
+if not preds_all.empty:
+    vintages = preds_all[preds_all["generated_at"] < preds_all["valid_from"]]
+    disp = vintages[vintages["model_version"] == latest_model]
+    if disp.empty and not vintages.empty:
+        # displayed model has no resolved vintages yet (fresh rollout) — show the previous engine's
+        acc_src_model = vintages.sort_values("generated_at")["model_version"].iloc[-1]
+        disp = vintages[vintages["model_version"] == acc_src_model]
+    forecasts = disp.sort_values("generated_at").drop_duplicates("valid_from", keep="first")
     accuracy = tariff.merge(
         forecasts[["valid_from", "predicted_price", "p10", "p90", "generated_at"]],
         on="valid_from", how="inner",
@@ -777,27 +804,48 @@ day_after = today_start + pd.Timedelta(days=2)
 
 today_acc = accuracy[(accuracy["valid_from"] >= today_start) & (accuracy["valid_from"] < tomorrow_start)] if not accuracy.empty else pd.DataFrame()
 tomorrow_acc = accuracy[(accuracy["valid_from"] >= tomorrow_start) & (accuracy["valid_from"] < day_after)] if not accuracy.empty else pd.DataFrame()
-last_week_acc = accuracy[accuracy["valid_from"] >= now - pd.Timedelta(days=7)] if not accuracy.empty else pd.DataFrame()
 
-tab_today, tab_tomorrow, tab_week = st.tabs(["Today", "Tomorrow (after 4pm)", "Last 7 days (backtest)"])
+tab_today, tab_tomorrow, tab_score = st.tabs(["Today", "Tomorrow (after 4pm)", "Scorecard (live, by lead)"])
 
 with tab_today:
     _show_section(
         today_acc,
-        "No predictions made before today's slots in the DB yet. Re-run `python ingest.py` daily and accuracy data will accumulate. Meanwhile see 'Last 7 days' for backtested accuracy.",
+        "No stored forecast vintage covers today's slots yet — vintages accumulate with each daily run.",
     )
+    if not today_acc.empty and acc_src_model != latest_model:
+        st.caption(f"Vintages from `{acc_src_model}` (the displayed model has none resolved yet).")
 
 with tab_tomorrow:
     _show_section(
         tomorrow_acc,
-        "Tomorrow's prices haven't been published yet (day-ahead settlement is released at ~4pm). Once they are, re-run `python ingest.py` and refresh this page.",
+        "Tomorrow's prices haven't been published yet (day-ahead settlement is released at ~4pm).",
     )
+    if not tomorrow_acc.empty and acc_src_model != latest_model:
+        st.caption(f"Vintages from `{acc_src_model}` (the displayed model has none resolved yet).")
 
-with tab_week:
-    _show_section(
-        last_week_acc,
-        "No backtested predictions found. Run `python ingest.py --full` to generate them.",
-    )
+with tab_score:
+    if scorecard.empty:
+        st.info(
+            "No scorecard yet — it is computed daily from stored forecast vintages "
+            "(`python compute_scorecard.py`) and refreshed by the daily Action."
+        )
+    else:
+        st.caption(
+            "Live skill, computed daily from **every stored forecast vintage** scored against "
+            "published prices — the same numbers as `python rebuild/score_eunice_live.py data.sqlite`. "
+            "Lead 0 = all leads pooled. Negative-slot flag: P(negative) ≥ 25% (the *likely* tier)."
+        )
+        _mv_order = [m for m in [latest_model] if m in set(scorecard["model_version"])]
+        _mv_order += [m for m in scorecard["model_version"].unique() if m not in _mv_order]
+        for _mv in _mv_order:
+            block = scorecard[scorecard["model_version"] == _mv].sort_values("lead_d")
+            st.markdown(f"**`{_mv}`**" + (" · currently displayed" if _mv == latest_model else ""))
+            show = block[["lead_d", "n", "mae", "bias", "cov10_90", "neg_n", "neg_recall", "neg_precision"]].round(3)
+            show["lead_d"] = show["lead_d"].astype(int).astype(str).replace("0", "all")
+            show.columns = ["lead (d)", "slots", "MAE (p)", "bias (p)", "P10–P90 cov", "neg slots", "neg recall", "neg precision"]
+            st.table(show.set_index("lead (d)").style.format("{:.3f}", subset=["MAE (p)", "bias (p)", "P10–P90 cov", "neg recall", "neg precision"], na_rep="—").format("{:.0f}", subset=["slots", "neg slots"]))
+        if "computed_at" in scorecard.columns and len(scorecard):
+            st.caption(f"Updated {scorecard['computed_at'].iloc[0]} (UTC)")
 
 with st.expander("Weather forecast (Open-Meteo, 7 day)"):
     if forecast.empty:

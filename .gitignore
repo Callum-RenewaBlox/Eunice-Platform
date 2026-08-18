@@ -33,3 +33,9 @@ Thumbs.db
 
 # Local dev server config (machine-specific absolute paths — not portable)
 .claude/
+
+# Eunice rebuild: source zips and regenerable data/parquet (see rebuild_bundle/REBUILD_KICKOFF.md)
+rebuild/data/
+rebuild/out/*.parquet
+rebuild/out/*.joblib
+rebuild_bundle/

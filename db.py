@@ -43,9 +43,33 @@ CREATE TABLE IF NOT EXISTS prediction (
     p90             REAL,
     p_spike         REAL,
     p_trough        REAL,
+    p25             REAL,
+    p50             REAL,
+    p75             REAL,
+    p95             REAL,
+    p_neg           REAL,
+    p_sub5          REAL,
+    p_sub10         REAL,
+    p_hi40          REAL,
+    origin_time     TEXT,
+    lead_days       INTEGER,
     model_version   TEXT NOT NULL,
     generated_at    TEXT NOT NULL,
     PRIMARY KEY (valid_from, region, product, model_version, generated_at)
+);
+CREATE TABLE IF NOT EXISTS scorecard (
+    product       TEXT NOT NULL,
+    model_version TEXT NOT NULL,
+    lead_d        REAL NOT NULL,
+    n             INTEGER,
+    mae           REAL,
+    bias          REAL,
+    cov10_90      REAL,
+    neg_n         INTEGER,
+    neg_recall    REAL,
+    neg_precision REAL,
+    computed_at   TEXT NOT NULL,
+    PRIMARY KEY (product, model_version, lead_d)
 );
 CREATE TABLE IF NOT EXISTS wholesale_price (
     valid_from        TEXT PRIMARY KEY,
@@ -186,6 +210,16 @@ def init_db():
                 ALTER TABLE prediction_new RENAME TO prediction;
                 """
             )
+        # v4: rebuilt-engine columns — full quantile set, event probabilities, origin metadata
+        # (re-read PRAGMA: the v2/v3 rebuilds above may have changed the column set; p05/p_trough
+        # are re-added here because those rebuilds' column lists predate them and drop them)
+        cols_pred = {row[1] for row in c.execute("PRAGMA table_info(prediction)").fetchall()}
+        for col, typ in (("p05", "REAL"), ("p_trough", "REAL"),
+                         ("p25", "REAL"), ("p50", "REAL"), ("p75", "REAL"), ("p95", "REAL"),
+                         ("p_neg", "REAL"), ("p_sub5", "REAL"), ("p_sub10", "REAL"), ("p_hi40", "REAL"),
+                         ("origin_time", "TEXT"), ("lead_days", "INTEGER")):
+            if col not in cols_pred:
+                c.execute(f"ALTER TABLE prediction ADD COLUMN {col} {typ}")
         cols_grid = {row[1] for row in c.execute("PRAGMA table_info(grid_history)").fetchall()}
         if "wind_generation_mw" not in cols_grid:
             c.execute("ALTER TABLE grid_history ADD COLUMN wind_generation_mw REAL")
@@ -241,6 +275,60 @@ def insert_predictions(rows, model_version, region, product):
                     model_version,
                     r.get("generated_at", default_generated_at),
                 )
+                for r in rows
+            ],
+        )
+
+
+def insert_predictions_v2(rows, model_version, region, product):
+    """Insert rows from the rebuilt engine (rebuild/write_predictions.py): full quantile set,
+    event probabilities and origin metadata. predicted_price mirrors p50 for the apps."""
+    default_generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    with conn() as c:
+        c.executemany(
+            "INSERT OR REPLACE INTO prediction (valid_from, region, product, valid_to, predicted_price, "
+            "p05, p10, p25, p50, p75, p90, p95, p_neg, p_sub5, p_sub10, p_hi40, origin_time, lead_days, "
+            "model_version, generated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [
+                (
+                    r["valid_from"],
+                    region,
+                    product,
+                    r["valid_to"],
+                    r["predicted_price"],
+                    r.get("p05"),
+                    r.get("p10"),
+                    r.get("p25"),
+                    r.get("p50"),
+                    r.get("p75"),
+                    r.get("p90"),
+                    r.get("p95"),
+                    r.get("p_neg"),
+                    r.get("p_sub5"),
+                    r.get("p_sub10"),
+                    r.get("p_hi40"),
+                    r.get("origin_time"),
+                    r.get("lead_days"),
+                    model_version,
+                    r.get("generated_at", default_generated_at),
+                )
+                for r in rows
+            ],
+        )
+
+
+def replace_scorecard(rows, product):
+    """Replace the live scorecard for one product. rows: dicts with model_version, lead_d
+    (0 = all leads), n, mae, bias, cov10_90, neg_n, neg_recall, neg_precision."""
+    computed_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    with conn() as c:
+        c.execute("DELETE FROM scorecard WHERE product = ?", (product,))
+        c.executemany(
+            "INSERT INTO scorecard (product, model_version, lead_d, n, mae, bias, cov10_90, "
+            "neg_n, neg_recall, neg_precision, computed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [
+                (product, r["model_version"], r["lead_d"], r.get("n"), r.get("mae"), r.get("bias"),
+                 r.get("cov10_90"), r.get("neg_n"), r.get("neg_recall"), r.get("neg_precision"), computed_at)
                 for r in rows
             ],
         )
