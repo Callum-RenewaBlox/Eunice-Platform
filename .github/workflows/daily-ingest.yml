@@ -140,6 +140,14 @@ jobs:
       - name: Compute the live scorecard from stored vintages
         run: python compute_scorecard.py
 
+      - name: Sync durable tables to BigQuery (no-op until GCP_SA_KEY exists)
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        run: |
+          if [ -n "$GCP_SA_KEY" ]; then pip install -q google-cloud-bigquery; fi
+          python bq_sync.py
+
       - name: Rebuild slim deploy database
         run: python build_lite_db.py
 
