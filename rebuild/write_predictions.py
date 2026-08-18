@@ -63,9 +63,42 @@ def load_or_refit_bundle(origin, month_start, force=False):
     return bundle
 
 
+def _load_affine():
+    """Prefer the monthly-refitted map (rebuild/data/region_affine_fitted.csv) when it is
+    recent; fall back to the shipped region_affine.csv."""
+    fitted = _R / 'data' / 'region_affine_fitted.csv'
+    if fitted.exists():
+        try:
+            aff = pd.read_csv(fitted)
+            age = (pd.Timestamp.now() - pd.to_datetime(aff.fitted_through.iloc[0])).days
+            if len(aff) == 28 and age <= 40:
+                return aff
+        except Exception as e:
+            print(f"WARNING: ignoring fitted affine map: {e}", flush=True)
+    return pd.read_csv(_R / 'region_affine.csv')
+
+
+def refresh_affine_if_stale():
+    """Monthly refit of the regional affine map from the tariff table (non-fatal)."""
+    fitted = _R / 'data' / 'region_affine_fitted.csv'
+    try:
+        if fitted.exists():
+            aff = pd.read_csv(fitted)
+            if (pd.Timestamp.now() - pd.to_datetime(aff.fitted_through.iloc[0])).days <= 28:
+                return
+        from fit_affine import fit_affine
+        from config import DB_PATH
+        out = fit_affine(DB_PATH)
+        fitted.parent.mkdir(parents=True, exist_ok=True)
+        out.to_csv(fitted, index=False)
+        print(f"refitted regional affine map through {out.fitted_through.iloc[0]}", flush=True)
+    except Exception as e:
+        print(f"WARNING: affine refit skipped: {e}", flush=True)
+
+
 def map_regions(rows, pred, known_until):
     """Map region-K predictions to every region; returns {region: DataFrame of db-ready rows}."""
-    aff = pd.read_csv(_R / 'region_affine.csv')
+    aff = _load_affine()
     vat_ku = vat_mult(known_until)
     tgt_dates = rows.target_local.dt.date.values
     vat_tgt = np.array([vat_mult(d) for d in tgt_dates])
@@ -102,6 +135,7 @@ def main(argv):
     month_start = _date(od.year, od.month, 1)
     bundle = load_or_refit_bundle(origin, month_start, force='--refit' in argv)
     pred = model.predict(bundle, rows)
+    refresh_affine_if_stale()
     regions = map_regions(rows, pred, known_until)
     k = regions['K']
     print(f"origin {od} {origin}: {len(k)} slots/region, leads {sorted(set(k.lead_days))}, "
