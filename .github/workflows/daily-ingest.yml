@@ -131,6 +131,12 @@ jobs:
             python rebuild/write_predictions.py 1635
           fi
 
+      - name: Archive forecast vintages (NESO / Elexon / Met Office issues)
+        env:
+          METOFFICE_API_KEY: ${{ secrets.METOFFICE_API_KEY }}
+        # per-source failures are internal warnings; the step only fails if every source fails
+        run: python capture_vintages.py
+
       - name: Compute the live scorecard from stored vintages
         run: python compute_scorecard.py
 

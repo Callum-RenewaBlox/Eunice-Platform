@@ -57,6 +57,14 @@ CREATE TABLE IF NOT EXISTS prediction (
     generated_at    TEXT NOT NULL,
     PRIMARY KEY (valid_from, region, product, model_version, generated_at)
 );
+CREATE TABLE IF NOT EXISTS forecast_vintages (
+    source      TEXT NOT NULL,
+    issue_time  TEXT NOT NULL,
+    target_time TEXT NOT NULL,
+    variable    TEXT NOT NULL,
+    value       REAL,
+    PRIMARY KEY (source, issue_time, target_time, variable)
+);
 CREATE TABLE IF NOT EXISTS scorecard (
     product       TEXT NOT NULL,
     model_version TEXT NOT NULL,
@@ -315,6 +323,23 @@ def insert_predictions_v2(rows, model_version, region, product):
                 for r in rows
             ],
         )
+
+
+def insert_vintages(rows):
+    """Archive forecast vintages: (source, issue_time, target_time, variable, value) tuples.
+    Vintages are immutable — INSERT OR IGNORE keeps re-captures idempotent."""
+    with conn() as c:
+        c.executemany(
+            "INSERT OR IGNORE INTO forecast_vintages (source, issue_time, target_time, variable, value) "
+            "VALUES (?, ?, ?, ?, ?)",
+            rows,
+        )
+
+
+def latest_vintage_issue(source):
+    with conn() as c:
+        row = c.execute("SELECT MAX(issue_time) FROM forecast_vintages WHERE source = ?", (source,)).fetchone()
+        return row[0] if row else None
 
 
 def replace_scorecard(rows, product):
