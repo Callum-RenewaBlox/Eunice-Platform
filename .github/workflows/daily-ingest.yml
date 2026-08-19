@@ -158,6 +158,9 @@ jobs:
           if ! git diff --quiet -- data_lite.sqlite; then
             git add data_lite.sqlite
             git commit -m "chore: daily prediction refresh $(date -u +%Y-%m-%d)"
+            # main may have moved while this job ran — replay our commit on top, keeping OUR
+            # freshly built data_lite on any conflict (-X theirs favours the replayed commit)
+            git pull --rebase -X theirs origin main
             git push
           else
             echo "No change to data_lite.sqlite — skipping commit."
