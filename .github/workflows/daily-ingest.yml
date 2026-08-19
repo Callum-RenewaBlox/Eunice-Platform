@@ -128,7 +128,12 @@ jobs:
           if [ "${{ github.event.schedule }}" = "45 9 * * *" ]; then
             python rebuild/write_predictions.py 1000
           else
-            python rebuild/write_predictions.py 1635
+            # manual runs can happen before the ~16:00 London day-ahead publication, when the
+            # 16:35 origin's last-known-day prices don't exist yet — fall back to the 10:00 origin
+            if ! python rebuild/write_predictions.py 1635; then
+              echo "1635 origin unavailable (day-ahead prices not published yet) — running the 1000 origin instead."
+              python rebuild/write_predictions.py 1000
+            fi
           fi
 
       - name: Archive forecast vintages (NESO / Elexon / Met Office issues)
@@ -159,8 +164,10 @@ jobs:
             git add data_lite.sqlite
             git commit -m "chore: daily prediction refresh $(date -u +%Y-%m-%d)"
             # main may have moved while this job ran — replay our commit on top, keeping OUR
-            # freshly built data_lite on any conflict (-X theirs favours the replayed commit)
-            git pull --rebase -X theirs origin main
+            # freshly built data_lite on any conflict (-X theirs favours the replayed commit).
+            # --autostash: the cache-restored data.sqlite always differs from its LFS pointer,
+            # so the tree is never clean here.
+            git pull --rebase --autostash -X theirs origin main
             git push
           else
             echo "No change to data_lite.sqlite — skipping commit."
