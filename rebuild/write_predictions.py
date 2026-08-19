@@ -119,6 +119,10 @@ def map_regions(rows, pred, known_until):
         df['predicted_price'] = df['p50']
         for ev in ['neg', 'sub5', 'sub10', 'hi40']:
             df[f'p_{ev}'] = np.clip(pred[f'p_{ev}'].values, 0.0, 1.0)
+        # legacy columns so pre-rebuild consumers see the new model: p_trough was P(<0) (= p_neg);
+        # p_spike was P(>25p) — the nearest new-engine signal is P(>40p), a stricter threshold
+        df['p_trough'] = df['p_neg']
+        df['p_spike'] = df['p_hi40']
         out[region] = df
     return out
 

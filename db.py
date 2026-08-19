@@ -295,8 +295,9 @@ def insert_predictions_v2(rows, model_version, region, product):
     with conn() as c:
         c.executemany(
             "INSERT OR REPLACE INTO prediction (valid_from, region, product, valid_to, predicted_price, "
-            "p05, p10, p25, p50, p75, p90, p95, p_neg, p_sub5, p_sub10, p_hi40, origin_time, lead_days, "
-            "model_version, generated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "p05, p10, p25, p50, p75, p90, p95, p_neg, p_sub5, p_sub10, p_hi40, p_trough, p_spike, "
+            "origin_time, lead_days, model_version, generated_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
                 (
                     r["valid_from"],
@@ -315,6 +316,8 @@ def insert_predictions_v2(rows, model_version, region, product):
                     r.get("p_sub5"),
                     r.get("p_sub10"),
                     r.get("p_hi40"),
+                    r.get("p_trough"),
+                    r.get("p_spike"),
                     r.get("origin_time"),
                     r.get("lead_days"),
                     model_version,
