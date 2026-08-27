@@ -590,12 +590,7 @@ return {refresh:render, redraw:drawPrice, sites:()=>DATA.sites};
 })();
 
 const map=L.map('map',{scrollWheelZoom:true,preferCanvas:true}).setView([54.5,-3],6);
-/* Esri light-grey canvas + labels. Keyless: the previous provider now stamps
-   "API KEY REQUIRED" across unauthenticated basemap tiles. Base renders first,
-   labels on top, both below the data markers. Native to z16; atlas runs at z6-9. */
-const ESRI='https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/';
-L.tileLayer(ESRI+'World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,maxNativeZoom:16,attribution:'Tiles &copy; Esri'}).addTo(map);
-L.tileLayer(ESRI+'World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,maxNativeZoom:16}).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=cb1_2b01_1_0552a6d00221009dab1f3482',{subdomains:'abcd',maxZoom:19,attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(map);
 let layer=L.layerGroup().addTo(map);
 function cfg(){
   if(mode==='hydro')return {view:'hydro',data:HYDRO,key:'exp',pal:HCAT,hidden:hidden.hydro,title:'Stranded Hydro',
