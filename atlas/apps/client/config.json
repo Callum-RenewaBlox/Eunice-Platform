@@ -1,0 +1,153 @@
+{
+  "app": "client",
+  "audience": "client",
+  "title": "RenewaBlox Client Atlas",
+  "h1": "RenewaBlox Client Atlas",
+  "productLabel": "Client Atlas",
+  "defaultTheme": "paper",
+  "defaultView": "sam",
+  "storageKey": "rbx-client-atlas",
+  "contactEmail": "callum@renewablox.com",
+  "publicUrl": "https://renewablox-client-atlas.streamlit.app/",
+  "switches": {
+    "_doc": "Owner decisions pending (see atlas/README.md). Each is one switch; rebuild with python3 atlas/build.py after changing.",
+    "sam_kw_source": "fit_register",
+    "_sam_kw_source": "fit_register = Rotherdale Farm & Scrivelsby at 998 kW (FiT register; SAM 143.6 MW everywhere) | dno_split = 499 kW (onsite + BM split; SAM 142.6 MW)",
+    "rego_labels": "softened",
+    "_rego_labels": "softened = 'No recent certificates' / 'Certificates declining' on the public page | raw = v1 labels (the client-safety scan then allows them)",
+    "tam_colour_mode": "fuels",
+    "_tam_colour_mode": "families = 3 technology families + Other (validated CVD-safe) | fuels = 9 per-fuel hues (v1 colours; not CVD-validated)"
+  },
+  "tabs": [
+    { "id": "peaker", "label": "Peaker Model", "short": "Peaker" },
+    { "id": "hydro", "label": "Hydro · {{hydro_n}}", "short": "Hydro", "count": "{{hydro_n}}" },
+    { "id": "ppa", "label": "PPA Benchmark", "short": "PPA" }
+  ],
+  "scope": { "tam": "TAM · {{tam_n}}", "sam": "SAM · {{sam_n}}", "tamShort": "TAM", "samShort": "SAM", "tamN": "{{tam_n}}", "samN": "{{sam_n}}" },
+  "menu": ["sources", "link"],
+  "views": {
+    "sam": {
+      "kicker": "PEAKER MODEL · SERVICEABLE MARKET (SAM)",
+      "headline": "{{sam_n}} AD plants that can earn when the grid runs tight",
+      "standfirst": "Verified anaerobic-digestion sites, graded into five Balancing-Mechanism tiers by where they connect. <em>Circle area shows installed capacity.</em>",
+      "universe": "{{sam_n}} sites · {{sam_mw0}} MW",
+      "kpis": [
+        { "label": "Capacity shown", "metric": "sumKw", "unit": "MW", "caption": "installed" },
+        { "label": "Sites shown", "metric": "count", "caption": "of {{sam_n}}" },
+        { "label": "Available for BM", "metric": "sumBm", "unit": "MW", "caption": "known for {known} sites" }
+      ],
+      "capTitle": "Capacity",
+      "sizeKey": { "title": "Installed capacity", "values": [250, 1000, 5000] },
+      "searchGroup": "VERIFIED AD · SAM",
+      "notes": [{ "id": "t1" }, { "id": "largest" }]
+    },
+    "tam": {
+      "kicker": "PEAKER MODEL · ADDRESSABLE MARKET (TAM)",
+      "headline": "{{tam_n}} subsidised generators, {{tam_gw}} GW that could flex",
+      "standfirst": "Biogas, biomass, energy-from-waste, landfill and sewage-gas generators holding RO or FiT accreditation. <em>Colour is technology; shape is subsidy.</em>",
+      "universe": "{{tam_n}} sites · {{tam_mw}} MW",
+      "kpis": [
+        { "label": "Capacity shown", "metric": "sumKw", "unit": "MW", "caption": "installed" },
+        { "label": "Sites shown", "metric": "count", "caption": "of {{tam_n}}" },
+        { "label": "Available for BM", "metric": "sumBm", "unit": "MW", "caption": "known for {known} sites" }
+      ],
+      "capTitle": "Capacity",
+      "sizeKey": { "title": "Capacity band" },
+      "searchGroup": "ALL SUBSIDISED · TAM",
+      "notes": [{ "id": "thames" }, { "id": "scotland" }]
+    },
+    "hydro": {
+      "kicker": "STRANDED HYDRO",
+      "headline": "{{hydro_n}} hydro schemes generating more than the grid will take",
+      "standfirst": "Installed capacity exceeds the export capacity the network allows, so power is stranded behind the meter. <em>Circle area shows stranded kW.</em>",
+      "universe": "{{hydro_n}} sites · {{hydro_str_mw}} MW stranded",
+      "kpis": [
+        { "label": "Stranded capacity shown", "metric": "sumKw", "unit": "MW", "caption": "behind the meter" },
+        { "label": "Sites shown", "metric": "count", "caption": "of {{hydro_n}}" },
+        { "label": "Installed", "metric": "sumInst", "unit": "MW", "caption": "FiT register" }
+      ],
+      "capTitle": "Installed capacity",
+      "sizeKey": { "title": "Stranded capacity", "values": [100, 500, 1300] },
+      "searchGroup": "STRANDED HYDRO",
+      "highlandsChip": "Zoom to Highlands · {{highlands_n}} sites",
+      "notes": [{ "id": "highlands" }, { "id": "largest" }]
+    },
+    "ppa": { "kicker": "PPA & PRICE BENCHMARK" }
+  },
+  "labels": {
+    "tiers": { "1": "Tier 1 · Highest", "2": "Tier 2 · Strong", "3": "Tier 3 · Moderate", "4": "Tier 4 · Modest", "5": "Tier 5 · Lower", "0": "Scotland · no BM revenue" },
+    "tierShort": { "1": "Highest", "2": "Strong", "3": "Moderate", "4": "Modest", "5": "Lower" },
+    "export": { "neg": "Negotiated PPA", "fit": "FiT standard", "btm": "Behind meter", "unk": "Unknown" },
+    "conf": ["High", "Medium", "Low", "Unverified"],
+    "families": ["Landfill gas", "Digestion gas", "Thermal", "Other fuels"],
+    "fuels": ["Landfill gas", "Fuelled (biomass/AD/EfW)", "Biomass", "Waste / EfW", "Biogas (AD)", "Sewage gas", "Advanced fuel", "Biofuel - other", "Biodiesel"]
+  },
+  "bmrev": { "1": { "a": "29.6", "t": "122" }, "2": { "a": "25.3", "t": "104" }, "3": { "a": "21.7", "t": "80" }, "4": { "a": "18.0", "t": "61" }, "5": { "a": "16.0", "t": "50" } },
+  "bmfreq": { "1": "~2× GB average", "2": "~1.5× GB average" },
+  "legend": {
+    "sam": {
+      "title": "BM Tier — projected p/kWh (next 12m)",
+      "rev": { "1": "29.6p avg · 122p top 5%", "2": "25.3p avg · 104p top 5%", "3": "21.7p avg · 80p top 5%", "4": "18.0p avg · 61p top 5%", "5": "16.0p avg · 50p top 5%" },
+      "foot": "Tier 1 sees ~2× and Tier 2 ~1.5× the GB-average offer-event frequency."
+    },
+    "tam": {
+      "title": "TAM · total addressable market",
+      "subsidyTitle": "SUBSIDY · SHAPE",
+      "techTitle": "TECHNOLOGY · RING",
+      "tierTitle": "BM TIER · INDICATIVE",
+      "techNote": "Colours group fuels into three families for colour-blind legibility; each site card names its exact fuel.",
+      "tierCaption": "Filter only; not shown by colour on the map."
+    },
+    "hydro": {
+      "title": "Confidence",
+      "foot": "How confidently each FiT installation was matched to its network export record.",
+      "splitTitle": "Where the power goes"
+    }
+  },
+  "cards": {
+    "offtakerTip": "Inferred from the largest external REGO certificate holder: strong evidence of who buys the power, not contractual proof.",
+    "hydroExplain": "Installed capacity (FiT register) exceeds the export capacity (MEC) the network operator allows, so this share of output has nowhere to go.",
+    "hydroNoExport": "No export connection on the register, so the whole output is stranded behind the meter.",
+    "mailSubject": "RenewaBlox — {name}, {town} ({outcode})",
+    "mailBody": "Hi Callum,\n\nI'd like to talk about {name} ({postcode}): {tier}, {installed} kW installed.\n\nLink: {url}\n"
+  },
+  "drawer": {
+    "title": "Sources & method",
+    "sources": [
+      "Ofgem FiT Installation Report (Mar 2026)",
+      "Ofgem RO / REGO registers (Aug 2026)",
+      "DNO Embedded Capacity Registers (NGED, NPG, SPEN, SSEN Jul-2026, UKPN)",
+      "Elexon BMRS MID",
+      "Montel / EEX (11 Aug 2026)",
+      "postcodes.io",
+      "OpenFreeMap / © OpenStreetMap contributors",
+      "Natural Earth",
+      "AWS Terrain Tiles"
+    ],
+    "provenance": "<b>Provenance.</b> Realised prices — Elexon BMRS Market Index Data, APXMIDP feed, 70,085 half-hourly settlement records Aug 2024–Jul 2026 (the N2EX feed reports zero volume and is excluded). Forward curve — Montel, EEX UK power futures, previous-settlement column, snapshot 11 Aug 2026. Export arrangement and FiT tariffs — Ofgem Feed-in Tariff Installation Report, March 2026; 128 of 129 sites matched on outcode, capacity, commissioning date and local authority. Counterparty — Ofgem Renewable Energy Register, REGO Accredited Stations and REGO Certificates (159 MB, 777,188 rows), current-holder field for the most recent output period. <b>Not shown, because it does not exist publicly:</b> contracted PPA prices for the 108 negotiated sites. Sourcing a discount-to-baseload benchmark is the remaining gap. Forward curve and counterparty data are point-in-time snapshots and need re-pulling to stay current.",
+    "glossary": [
+      ["BM", "The Balancing Mechanism: National Grid ESO's real-time market for flexing generation up or down to keep the system balanced."],
+      ["BM tier", "Five location tiers grading how often and how richly a connection point is called in the Balancing Mechanism. Tier 1 is highest."],
+      ["SAM", "Serviceable market: the 129 verified anaerobic-digestion sites RenewaBlox can serve today."],
+      ["TAM", "Total addressable market: every subsidised biogas, biomass, energy-from-waste, landfill and sewage-gas generator with RO or FiT accreditation."],
+      ["REGO", "Renewable Energy Guarantees of Origin: certificates issued per MWh of renewable output; the holder is usually the buyer of the power."],
+      ["FiT", "Feed-in Tariff: the statutory scheme paying a generation tariff plus a guaranteed export rate."],
+      ["RO", "Renewables Obligation: the certificate-based subsidy scheme for larger generators."],
+      ["MEC / export capacity", "The maximum export capacity the network operator allows a site to send to the grid."],
+      ["Stranded", "Output a site can generate but cannot export, because installed capacity exceeds its export capacity."],
+      ["MPAN", "Meter Point Administration Number: one per metered supply point; some sites aggregate several."],
+      ["Offer event", "A Balancing Mechanism instruction accepting a generator's offer to increase output."]
+    ],
+    "asOf": "Data as of {{as_of}}"
+  },
+  "about": {
+    "title": "About this map",
+    "body": [
+      "The RenewaBlox Client Atlas shows where flexible and stranded renewable capacity can be put to work across Great Britain: {{sam_n}} verified anaerobic-digestion sites that can earn in the Balancing Mechanism, {{tam_n}} subsidised generators that could flex, and {{hydro_n}} hydro schemes generating more than the grid will take.",
+      "The PPA Benchmark sets realised and forward GB power prices against the guaranteed FiT export tariff for every serviceable site.",
+      "Every figure comes from public registers and market data. Balancing Mechanism tiers and revenues are indicative projections, not offers. Sources & method lists each source and how it was used."
+    ]
+  },
+  "attribution": "Geocoding: <a href=\"https://postcodes.io\">postcodes.io</a>",
+  "ppaPlaceholder": "The PPA Benchmark module loads here."
+}

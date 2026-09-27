@@ -1,0 +1,50 @@
+<a class="skip-link" href="#hdrSearch">Skip to search</a>
+<div id="app" class="app" data-view="sam">
+  <header id="hdr" class="hdr" role="banner"></header>
+  <div id="bandSlot" class="band-slot"></div>
+  <main id="stage" class="stage">
+    <section id="mapArea" class="map-area" aria-label="Map">
+      <aside id="rail" class="rail" aria-label="Map key and filters">
+        <button id="railHandle" class="rail-handle" type="button" aria-expanded="false" aria-controls="railBody"><span class="rail-grip" aria-hidden="true"></span><span class="sr-only">Show the full key and filters</span></button>
+        <button id="railCollapse" class="rail-collapse" type="button" aria-expanded="true" aria-controls="railBody" title="Collapse panel (L)"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg><span class="sr-only">Collapse panel</span></button>
+        <div id="railBody" class="rail-body"></div>
+      </aside>
+      <div id="map" class="map"></div>
+      <div class="vignette" aria-hidden="true"></div>
+      <div id="mapFallback" class="map-fallback" hidden>
+        <div class="map-fallback-card"><p class="map-fallback-t">The interactive map couldn't load on this network. The PPA Benchmark and site search still work.</p></div>
+      </div>
+      <div id="sizekey" class="sizekey" aria-hidden="true"></div>
+      <div id="mapCtl" class="map-ctl" role="group" aria-label="Map controls">
+        <button type="button" class="ctl ctl-zoom" id="zIn" aria-label="Zoom in"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4.5v11M4.5 10h11"/></svg></button>
+        <button type="button" class="ctl ctl-zoom" id="zOut" aria-label="Zoom out"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M4.5 10h11"/></svg></button>
+        <button type="button" class="ctl" id="zReset" aria-label="Reset view" title="Reset view (R)"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.8 10a6.2 6.2 0 1 0 1.9-4.5"/><path d="M3.4 3v3.4h3.4"/></svg></button>
+      </div>
+      <div id="offlinePill" class="offline-pill" hidden>Simplified basemap · detail tiles unavailable</div>
+      <div id="tip" class="tip" role="tooltip" hidden></div>
+      <section id="sheet" class="sheet" role="dialog" aria-modal="false" aria-labelledby="sheetName" hidden></section>
+    </section>
+    <section id="ppa" class="ppa-page" aria-label="PPA Benchmark" hidden></section>
+  </main>
+  <div id="footSlot" class="foot-slot"></div>
+</div>
+<div id="palette" class="palette" hidden>
+  <div class="palette-scrim" data-close="1"></div>
+  <div class="palette-box" role="dialog" aria-modal="true" aria-label="Search sites">
+    <div class="palette-in">
+      <svg class="i" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4 4"/></svg>
+      <label for="palQ" class="sr-only">Search sites, towns, postcodes, operators or RO references</label>
+      <input id="palQ" type="text" autocomplete="off" spellcheck="false" placeholder="Search sites, towns, postcodes…" role="combobox" aria-expanded="false" aria-controls="palList" aria-autocomplete="list">
+      <button type="button" class="palette-esc" data-close="1"><span class="kbd">esc</span><span class="sr-only">Close search</span></button>
+    </div>
+    <div id="palList" class="palette-list" role="listbox" aria-label="Results"></div>
+    <div class="palette-foot" aria-hidden="true"><span><span class="kbd">↑</span><span class="kbd">↓</span> navigate</span><span><span class="kbd">↵</span> open</span><span><span class="kbd">esc</span> close</span><span id="palCount" class="palette-count"></span></div>
+  </div>
+</div>
+<div id="drawer" class="drawer" hidden>
+  <div class="drawer-scrim" data-close="1"></div>
+  <section class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawerTitle"></section>
+</div>
+<div id="menuPop" class="menu-pop" role="menu" hidden></div>
+<div id="toasts" class="toasts" aria-live="polite"></div>
+<div id="live" class="sr-only" aria-live="polite"></div>

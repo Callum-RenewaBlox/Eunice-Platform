@@ -1,0 +1,68 @@
+/* Base, shell grid, shared primitives */
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--map-land);color:var(--ink-1)}
+body{font:400 13px/1.45 var(--font-ui);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow:hidden;
+  font-feature-settings:"cv11","ss01"}
+button,input,select{font:inherit;color:inherit}
+button{background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:3px}
+.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none;display:block}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.kbd{display:inline-block;font:500 10.5px/1 var(--font-ui);padding:3px 5px;border-radius:4px;border:1px solid var(--rule-2);color:var(--ink-3);min-width:18px;text-align:center}
+.skip-link{position:fixed;left:8px;top:-60px;z-index:100;background:var(--surface-1);color:var(--ink-1);padding:10px 14px;border-radius:var(--r-2);box-shadow:var(--sh-2);font-weight:600;transition:top var(--dur-2) var(--ease)}
+.skip-link:focus{top:8px}
+
+/* shell */
+.app{display:grid;grid-template-rows:var(--header-h) auto minmax(0,1fr) auto;height:100vh;height:100dvh;width:100%;overflow:hidden}
+.stage{position:relative;min-height:0;min-width:0}
+.map-area{position:absolute;inset:0;overflow:hidden;background:var(--map-land)}
+.map{position:absolute;inset:0}
+.maplibregl-canvas:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+.vignette{position:absolute;inset:0;pointer-events:none;background:var(--vignette);z-index:1}
+.app[data-view="ppa"] .map-area{visibility:hidden}
+.map-fallback{position:absolute;inset:0;display:grid;place-items:center;z-index:2;background:var(--map-land)}
+.map-fallback[hidden]{display:none}
+.map-fallback-card{max-width:420px;margin-left:calc(var(--rail-w) + var(--gutter));padding:22px 24px;background:var(--surface-1);border:1px solid var(--rule);border-radius:var(--r-4);box-shadow:var(--sh-1)}
+.map-fallback-t{margin:0;font:400 16px/1.45 var(--font-display);color:var(--ink-2)}
+
+/* tooltip */
+.tip{position:absolute;z-index:50;pointer-events:none;background:var(--tooltip-bg);color:var(--tooltip-ink);border-radius:var(--r-2);padding:8px 10px;max-width:260px;
+  font:400 12px/1.35 var(--font-ui);box-shadow:var(--sh-2);left:0;top:0}
+.tip[hidden]{display:none}
+.tip-n{font-weight:600;font-size:12.5px;margin-bottom:2px}
+.tip-s{display:flex;align-items:center;gap:6px;opacity:.86;font-variant-numeric:tabular-nums}
+.tip-s svg{flex:none}
+
+/* offline pill */
+.offline-pill{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:10;padding:5px 12px;border-radius:var(--r-pill);background:var(--surface-float);
+  border:1px solid var(--rule);color:var(--ink-2);font:500 11.5px/1.2 var(--font-ui);box-shadow:var(--sh-1);white-space:nowrap}
+.offline-pill[hidden]{display:none}
+
+/* toasts */
+.toasts{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:70;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{pointer-events:auto;display:flex;align-items:center;gap:14px;padding:10px 12px 10px 16px;border-radius:var(--r-3);background:var(--tooltip-bg);color:var(--tooltip-ink);
+  font:500 12.5px/1.35 var(--font-ui);box-shadow:var(--sh-2);max-width:min(560px,92vw);animation:toastIn var(--dur-3) var(--ease)}
+.toast button{font-weight:600;color:var(--lime);padding:4px 8px;border-radius:var(--r-1)}
+.toast button:hover{background:rgba(255,255,255,.08)}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* shared buttons and chips */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:34px;padding:0 14px;border-radius:var(--r-pill);border:1px solid var(--rule-2);
+  font:500 12.5px/1 var(--font-ui);color:var(--ink-1);background:var(--surface-1);white-space:nowrap;text-decoration:none;transition:background var(--dur-1),border-color var(--dur-1)}
+.btn:hover{border-color:var(--ink-3);background:var(--wash)}
+.btn .i{width:14px;height:14px}
+.btn-primary{background:var(--lime);border-color:var(--lime);color:#0B2E2A;font-weight:600}
+.btn-primary:hover{background:#9EDB60;border-color:#9EDB60}
+.btn-ghost{border-color:transparent;background:none}
+.chip{display:inline-flex;align-items:center;gap:6px;font:600 10.5px/1.2 var(--font-ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.tag{display:inline-flex;align-items:center;font:500 10.5px/1 var(--font-ui);letter-spacing:.02em;padding:3px 6px;border-radius:var(--r-pill);border:1px solid var(--rule-2);color:var(--ink-3);cursor:help;white-space:nowrap}
+.eyebrow{font:600 10.5px/1.2 var(--font-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.hatch{background-image:repeating-linear-gradient(135deg,var(--rule-2) 0 1.5px,transparent 1.5px 5px);background-color:var(--wash)}
+.sw{display:inline-block;flex:none;vertical-align:middle}
+.glyph{display:block;flex:none}
+
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+/* Inter joins "Fi" with a dotless i, which makes "FiT" read as "FIT"; keep the brand spelling legible everywhere. */
+*{font-variant-ligatures:no-common-ligatures no-contextual!important}

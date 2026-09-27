@@ -1,57 +1,88 @@
 """RenewaBlox Client Atlas — client-facing opportunity map (public).
 
-A sales-facing Leaflet map for clients and partners:
-- **Hydro** — GB hydro sites with stranded electricity (installed vs export
-  capacity); bubble size = stranded kW, colour = data confidence.
-- **Peaker - BM** — sites with projected Balancing Mechanism offer revenues
-  by tier (average and top-5% p/kWh, next 12 months).
+A sales-facing MapLibre map for prospective clients and partners, in three modes:
+- **Peaker Model** — the serviceable market (SAM: 129 verified AD sites, coloured by Balancing
+  Mechanism tier, sized by installed capacity) and the total addressable market (TAM: 1,309
+  subsidised generators; colour = technology, shape = subsidy).
+- **Hydro** — 57 hydro schemes whose installed capacity exceeds the export capacity the network
+  allows (circle area = stranded kW, colour = match confidence).
+- **PPA Benchmark** — realised and forward GB power prices against the FiT export tariff, and
+  the certificate counterparty and register for every SAM site.
 
-Self-contained and client-safe: it reads ``client_atlas.html`` (a standalone
-Leaflet map with ONLY client-facing data embedded — no scores, operators'
-internal notes, or target rankings) and renders it via ``st.iframe``. No
-database, no secrets.
+Self-contained and client-safe: it reads ``client_atlas.html`` — one self-contained page built by
+``atlas/build.py`` from ``atlas/`` (client-safe data only; the build fails if any investor or
+internal field reaches it) — and renders it via ``st.iframe``. No database, no secrets required.
 
-``client_atlas.html`` is derived from the internal atlas with all internal
-fields stripped out; regenerate it with ``_make_client.py`` if the source
-changes (see git history).
+Deep links: ``?view=sam|tam|hydro|ppa&site=<key>&theme=paper|night`` are validated here and
+injected into the page (``window.__ATLAS_INIT__``). Optional secret ``ATLAS_PUBLIC_URL`` overrides
+the public base URL used by "Copy link".
 
-Run locally:  streamlit run app_client_atlas.py
+Rebuild the page:  python3 atlas/build.py --only client
+Run locally:       streamlit run app_client_atlas.py
 """
-import streamlit as st
+import json
+import re
 from pathlib import Path
+
+import streamlit as st
 
 st.set_page_config(
     page_title="RenewaBlox Client Atlas",
     page_icon=":material/map:",
     layout="wide",
+    initial_sidebar_state="collapsed",
+)
+# Full-bleed: the map page carries its own header, so trim Streamlit's padding (the top inset keeps the
+# iframe clear of Streamlit's floating toolbar).
+st.markdown(
+    "<style>.block-container{padding:3.25rem 1rem 0;max-width:100%}"
+    "header[data-testid='stHeader']{background:transparent}</style>",
+    unsafe_allow_html=True,
 )
 
-# Read the map fresh from the main script on each run (NOT via an imported
-# module): Streamlit re-runs this script but can keep imported modules cached,
-# so reading here keeps the embedded map current after every redeploy.
-CLIENT_HTML = (Path(__file__).resolve().parent / "client_atlas.html").read_text(
-    encoding="utf-8")
+# Read the map fresh from the main script on each run (NOT via an imported module): Streamlit
+# re-runs this script but can keep imported modules cached, so reading here keeps the embedded
+# map current after every redeploy.
+HTML = (Path(__file__).resolve().parent / "client_atlas.html").read_text(encoding="utf-8")
 
-# ----------------------------------------------------------------- sidebar
+# Whitelisted deep-link parameters only; values must match exactly or they are dropped.
+ALLOWED = {
+    "view": r"^(sam|tam|hydro|ppa)$",
+    "site": r"^[A-Za-z0-9-]{1,48}$",
+    "theme": r"^(paper|night)$",
+}
+init = {}
+for key, pattern in ALLOWED.items():
+    value = st.query_params.get(key)
+    if value is not None and re.fullmatch(pattern, str(value)):
+        init[key] = str(value)
+try:
+    public_url = str(st.secrets.get("ATLAS_PUBLIC_URL", "") or "")
+except Exception:  # no secrets file configured
+    public_url = ""
+if re.fullmatch(r"https://[A-Za-z0-9.\-]+(/[A-Za-z0-9._~\-/]*)?", public_url):
+    init["publicUrl"] = public_url
+# JSON-encode and neutralise "</" so the payload can never close the <script> element.
+payload = json.dumps(init, ensure_ascii=True).replace("</", "<\\/")
+HTML = HTML.replace("/*__ATLAS_INIT__*/", "window.__ATLAS_INIT__=" + payload + ";", 1)
+
+# ----------------------------------------------------------------- sidebar (collapsed by default)
 st.sidebar.title("RenewaBlox Client Atlas")
-st.sidebar.caption(
-    "Where stranded renewable capacity meets new revenue — no Watt wasted.")
+st.sidebar.caption("Where stranded renewable capacity meets new revenue — no Watt wasted.")
 st.sidebar.divider()
 st.sidebar.markdown(
-    "**Layers** — switch with the tabs in the map header:\n\n"
-    "- **Hydro** — GB hydro sites with **stranded electricity** (installed vs "
-    "export capacity). Bubble size = stranded kW; colour = data confidence.\n"
-    "- **Peaker - BM** — sites with **projected Balancing Mechanism revenues** "
-    "by tier (average and top-5% p/kWh over the next 12 months).\n\n"
-    "Click any site for its detail card.")
+    "**Views** — switch with the tabs in the map header:\n\n"
+    "- **Peaker Model** — *SAM*: 129 verified anaerobic-digestion sites, coloured by projected "
+    "Balancing Mechanism tier and sized by installed capacity. *TAM*: 1,309 subsidised biogas, "
+    "biomass, energy-from-waste, landfill and sewage-gas generators.\n"
+    "- **Hydro** — 57 hydro schemes generating more than the grid will take (stranded kW).\n"
+    "- **PPA Benchmark** — realised and forward GB power prices against the guaranteed FiT "
+    "export tariff, with each site's export arrangement and certificate counterparty.\n\n"
+    "Search with **/** or **⌘K**; click any site for its detail card.")
 st.sidebar.divider()
 st.sidebar.caption(
-    "Base map © OpenStreetMap contributors · geocoding postcodes.io.")
+    "Base map © OpenStreetMap contributors · OpenFreeMap · Natural Earth · geocoding postcodes.io.")
 
 # -------------------------------------------------------------------- main
-st.title("RenewaBlox Client Atlas")
-st.caption("Where the RenewaBlox Solution fits the map — **no Watt wasted.**")
-
-st.iframe(CLIENT_HTML, height=780)
-
-st.caption("RenewaBlox · contact callum@renewablox.com")
+st.iframe(HTML, height=820)
+st.markdown("RenewaBlox · contact [callum@renewablox.com](mailto:callum@renewablox.com)")
