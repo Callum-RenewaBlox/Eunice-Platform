@@ -1,4 +1,4 @@
-/* RBX.data: decode the compact columnar payload (build.py → compact()) into rows, derive the map properties
+/* RBX.data: decode the compact columnar payload (the build’s compact() encoder) into rows, derive the map properties
    (sv, sk, fam, band, …) and build GeoJSON. Audience-specific derivations go through RBX.hooks.derive. */
 (function () {
   'use strict';
@@ -70,7 +70,7 @@
       r.cap = r.inst != null ? r.inst : r.kw;
       H.hydro(r, ctx);
     });
-    var samByKey = {};
+    var samByKey = Object.create(null);
     sam.forEach(function (r) { samByKey[r.key] = r; });
     tam.forEach(function (r, i) {
       r.id = i; r.kind = 'tam';
@@ -82,7 +82,7 @@
       r.ap = r.p ? 1 : 0;
       r.band = D.band(r.kw);
       r.cap = r.kw || 0;
-      r.samRow = r.sam ? samByKey[r.sam] || null : null;
+      r.samRow = r.sam && Object.prototype.hasOwnProperty.call(samByKey, r.sam) ? samByKey[r.sam] : null;
       if (r.samRow) r.samRow.tamRow = r;
       r.inSam = r.sam ? 1 : 0;
       // half-diameter + 3 at icon-size 1 (selection and hover ring radius, spec 5.1)
@@ -91,7 +91,7 @@
       H.tam(r, ctx);
     });
     D.rows = { sam: sam, hydro: hyd, tam: tam };
-    D.byKey = { sam: samByKey, hydro: {}, tam: {} };
+    D.byKey = { sam: samByKey, hydro: Object.create(null), tam: Object.create(null) };
     hyd.forEach(function (r) { D.byKey.hydro[r.key] = r; });
     tam.forEach(function (r) { D.byKey.tam[r.key] = r; });
     D.ppa = raw.ppa || null;
@@ -102,7 +102,11 @@
   /** Find a row by key in any layer (first match in view order). */
   D.find = function (key, prefer) {
     var order = [prefer, 'sam', 'hydro', 'tam'];
-    for (var i = 0; i < order.length; i++) { var k = order[i]; if (k && D.byKey[k] && D.byKey[k][key]) return D.byKey[k][key]; }
+    if (typeof key !== 'string' || !key) return null;
+    for (var i = 0; i < order.length; i++) {
+      var k = order[i];
+      if (k && D.byKey[k] && Object.prototype.hasOwnProperty.call(D.byKey[k], key)) return D.byKey[k][key];
+    }
     return null;
   };
 

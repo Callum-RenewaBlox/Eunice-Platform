@@ -138,14 +138,186 @@ def display_case(s):
     return r[:1].upper() + r[1:]
 
 
+# ------------------------------------------------------------------ smart title case (names, sites, towns)
+ACRO = {'AD', 'STW', 'WWTW', 'WTW', 'WWTC', 'CHP', 'CCHP', 'UK', 'GB', 'LLP', 'NHS', 'JV', 'SPV', 'CIC', 'EU', 'WRC',
+        'WWT', 'STC', 'RAF', 'MOD', 'II', 'III', 'IV', 'AEL', 'UKPN', 'NGED', 'MFG', 'JFS', 'EDL', 'LGC', 'PMF', 'SSE',
+        'CB', 'SIMEC', 'BIFFA', 'NWWA', 'RSTC', 'FDBL', 'GSRE', 'SELCHP', 'BEDZED', 'JLEN', 'ENGIE'}
+CASE_FIX = {'ltd': 'Ltd', 'plc': 'plc', 'efw': 'EfW', 'mccain': 'McCain', 'ad': 'AD', 'stw': 'STW', 'wwtw': 'WWTW',
+            'wtw': 'WTW', 'chp': 'CHP', 'llp': 'LLP', 'uk': 'UK'}
+SMALL_W = {'and', 'of', 'the', 'at', 'on', 'in', 'for', 'to', 'de', 'by', 'upon', 'le', 'nr', 'with', 'via', 'en'}
+# v1 already title-cased some acronyms ("Edl", "Fka Jfs"): restore them
+TITLE_FIX = {'Edl': 'EDL', 'Jfs': 'JFS', 'Fka': 'fka', 'Pmf': 'PMF', 'Lgc': 'LGC', 'Mfg': 'MFG'}
+HYPH_SMALL = {'super', 'upon', 'on', 'under', 'next', 'the', 'le', 'en', 'in', 'by', 'sur', 'de'}
+# words inside operator parentheticals that are notes, not names ("fka", "op.", "now", "t/a" …): never capitalised
+NOTE_W = {'fka', 'op', 'orig', 'mgd', 'acq', 'now', 'owned', 'via', 'site', 'run', 'by', 't', 'a', 'in', 'liquidation',
+          'partnership', 'local', 'authority', 'of', 'former', 'sludge', 'with'}
+PC_RX = re.compile(r'^[A-Za-z]{1,2}\d[A-Za-z\d]?$|^\d[A-Za-z]{2}$')
+TRAIL_PC_RX = re.compile(r'[\s,]+[A-Za-z]{1,2}\d[A-Za-z\d]?\s*\d[A-Za-z]{2}\s*$')
+
+
+def _cap(w):
+    lw = w.lower()
+    if lw in CASE_FIX:
+        return CASE_FIX[lw]
+    if lw.startswith('mc') and len(lw) > 3:
+        return 'Mc' + lw[2:3].upper() + lw[3:]
+    if re.match(r"^[a-z]'[a-z]", lw):
+        return lw[0].upper() + "'" + lw[2].upper() + lw[3:]
+    return lw[:1].upper() + lw[1:]
+
+
+def smart_title(s, lower_fix=True, op_notes=False):
+    """Display case for public names, sites and towns (T08 / D2).
+    * ALL-CAPS words become Title Case when the string is mostly capitals (≥ 60 %), or when they sit in a run of two
+      or more capitalised words ("WEST BERKSHIRE COUNCIL (local authority)" → "West Berkshire Council (local authority)");
+      acronyms (AD, STW, WWTW, CHP, UK, LLP …) and postcodes stay upper-case; Ltd / plc / EfW get their house form.
+    * lower-case significant words are capitalised ("Station farm" → "Station Farm", "Banbury ad plant" →
+      "Banbury AD Plant"); small words (and, of, the, nr …) stay lower except first; hyphenated place names keep
+      their joiners lower ("Weston-super-Mare").
+    * Existing mixed-case words (McCain, GwyriAD, BioticNRG) are left alone."""
+    if not s:
+        return s
+    s = re.sub(r'\s+', ' ', s.strip()).replace(' ,', ',')
+    # share of capitals over the words that are not acronyms or initials
+    letters = [c for w in re.findall(r"[A-Za-z]+", s) if len(w) >= 2 and w not in ACRO for c in w]
+    caps_mode = bool(letters) and sum(c.isupper() for c in letters) / len(letters) >= 0.6
+    toks = re.split(r"([A-Za-z0-9'’]+)", s)       # odd indices are words, even are separators
+    words = list(range(1, len(toks), 2))
+    is_caps = {i: toks[i].isalpha() and toks[i].isupper() for i in words}
+    # runs of all-caps words joined only by spaces / & / , / -
+    in_run = set()
+    run = []
+
+    def run_ok(r):
+        return len(r) >= 2 and any(len(toks[j]) >= 3 and toks[j] not in ACRO for j in r)
+    # a parenthetical written wholly in capitals ("(SWALCLIFFE)") is converted like a caps string
+    caps_paren = set()
+    for m in re.finditer(r'\(([^()]*)\)', s):
+        inner = [c for c in m.group(1) if c.isalpha()]
+        if inner and all(c.isupper() for c in inner):
+            caps_paren.update(range(m.start(), m.end()))
+    pos, tok_pos = 0, {}
+    for i, t in enumerate(toks):
+        tok_pos[i] = pos
+        pos += len(t)
+    for n, i in enumerate(words):
+        if is_caps[i] and (not run or re.fullmatch(r"[\s&,\-]*", toks[i - 1] or '')):
+            run.append(i)
+        else:
+            if run_ok(run):
+                in_run.update(run)
+            run = [i] if is_caps[i] else []
+    if run_ok(run):
+        in_run.update(run)
+    depth, first = 0, True
+    for i in range(len(toks)):
+        t = toks[i]
+        if i % 2 == 0:
+            depth += t.count('(') - t.count(')')
+            continue
+        prev_sep, next_sep = toks[i - 1], toks[i + 1] if i + 1 < len(toks) else ''
+        lw = t.lower()
+        if any(c.isdigit() for c in t):
+            if PC_RX.match(t):
+                toks[i] = t.upper()
+        elif is_caps[i]:
+            if t in ACRO or len(t) == 1:
+                pass
+            elif (caps_mode and depth == 0) or i in in_run or (tok_pos[i] in caps_paren and len(t) >= 3):
+                toks[i] = 'Ltd' if t == 'LTD' else 'plc' if t == 'PLC' else 'EfW' if t == 'EFW' else (
+                    lw if (not first and lw in SMALL_W) else _cap(t))
+        elif t in TITLE_FIX:
+            toks[i] = TITLE_FIX[t]
+        elif t.islower() or (t[:1].isupper() and t[1:].islower() and lw in CASE_FIX):
+            if lw in CASE_FIX and (lower_fix or t[:1].isupper()):
+                toks[i] = CASE_FIX[lw]
+            elif not lower_fix or depth > 0:
+                pass                                   # parentheticals keep their own case ("(1 of 3)", "(fka …)")
+            elif op_notes and lw in NOTE_W:
+                pass
+            elif prev_sep.endswith('-') and next_sep.startswith('-') and lw in HYPH_SMALL:
+                toks[i] = lw
+            elif not first and lw in SMALL_W:
+                pass
+            elif t.islower():
+                toks[i] = _cap(t)
+        first = False
+    out = ''.join(toks)
+    out = re.sub(r'\bAD Site\b', 'AD site', out)
+    return out[:1].upper() + out[1:]
+
+
+def clean_site(site):
+    """Public site string: placeholders dropped, trailing postcode stripped, smart-title-cased."""
+    site = (site or '').strip()
+    if site.upper() in ('DATA NOT AVAILABLE', 'EXPORT', 'IMPORT METER'):
+        return ''
+    cut = TRAIL_PC_RX.sub('', site).strip(' ,')
+    if cut and not re.fullmatch(r'AD site', cut, re.I):      # "AD site LA2 0AG" keeps its postcode (it is the name)
+        site = cut
+    return smart_title(site)
+
+
+REDACTED_RX = re.compile(r'^\W*redacted\W*$', re.I)
+WITHHELD = 'Name withheld (FiT register)'
+
+
 # Research notes left inside v1 operator strings (e.g. "(in liquidation; site=Farmgen, Warton — verify owner)",
 # "(developer; SPV TBC)") are internal working notes and must never reach a public page.
 OP_NOTE_RX = re.compile(r'\s*\((?=[^)]*(?:\bverify\b|\bTBC\b|\bTODO\b|site=|\?))[^)]*\)', re.I)
+# researcher parentheticals: role notes ("site op.; X was contractor", "landowner; …", "site owner; …", "developer; …")
+ROLE_NOTE_RX = re.compile(r'\s*\((?=[^)]*(?:contractor|\bsite owner\b|\blandowner\b|\bsite op\.|\bdeveloper;))[^)]*\)', re.I)
+# private individuals named in a parenthetical: "(Dr Stephen Temple)", "(Neil Gemmell)", "(Glyn family)"
+ORG_W = {'Ltd', 'Limited', 'Estates', 'Estate', 'Farms', 'Farm', 'Water', 'Biogas', 'Capital', 'Energy', 'Power', 'Green',
+         'Renewables', 'Generation', 'Group', 'Holdings', 'Partners', 'Trust', 'Council', 'Foods', 'Change', 'Upcycle'}
+PERSON_RX = re.compile(r'\s*\((?:(?:Dr|Mr|Mrs|Ms|Miss)\.?\s[^)]*|[^)]*\bfamily|([A-Z][a-z]+) ([A-Z][a-z]+))\)')
+
+
+def _strip_person(m):
+    if m.group(1) and (m.group(1) in ORG_W or m.group(2) in ORG_W):
+        return m.group(0)
+    return ''
+
+
+# A short factual company status inside a stripped research note ("(in liquidation; site=… — verify owner)") is kept
+# for the investor build only, as its own field (`opSt`) that the cards, search and CSV show as a muted tag (DI1).
+OP_STATUS_RX = re.compile(r'\b(in liquidation|in administration|in receivership|dissolved|struck off)\b', re.I)
+
+
+def op_status(*raws):
+    """Factual company status from the parentheticals of the raw operator / developer strings, else None."""
+    for raw in raws:
+        for par in re.findall(r'\(([^)]*)\)', raw or ''):
+            m = OP_STATUS_RX.search(par)
+            if m:
+                return m.group(1).lower()
+    return None
+
+
+# A sole trader's operator string is a private individual's name (e.g. "Firstname Surname"). The public client page
+# shows PRIVATE_OPERATOR instead; the gated investor build keeps the name.
+PRIVATE_OPERATOR = 'Private operator'
+PERSON_NAME_RX = re.compile(r"(?:(?:Dr|Mr|Mrs|Ms|Miss)\.?\s)?[A-Z][a-z]+(?:[-'][A-Za-z]+)?(?:\s[A-Z]\.?)?\s[A-Z][a-z]+(?:[-'][A-Za-z]+)?")
+
+
+def is_personal_name(op):
+    """True when an operator string is just a person's name (no organisation word)."""
+    return bool(op) and bool(PERSON_NAME_RX.fullmatch(op.strip())) and not (set(op.split()) & ORG_W)
+
+
+def client_operator(op):
+    """Operator for the public client page: a private individual's name is replaced by PRIVATE_OPERATOR."""
+    return PRIVATE_OPERATOR if is_personal_name(op) else op
 
 
 def public_operator(op):
-    """Operator as shown publicly: research-note parentheticals stripped, then display-cased."""
-    return display_case(OP_NOTE_RX.sub('', op or '').strip())
+    """Operator as shown publicly: research-note, role-note and personal-name parentheticals stripped, then
+    display-cased per word (mixed-case words kept)."""
+    op = OP_NOTE_RX.sub('', op or '')
+    op = ROLE_NOTE_RX.sub('', op)
+    op = PERSON_RX.sub(_strip_person, op).strip()
+    op = display_case(op)
+    return smart_title(op, lower_fix=True, op_notes=True)
 
 
 def clean_counterparty(o):
@@ -237,7 +409,7 @@ def main():
     assert len(reg_by_pc) == 129
 
     # ---------------- SAM (client)
-    sam, sam_reg, inv_sam, inv_reg, kw_dno = [], [], [], [], {}
+    sam, sam_reg, inv_sam, inv_reg, kw_dno, raw_site = [], [], [], [], {}, {}
     inv_by_pc = {pcn(p['pc']): p for p in I['PEAKER']}
     assert len(inv_by_pc) == 129
     for p in C['PEAKER']:
@@ -245,22 +417,26 @@ def main():
         pk = C['PKD'][p['rank']]
         reg = reg_by_pc[key]
         assert abs(float(reg['installed_kw']) - float(p['installed_kw'])) < 0.01, key
-        site = (p.get('site') or '').strip()
-        if site.upper() == 'DATA NOT AVAILABLE':
-            site = ''
-        pname = site.split(',')[0].strip() if site else (p.get('operator') or p.get('town') or p['postcode'])
+        raw_site[key] = (p.get('site') or '').strip()
+        site = clean_site(p.get('site'))
+        op = (p.get('operator') or '').strip()
+        if op.upper() == 'DATA NOT AVAILABLE':
+            op = ''
+        op = public_operator(op)
+        if inv_by_pc[key]['n'] == 'AD site (name withheld)':
+            # v1 investor withheld these names; the operator stays in the Operator row, never as the title
+            pname = 'AD site (%s)' % re.match(r'^([A-Z]{1,2}\d[A-Z\d]?)', key).group(1)
+        else:
+            pname = site.split(',')[0].strip() if site else (re.sub(r'\s*\([^)]*\)', '', op).strip() or smart_title(p.get('town') or '') or p['postcode'])
         town = (p.get('town') or '').strip()
         if town.upper() == 'DATA NOT AVAILABLE':
             town = ''
         la = (p.get('local_authority') or '').strip()
         la = re.sub(r'-\s*County of$', '', la).strip() if la.upper() != 'DATA NOT AVAILABLE' else ''
-        op = (p.get('operator') or '').strip()
-        if op.upper() == 'DATA NOT AVAILABLE':
-            op = ''
         comm = intish(reg.get('commissioned') or p.get('commissioned'))
         row = {
-            'key': key, 'name': display_case(pname), 'site': site, 'town': display_case(town), 'la': la,
-            'pc': p['postcode'].strip().upper(), 'op': public_operator(op), 't': int(p['tier']),
+            'key': key, 'name': smart_title(pname), 'site': site, 'town': smart_title(town), 'la': la,
+            'pc': p['postcode'].strip().upper(), 'op': client_operator(op), 't': int(p['tier']),
             'kw': intish(p['installed_kw']), 'kwOn': intish(pk[1]), 'kwBm': intish(pk[2]),
             'comm': comm, 'lat': r5(p['lat']), 'lon': r5(p['lon'])}
         sam.append(row)
@@ -274,13 +450,16 @@ def main():
         # investor overlay (commercial fields + raw register)
         ip = inv_by_pc[key]
         assert ip['t'] == p['tier'], key
-        inv_sam.append(dict(row, rank=p['rank'], invName=ip['n'], g=ip['g'], dev=ip['dev'], inst=intish(ip['inst']),
+        inv_sam.append(dict(row, op=op, rank=p['rank'], g=ip['g'], dev=public_operator(ip['dev']) or None, inst=intish(ip['inst']),
                             av=ip['av'], btc=ip['btc'], en=ip['en'], tcv=ip['tcv'], tcvT=ip['tcvT'],
                             web=(p.get('website') or '').strip() or None))
+        st = op_status(p.get('operator'), ip['dev'], reg.get('operator'))
+        if st:
+            inv_sam[-1]['opSt'] = st          # investor only; never in the client allowlist
         ir = {k: v for k, v in reg.items() if k not in ('lat', 'lon')}
         ir.update({'key': key, 'offtaker_raw': reg.get('offtaker'), 'offtaker': clean_counterparty(reg.get('offtaker')),
-                   'operator': display_case((reg.get('operator') or '').strip()),
-                   'town': display_case((reg.get('town') or '').strip()) or None})
+                   'operator': public_operator((reg.get('operator') or '').strip()),
+                   'town': smart_title((reg.get('town') or '').strip()) or None})
         inv_reg.append(ir)
 
     # neutral register order for the client: tier ascending, then kW descending, then name
@@ -296,7 +475,7 @@ def main():
     # ---------------- Hydro (client HYDRO_S + HYX aligned by index; investor HYDRO joined by name+coords)
     hyd = []
     for h, x in zip(C['HYDRO_S'], C['HYX']):
-        hyd.append({'key': 'h-' + slug(h['name']), 'name': display_case(h['name']), 'exp': h['exp'], 'conf': h['conf'],
+        hyd.append({'key': 'h-' + slug(h['name']), 'name': smart_title(display_case(h['name'])), 'exp': h['exp'], 'conf': h['conf'],
                     'kw': h['kw'], 'inst': x[0], 'mec': x[1], 'lat': r5(h['lat']), 'lon': r5(h['lon'])})
     assert len({h['key'] for h in hyd}) == 57, 'hydro keys not unique'
     inv_hyd = []
@@ -307,7 +486,7 @@ def main():
             m = [h for h in hyd if abs(h['lat'] - ih['lat']) < 1e-4 and abs(h['lon'] - ih['lon']) < 1e-4]
         assert len(m) == 1, ('hydro join', ih['n'])
         assert m[0]['kw'] == ih['kw'] and m[0]['exp'] == ih['exp'] and m[0]['conf'] == ih['conf'], ih['n']
-        inv_hyd.append(dict(m[0], invName=ih['n'], btc=ih['btc'], en=ih['en'], tcv=ih['tcv'], tcvT=ih['tcvT']))
+        inv_hyd.append(dict(m[0], btc=ih['btc'], en=ih['en'], tcv=ih['tcv'], tcvT=ih['tcvT']))
     assert len({h['key'] for h in inv_hyd}) == 57
     hyd.sort(key=lambda h: -h['kw'])
     inv_hyd.sort(key=lambda h: -h['kw'])
@@ -321,9 +500,6 @@ def main():
     for i, (t, it) in enumerate(zip(C['TAM'], I['TAM'])):
         assert t['n'] == it['n'] and t['f'] == it['f'] and t.get('kw') == it.get('kw'), i
         ro = t.get('ro') or None
-        base = ro if ro else 't' + slug(t['n'])[:16].strip('-') + '-' + geohash(t['lat'], t['lon'], 3)
-        keys[base] += 1
-        key = base if keys[base] == 1 else base + '-' + str(keys[base])
         samkey = None
         if t.get('sam'):
             cand = sam_by_ll.get((round(t['lat'], 4), round(t['lon'], 4)), [])
@@ -334,16 +510,33 @@ def main():
         name = t['n']
         if len(name) >= 54:
             # v1 cut TAM names at 54 characters; restore the full site string from the SAM row it matches
-            full = [c['site'] for c in sam if c.get('site') and c['site'].startswith(name) and len(c['site']) > len(name)]
+            full = [v for v in raw_site.values() if v and v.startswith(name) and len(v) > len(name)]
             if samkey:
-                full = [c['site'] for c in sam if c['key'] == samkey and c.get('site', '').startswith(name)] or full
-            exact = any(c.get('site') == name for c in sam)
+                full = [raw_site[samkey]] if raw_site.get(samkey, '').startswith(name) else full
+            exact = any(v == name for v in raw_site.values())
             if len(set(full)) == 1:
                 name = full[0]
                 n_full += 1
             elif not exact:
                 name = name.rstrip(' ,-(/') + '…'     # no full source exists: mark the v1 cut honestly
-        row = {'key': key, 'n': display_case(name), 'f': t['f'], 'kw': t.get('kw'), 'bm': t.get('bm'),
+        srow = next((c for c in sam if c['key'] == samkey), None) if samkey else None
+        if srow and (srow['name'].startswith('AD site (') or re.fullmatch(r'export|import meter', name, re.I)
+                     or name == (inv_by_pc[samkey].get('dev') or '')):
+            name = srow['name']                  # withheld / placeholder / operator-as-name: use the SAM title
+        elif REDACTED_RX.match(name):
+            name = WITHHELD
+        elif re.fullmatch(r'export|import meter', name, re.I):
+            name = 'Unnamed site (FiT register)'
+        else:
+            cut = TRAIL_PC_RX.sub('', name).strip(' ,')
+            if cut and not re.fullmatch(r'AD site', cut, re.I):
+                name = cut
+        pub = name if (name in (WITHHELD, 'Unnamed site (FiT register)') or (srow and name == srow['name'])) else smart_title(display_case(name))
+        # stable key from the RO code, else from the PUBLIC name (a raw name can hold a withheld or personal name)
+        base = ro if ro else 't' + slug(pub)[:16].strip('-') + '-' + geohash(t['lat'], t['lon'], 3)
+        keys[base] += 1
+        key = base if keys[base] == 1 else base + '-' + str(keys[base])
+        row = {'key': key, 'n': pub, 'f': t['f'], 'kw': t.get('kw'), 'bm': t.get('bm'),
                'p': 1 if t.get('p') == 'approx' else 0, 'bt': t['bt'], 'ro': ro, 'units': t.get('units'),
                'sam': samkey, 'lat': r5(t['lat']), 'lon': r5(t['lon'])}
         tam.append(row)

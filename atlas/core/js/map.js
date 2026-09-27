@@ -92,11 +92,29 @@
   M.updateOfflinePill = function () {
     var el = document.getElementById('offlinePill'), m = RBX.map;
     if (!el) return;
-    el.hidden = !(m && m.__rbxBasemapMode === 'offline' && m.getZoom() >= 7.2 && RBX.state.view !== 'ppa');
+    var mode = m && m.__rbxBasemapMode, slow = !!(m && m.__rbxBasemapSlow && mode !== 'offline');
+    if (!el.getAttribute('data-offline-text')) el.setAttribute('data-offline-text', el.textContent);
+    el.textContent = slow ? 'Detail tiles loading slowly' : el.getAttribute('data-offline-text');
+    el.classList.toggle('slow', slow);
+    el.hidden = !(m && (mode === 'offline' || slow) && m.getZoom() >= 7.2 && RBX.state.view !== 'ppa');
+    M.centreChrome(el);
+  };
+  /** Centre a top-of-map pill over the unobstructed part of the map (between the rail and an open card). */
+  M.centreChrome = function (el) {
+    if (!el || el.hidden) return;
+    if (U.isMobile()) { el.style.left = ''; return; }
+    var area = document.getElementById('mapArea'); if (!area) return;
+    var o = M.obstruction(), w = area.clientWidth;
+    el.style.left = Math.round((o.left || 0) + (w - (o.left || 0) - (o.right || 0)) / 2) + 'px';
   };
 
   M.fallback = function (reason) {
+    if (M.failed) return;
+    M.failed = true;
+    clearTimeout(M.watch);
+    var old = RBX.map;
     RBX.map = null;
+    if (old) { try { old.remove(); } catch (e) { /* ignore */ } }
     var fb = document.getElementById('mapFallback'); if (fb) fb.hidden = false;
     var ctl = document.getElementById('mapCtl'); if (ctl) ctl.hidden = true;
     if (window.console) console.warn('[atlas] map unavailable: ' + reason);
@@ -116,27 +134,43 @@
     return fetch(ml.getWorkerUrl()).then(function (r) { return r.text(); }).then(function (src) {
       ml.setWorkerUrl(URL.createObjectURL(new Blob([shim + src], { type: 'text/javascript' })));
       return true;
-    }).catch(function () { return false; });
+    }).catch(function (e) {
+      if (window.console) console.warn('[atlas] worker shim failed; the map may not load inside this frame', e && e.message);
+      return false;
+    });
   };
 
+  /** MapLibre loads async (a hanging CDN must not block the shell): wait for it up to 8 s, then show the fallback. */
   M.init = function (boot, onLoad) {
-    if (!window.maplibregl || !window.RBXBasemap) { M.fallback('MapLibre not loaded'); return false; }
-    M.prepareWorker().then(function () { M.create(boot, onLoad); });
+    var t0 = Date.now();
+    (function wait() {
+      if (window.maplibregl && window.RBXBasemap) {
+        M.prepareWorker().then(function () { M.create(boot, onLoad); });
+        return;
+      }
+      if (!window.RBXBasemap || Date.now() - t0 > (M.LOAD_TIMEOUT || 8000) || window.__rbxMaplibreFailed) { M.fallback('MapLibre not loaded'); return; }
+      setTimeout(wait, 50);
+    })();
     return true;
   };
-  M.create = function (boot, onLoad) {
+  M.create = function (boot, onLoad, noCam) {
     var cfg = RBX.config;
     var start = boot.view === 'ppa' ? (RBX.state.lastPeaker || 'sam') : boot.view;
     var opts = {
-      container: 'map', style: window.RBXBasemap.style(boot.theme, { focus: 'uk' }),
+      // the DEM (third-party host) is added only after the data layers are on the map (M.addRelief)
+      container: 'map', style: window.RBXBasemap.style(boot.theme, { focus: 'uk', deferTerrain: true }),
       minZoom: 4.2, maxZoom: 15, maxBounds: [[-28, 44.5], [18, 63.5]],
       attributionControl: { compact: true, customAttribution: cfg.attribution || 'Geocoding: <a href="https://postcodes.io">postcodes.io</a>' },
       dragRotate: false, pitchWithRotate: false, touchPitch: false
     };
-    if (boot.cam) { opts.center = boot.cam.c; opts.zoom = boot.cam.z; }
+    if (boot.cam && !noCam) { opts.center = boot.cam.c; opts.zoom = boot.cam.z; }
     else { opts.bounds = M.viewBounds(start); opts.fitBoundsOptions = { padding: M.fitPadding(), maxZoom: 7.2 }; }
     var map;
-    try { map = new window.maplibregl.Map(opts); } catch (e) { M.fallback(e && e.message); return false; }
+    try { map = new window.maplibregl.Map(opts); } catch (e) {
+      // a bad boot camera must never cost the whole map: retry once on the default framing
+      if (boot.cam && !noCam) return M.create(boot, onLoad, true);
+      M.fallback(e && e.message); return false;
+    }
     RBX.map = map;
     try { map.getCanvas().setAttribute('aria-label', 'Map of sites. Arrow keys pan, plus and minus zoom; use search (/) to reach any site.'); } catch (e) { /* ignore */ }
     map.touchZoomRotate.disableRotation();
@@ -147,25 +181,68 @@
       var url = (e && e.error && e.error.url) || (e && e.source && e.source.url) || '';
       if (!/openfreemap|Failed to fetch|NetworkError|AJAXError|\.pbf|terrarium|elevation-tiles|glyphs|tiles/i.test(msg + ' ' + url) && window.console) console.warn('[atlas] map error: ' + msg);
     });
-    var cities = window.RBXBasemap.cities.filter(function (c) { return c[1] > -11 && c[1] < 1.9; });
+    var cities = M.cities = window.RBXBasemap.cities.filter(function (c) { return c[1] > -11 && c[1] < 1.9; });
     M.basemap = window.RBXBasemap.attach(map, { cities: cities, onMode: function () { M.updateOfflinePill(); } });
 
-    map.on('load', function () {
+    // Data layers go on as soon as the style has parsed ('style.load'), not on 'load': 'load' waits for every source,
+    // so a hanging or failing third-party host (DEM, vector tiles) would otherwise leave an empty map.
+    var wired = false, readyDone = false;
+    var markReady = function () {
+      if (readyDone || M.failed) return; readyDone = true;
+      var fr = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+      var br = (M.basemap && M.basemap.ready && M.basemap.ready.then) ? M.basemap.ready : Promise.resolve();
+      Promise.all([fr, br.catch ? br.catch(function () {}) : br]).then(function () {
+        setTimeout(function () { window.__atlasReady = true; RBX.bus.emit('ready'); M.addRelief(); M.prewarm(); }, 120);
+      });
+    };
+    var wire = function () {
+      if (wired || M.failed || RBX.map !== map) return;
+      wired = true;
       if (U.isMobile()) { var ab = document.querySelector('.maplibregl-ctrl-attrib'); if (ab) ab.classList.remove('maplibregl-compact-show'); }
       onLoad(map);
-      var ready = function () {
-        var fr = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
-        var br = (M.basemap && M.basemap.ready && M.basemap.ready.then) ? M.basemap.ready : Promise.resolve();
-        Promise.all([fr, br.catch ? br.catch(function () {}) : br]).then(function () { setTimeout(function () { window.__atlasReady = true; RBX.bus.emit('ready'); }, 120); });
-      };
-      map.once('idle', ready);
-    });
+      map.once('idle', markReady);
+      // Our own GeoJSON sources load in the map's worker. If none has loaded after 9 s, the worker cannot talk to the
+      // page (e.g. a broken srcdoc origin shim): the map would stay empty, so show the fallback panel instead.
+      setTimeout(function () {
+        if (M.failed || RBX.map !== map || readyDone) return;
+        var any = false;
+        ['sam', 'hydro', 'tam'].forEach(function (k) { try { any = any || map.isSourceLoaded(k); } catch (e) { /* ignore */ } });
+        if (!any) M.fallback('map data did not load (map worker unreachable)');
+      }, M.DATA_TIMEOUT || 9000);
+      // a source that never settles (hanging host) must not hold __atlasReady forever
+      setTimeout(markReady, M.READY_TIMEOUT || 12000);
+    };
+    map.once('style.load', wire);
+    map.on('styledata', function () { if (!wired && map.isStyleLoaded()) wire(); });
+    // Watchdog: the style never parsed (e.g. the worker cannot talk to the page) → fallback panel + ready.
+    M.watch = setTimeout(function () {
+      if (wired || M.failed || RBX.map !== map) return;
+      var parsed = false;
+      try { parsed = !!(map.style && map.style._loaded); } catch (e) { parsed = false; }
+      if (parsed) wire(); else M.fallback('map did not load');
+    }, M.WATCHDOG_MS || 12000);
     map.on('zoomend', M.updateOfflinePill);
+    window.addEventListener('resize', U.rafThrottle(M.updateOfflinePill));
     map.on('movestart', function (e) { if (e && e.originalEvent) M.userMoved = true; });
     map.on('moveend', function () { if (RBX.state.view !== 'ppa') RBX.state.writeHash(); });
     if (window.ResizeObserver) {
       new ResizeObserver(U.rafThrottle(function () { if (RBX.map) RBX.map.resize(); })).observe(document.getElementById('map'));
     }
     return true;
+  };
+  /** While idle, pre-build the other theme's basemap labels and TAM icons so a theme switch only swaps images. */
+  M.prewarm = function () {
+    var idle = window.requestIdleCallback || function (f) { return setTimeout(f, 400); };
+    idle(function () {
+      var m = RBX.map; if (!m) return;
+      var other = RBX.state.theme === 'night' ? 'paper' : 'night';
+      if (M.basemap && M.basemap.prewarm) M.basemap.prewarm(other);
+      idle(function () { if (RBX.map && RBX.icons && RBX.icons.ensure) { try { RBX.icons.ensure(RBX.map, other); } catch (e) { /* ignore */ } } });
+    });
+  };
+  /** Relief (DEM hillshade) is added once the map is ready, so the third-party DEM host never blocks markers. */
+  M.addRelief = function () {
+    var m = RBX.map; if (!m || !window.RBXBasemap || !window.RBXBasemap.addTerrain) return;
+    if (window.RBXBasemap.addTerrain(m, RBX.state.theme) && RBX.layers && RBX.layers.relief) RBX.layers.relief(RBX.state.view === 'ppa' ? RBX.state.lastPeaker : RBX.state.view);
   };
 })();

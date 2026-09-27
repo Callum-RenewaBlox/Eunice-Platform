@@ -34,6 +34,11 @@
   --tier-1: #004A2D; --tier-2: #1D6835; --tier-3: #478638; --tier-4: #6F9E45; --tier-5: #93B163;
   --tier-hot-1: #F7FFD6; --tier-hot-2: #E6F7C9; --tier-hot-3: #D5F0D2; --tier-hot-4: #CCE7D4; --tier-hot-5: #C3DACB;
   --fam-0: #B07A1C; --fam-1: #0B7C55; --fam-2: #5A62CA; --fam-3: #8A877C;
+  /* TAM per-fuel rings (switches.tam_colour_mode "fuels"), in labels.fuels order: landfill gas, fuelled (mixed),
+     biomass, waste/EfW, biogas (AD), sewage gas, advanced fuel, biofuel-other, biodiesel. Each ≥ 3:1 on --map-land;
+     validated with tools/validate_palettes.sh (see README "TAM fuel palette"). */
+  --fuel-0: #8F5202; --fuel-1: #6D84AD; --fuel-2: #E25E01; --fuel-3: #960B28; --fuel-4: #0A7756;
+  --fuel-5: #844386; --fuel-6: #0947BE; --fuel-7: #778F49; --fuel-8: #524F50;
   --tam-fill: rgba(250,247,240,.66); --tam-halo: rgba(250,247,240,.85);
   --samdot: #8FD14F; --samdot-stroke: #0B2E2A;
   --hyd-0: #15557E; --hyd-1: #3F84AE; --hyd-2: #7EADC7; --hyd-unv: #8A877C;
@@ -100,6 +105,8 @@
 
   --tier-1: #D7F96C; --tier-2: #A2DD50; --tier-3: #6FBF5D; --tier-4: #4E9F63; --tier-5: #407E5B;
   --fam-0: #BF8834; --fam-1: #2A9E7A; --fam-2: #7F88E4; --fam-3: #8C8A80;
+  --fuel-0: #A56500; --fuel-1: #7E95BD; --fuel-2: #EB6803; --fuel-3: #C13750; --fuel-4: #02AF7F;
+  --fuel-5: #A458A3; --fuel-6: #4C82F0; --fuel-7: #8E9448; --fuel-8: #717171;
   --tam-fill: rgba(10,18,17,.62); --tam-halo: rgba(6,11,12,.80);
   --hyd-0: #A5D2EA; --hyd-1: #5E9EC3; --hyd-2: #3A7596; --hyd-unv: #8C8A80;
   --hyd-hot-0: #EAF6FC; --hyd-hot-1: #CFE6F3; --hyd-hot-2: #B4D3E4;

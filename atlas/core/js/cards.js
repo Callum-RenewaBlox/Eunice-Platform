@@ -128,7 +128,7 @@
 
   // ------------------------------------------------------------------ TAM
   Sh.chip.tam = function (r) {
-    return '<span class="fuelchip">' + RBX.icons.forRow(r, 12) + U.esc(r.fuel) + ' · ' + (r.ro ? 'RO' : 'FiT') + '</span>';
+    return '<span class="fuelchip">' + RBX.icons.forRow(r, 12) + '<span>' + U.caseSafe(r.fuel + ' · ' + (r.ro ? 'RO' : 'FiT')) + '</span></span>';
   };
   Sh.section('tam', 'head', { order: 10, render: function (r) {
     var h = C.head(r.name, [r.fuel, r.ro]);
@@ -161,12 +161,14 @@
   } });
   Sh.section('hydro', 'stranded', { order: 20, render: function (r) {
     var P = RBX.theme.pal(), cc = RBX.config.cards || {}, col = r.c === 3 ? P.unv : P.hyd[r.c];
-    var tot = r.inst || ((r.kw || 0) + (r.mec || 0)) || 1, pe = (r.mec || 0) / tot * 100, ps = (r.kw || 0) / tot * 100;
+    var tot = r.inst || ((r.kw || 0) + (r.mec || 0)) || 1;
+    // rounded shares always sum to 100 (captions and aria label use the same integers)
+    var pe = Math.max(0, Math.min(100, Math.round((r.mec || 0) / tot * 100))), ps = 100 - pe;
     var h = '<div class="hero" style="color:' + col + '">' + U.int(r.kw) + '<small>kW stranded</small></div>';
     if (r.exp === 'No export') h += '<div style="margin-top:10px"><span class="badge">No export</span></div>';
     else h += '<div class="figs two" style="margin-top:14px">' + C.fig('Installed capacity', U.int(r.inst), 'kW') + C.fig('Export capacity', U.int(r.mec), 'kW') + '</div>';
-    h += C.splitBar([{ v: pe, cls: 'hatch' }, { v: ps, color: col }], 'Export ' + Math.round(pe) + '%, stranded ' + Math.round(ps) + '%') +
-      '<div class="capbar-l"><span>Can export ' + Math.round(pe) + '%</span><span>' + Math.round(ps) + '% stranded</span></div>' +
+    h += C.splitBar([{ v: pe, cls: 'hatch' }, { v: ps, color: col }], 'Export ' + pe + '%, stranded ' + ps + '%') +
+      '<div class="capbar-l"><span>Can export ' + pe + '%</span><span>' + ps + '% stranded</span></div>' +
       '<div class="note-i">' + INFO + '<span>' + U.esc(r.exp === 'No export' ? (cc.hydroNoExport || '') : (cc.hydroExplain || '')) + '</span></div>';
     return C.sec('Stranded capacity', '', h);
   } });

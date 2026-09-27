@@ -50,8 +50,10 @@
     if (!s) return s;
     var letters = s.replace(/[^A-Za-z]/g, '');
     if (!letters || letters.replace(/[^A-Z]/g, '').length / letters.length < 0.8) return s;
-    return s.toLowerCase().replace(/[a-z0-9']+/g, function (w, i) {
-      var u = w.toUpperCase();
+    // per word: only ALL-CAPS words are re-cased; mixed-case words (McCain, BioticNRG) keep their capitals
+    return s.replace(/[A-Za-z0-9']+/g, function (w0, i) {
+      if (/[a-z]/.test(w0)) return w0;
+      var w = w0.toLowerCase(), u = w0;
       if (KEEP[u]) return u;
       if (u === 'LTD') return 'Ltd';
       if (u === 'PLC') return 'plc';
@@ -60,6 +62,10 @@
       if (i > 0 && /^(and|of|the|at|on|in|for|to|by)$/.test(w)) return w;
       return w.charAt(0).toUpperCase() + w.slice(1);
     });
+  };
+  /** Escape, then protect units and mixed-case acronyms (kW, MW, FiT, EfW …) from CSS text-transform:uppercase. */
+  U.caseSafe = function (s) {
+    return U.esc(s).replace(/\b(kW|MW|GW|kWh|MWh|FiT|EfW)\b/g, '<span class="nc">$1</span>');
   };
   U.cleanName = function (o) {
     if (!o) return o;

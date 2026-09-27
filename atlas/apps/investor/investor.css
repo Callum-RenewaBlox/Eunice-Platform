@@ -28,16 +28,21 @@
 .band-i{display:inline-grid;place-items:center;width:22px;height:22px;margin:-3px 0 -3px 1px;border-radius:var(--r-pill);color:var(--ink-2)}
 .band-i:hover,.band-i[aria-expanded="true"]{background:var(--wash);color:var(--ink-1)}
 .band-i .i{width:14px;height:14px}
-.band-asof{justify-content:center;max-width:240px;font:400 11.5px/1.35 var(--font-ui);color:var(--ink-3);white-space:normal}
+.band-asof{justify-content:center;max-width:240px;font:400 11.5px/1.35 var(--font-ui);color:var(--ink-3);flex:0 1 auto;min-width:0;overflow:hidden}
 .asof-1{display:block;color:var(--ink-2);font-weight:500}
 .asof-2{display:block}
+.asof-1,.asof-2{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .band-mkt{display:none;flex:none;flex-direction:column;justify-content:center;gap:5px;padding-left:18px;margin-left:auto;border-left:1px solid var(--rule);font:400 12px/1.2 var(--font-ui);color:var(--ink-2);white-space:nowrap}
 .mkt-t{display:flex;gap:10px;font:600 10.5px/1.2 var(--font-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
 .mkt-t span{letter-spacing:.02em;text-transform:none;font-weight:400}
 .mkt-v b{font-weight:600;color:var(--ink-1)}
 .mkt-v i{font-style:normal;color:var(--ink-4);margin:0 7px}
 .mkt-up{color:var(--lime-ink);font-weight:600}
+.mkt-k{font-variant-numeric:normal}  /* "Win-26", not the tabular-hyphen "Win - 26" */
 @media (min-width:1280px){ .band-mkt{display:flex} }
+/* T02: band.js measures the cells at their natural width (.mkt-measure) and hides the strip when they would reach it */
+.band.mkt-measure .band-cells,.band.mkt-measure .band-asof{flex:none}
+.band.mkt-off .band-mkt{display:none}
 @media (max-width:1180px){ .band-cell{padding:0 12px} .band-v{font-size:23px} .band-asof{max-width:215px;font-size:11px} }
 
 /* footer bar */
@@ -67,6 +72,28 @@
 .pop-warn{padding:8px 10px;border-left:3px solid var(--status-warning);background:var(--wash);border-radius:0 var(--r-1) var(--r-1) 0}
 .pop-warn b{color:var(--ink-1)}
 .pop-act{display:flex;justify-content:flex-end}
+
+/* T13: Sites list (investor columns: # · Site · TCV · tier · kW); wider box, no horizontal scroll at desktop widths */
+.modal-box.modal-sites{width:min(1080px,calc(100vw - 48px))}
+.sites-t th.c-name{min-width:200px}
+.sites-t .c-tcv,.sites-t .c-pot{white-space:nowrap;text-align:right}
+.sites-t td.c-tcv{color:var(--ink-1)}
+@media (max-width:760px){
+  .modal-box.modal-sites{width:100%}
+  .sites-t[data-view="sam"] :is(.c-t,.c-kw,.c-bm),
+  .sites-t[data-view="hydro"] :is(.c-c,.c-inst,.c-mec),
+  .sites-t[data-view="tam"] :is(.c-fuel,.c-sub,.c-bt){display:none}
+  .sites-t th.c-name{min-width:0}
+  .sites-t thead th button{white-space:normal}
+  .sites-t tbody th{max-width:46vw}
+  .sites-t td,.sites-t tbody th{padding:6px 6px}
+  .sites-t .st-open span{overflow-wrap:anywhere}
+}
+
+/* DI1: company status ("in liquidation") as a muted tag beside, never inside, the operator name */
+.op-st{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:var(--r-pill);border:1px solid var(--rule-2);font:500 10.5px/1.35 var(--font-ui);color:var(--ink-3);white-space:nowrap;vertical-align:1px}
+.rbx-ppa .reg-t .op-st{display:table;margin:2px 0 0;padding:0 5px}
+.pal-s .op-st{margin-left:6px;padding:0 5px;vertical-align:0}
 
 /* investor legend */
 .lg-mw .up{color:var(--lime-ink);font-weight:600}

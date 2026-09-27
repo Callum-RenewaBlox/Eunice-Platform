@@ -81,7 +81,7 @@ st.sidebar.markdown(
     "Search with **/** or **⌘K**; click any site for its detail card.")
 st.sidebar.divider()
 st.sidebar.caption(
-    "Base map © OpenStreetMap contributors · OpenFreeMap · Natural Earth · geocoding postcodes.io.")
+    "Base map © OpenStreetMap contributors · OpenFreeMap © OpenMapTiles · Natural Earth · geocoding postcodes.io.")
 
 # -------------------------------------------------------------------- main
 st.iframe(HTML, height=820)

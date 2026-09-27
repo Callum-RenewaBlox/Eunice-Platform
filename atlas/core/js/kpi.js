@@ -60,7 +60,8 @@
       var m = (K.metrics[k.metric] || K.metrics.count)(rows);
       var fmt = function (x) { return U.num(x, m.d) + (k.unit ? '<small>' + U.esc(k.unit) + '</small>' : ''); };
       if (instant) { el.setAttribute('data-v', String(m.v)); el.innerHTML = fmt(m.v); } else U.countUp(el, m.v, fmt, 600);
-      if (cap) cap.textContent = U.template(k.caption || '', { known: U.int(m.known), n: U.int(rows.length), total: U.int(all.length) });
+      if (cap) cap.textContent = !rows.length && /\{known\}/.test(k.caption || '') ? 'no sites shown'
+        : U.template(k.caption || '', { known: U.int(m.known), n: U.int(rows.length), total: U.int(all.length) });
       if (lb) lb.textContent = label(k);
     });
     if (!instant) {

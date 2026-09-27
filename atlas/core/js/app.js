@@ -37,7 +37,7 @@
   };
 
   A.openSite = function (row, opts) {
-    if (!row) return;
+    if (!row || typeof row !== 'object' || !row.kind || !row.key) return;
     opts = opts || {};
     if (row.kind !== S.view) A.setView(row.kind, { camera: !opts.fly });
     S.site = row.key;
@@ -127,10 +127,32 @@
       });
     });
     RBX.mapctl.init(b, wireMap);
-    if (b.present && RBX.present && RBX.present.enter) RBX.bus.on('ready', function () { RBX.present.enter(); });
+    if (b.present && RBX.present && RBX.present.enter) RBX.bus.on('ready', function () { RBX.present.enter(0, { gesture: false }); });
     RBX.header.sync();
     S.writeHash();
   };
+
+  // ------------------------------------------------------------------ empty state: filters that match no site
+  A.syncEmpty = function () {
+    var v = S.view, area = document.getElementById('mapArea'); if (!area) return;
+    var el = document.getElementById('emptyPill');
+    var empty = v !== 'ppa' && RBX.data.rows[v] && RBX.filters.active(v).length === 0;
+    if (!empty) { if (el) el.hidden = true; return; }
+    if (!el) {
+      el = document.createElement('div'); el.id = 'emptyPill'; el.className = 'empty-pill'; el.setAttribute('role', 'status');
+      el.innerHTML = '<span>No sites match these filters</span><button type="button" class="empty-clear">Clear filters</button>';
+      el.querySelector('button').addEventListener('click', function () {
+        RBX.filters.resetView(S.view);
+        if (RBX.hist && RBX.hist.setPreset) RBX.hist.setPreset('all');
+      });
+      area.appendChild(el);
+    }
+    el.hidden = false;
+    RBX.mapctl.centreChrome(el);
+  };
+  RBX.bus.on('filter', function () { A.syncEmpty(); });
+  RBX.bus.on('select', function () { RBX.mapctl.updateOfflinePill(); var e = document.getElementById('emptyPill'); if (e) RBX.mapctl.centreChrome(e); });
+  RBX.bus.on('view', function () { A.syncEmpty(); });
 
   // a typed or linked short anchor (#ppa, #hydro, #tam, #sam) switches view at runtime too
   window.addEventListener('hashchange', function () {
@@ -144,7 +166,7 @@
   window.atlas = {
     setView: function (v) { A.setView(v); },
     select: function (kind, k, fly) {
-      var rows = RBX.data.rows[kind] || [], r = typeof k === 'number' ? rows[k] : (RBX.data.byKey[kind][k] || rows.filter(function (x) { return x.name.toLowerCase().indexOf(String(k).toLowerCase()) >= 0; })[0]);
+      var rows = RBX.data.rows[kind] || [], bk = RBX.data.byKey[kind] || {}, r = typeof k === 'number' ? rows[k] : ((Object.prototype.hasOwnProperty.call(bk, k) && bk[k]) || rows.filter(function (x) { return x.name.toLowerCase().indexOf(String(k).toLowerCase()) >= 0; })[0]);
       if (r) RBX.search.reveal(r); if (r && fly === false && RBX.map) RBX.map.stop();
       return r ? r.key : null;
     },

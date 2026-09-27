@@ -14,6 +14,8 @@ ATLAS = os.path.dirname(HERE)
 sys.path.insert(0, ATLAS)
 
 import build  # noqa: E402
+sys.path.insert(0, os.path.join(ATLAS, 'tools'))
+import extract_v1  # noqa: E402
 
 _CACHE = {}
 
@@ -68,7 +70,7 @@ def test_client_data_research_notes_are_rejected():
     bad = copy.deepcopy(data)
     bad['sam'][0]['op'] = 'Some Farm Ltd (in liquidation; verify owner)'
     try:
-        build.client_safety(bad, '/*__ATLAS_INIT__*/', 'softened')
+        build.public_text_checks('client', bad)
     except build.BuildError as e:
         assert 'research note' in str(e)
     else:
@@ -229,6 +231,132 @@ def test_investor_wrapper_deep_links_whitelisted():
         src = fh.read()
     assert 'INVESTOR_PASSWORD' not in src          # owner decision 3: Streamlit Cloud viewer allowlist only
     assert '"present": r"^1$"' in src
+
+
+def investor_build():
+    if 'investor' not in _CACHE:
+        _CACHE['investor'] = build.build_app('investor', [])
+    return _CACHE['investor']
+
+
+def _inlined_config(html):
+    m = re.search(r'window\.ATLAS_CONFIG=(\{.*?\});window\.ATLAS_DATA=', html, re.S)
+    assert m, 'ATLAS_CONFIG not found'
+    return json.loads(m.group(1))
+
+
+def test_private_config_keys_never_inlined():
+    """T03: maintainer notes (`_doc`, `_sam_kw_source` …) are stripped from the inlined config of both builds."""
+    for res in (client_build(), investor_build()):
+        cfg = _inlined_config(res['html'])
+
+        def walk(o, path=''):
+            if isinstance(o, dict):
+                for k, v in o.items():
+                    assert not k.startswith('_'), path + '.' + k
+                    walk(v, path + '.' + k)
+            elif isinstance(o, list):
+                for x in o:
+                    walk(x, path)
+        walk(cfg)
+        assert 'Owner decisions pending' not in res['html'] and 'not CVD-validated' not in res['html']
+
+
+def test_public_text_checks_both_apps():
+    """T08/T09: researcher notes, private individuals, placeholders and lower-case names fail either build."""
+    for app in ('client', 'investor'):
+        data = build.ASSEMBLE[app]({'switches': {}})
+        build.public_text_checks(app, data)          # the committed data passes
+        for field, val, why in (('op', 'X Ltd (Dr Jane Smith)', 'research note'), ('name', 'Station farm', 'title-cased'),
+                                ('name', 'Export', 'placeholder'), ('site', 'Home Farm, Rectory Lane LN9 6JC', 'postcode')):
+            bad = copy.deepcopy(data)
+            bad['sam'][0][field] = val
+            try:
+                build.public_text_checks(app, bad)
+            except build.BuildError as e:
+                assert why in str(e), (app, field, str(e))
+            else:
+                raise AssertionError('%s: %s=%r was not rejected' % (app, field, val))
+        if app == 'investor':
+            bad = copy.deepcopy(data)
+            bad['sam'][0]['dev'] = 'Castillium Ltd (developer; SPV TBC)'
+            try:
+                build.public_text_checks(app, bad)
+            except build.BuildError:
+                pass
+            else:
+                raise AssertionError('investor dev research note was not rejected')
+
+
+def test_withheld_names_and_people():
+    data = build.assemble_client({'switches': {}})
+    by = {r['key']: r for r in data['sam']}
+    for k in ('OX106SL', 'DT28PE', 'SP78PX', 'RG73XJ', 'CO77BN', 'NR231NY'):
+        assert re.fullmatch(r'AD site \([A-Z]{1,2}\d[A-Z\d]?\)', by[k]['name']), by[k]['name']
+    assert by['PE220SE']['name'] == 'Station Farm'
+    html = client_build()['html']
+    for s in ('Stephen Temple', 'Neil Gemmell', 'Glyn family', 'was contractor', '--Redacted--', 'Adam Balch', 'adam-balch'):
+        assert s not in html, s
+    # a sole trader's personal name is never the public operator; the gated investor build keeps it
+    assert by['SP78PX']['op'] == 'Private operator'
+    assert not [r['op'] for r in data['sam'] if r.get('op') and extract_v1.is_personal_name(r['op'])]
+
+
+def test_cdn_tags_non_blocking_with_sri():
+    """T12: MapLibre JS/CSS carry SRI + crossorigin; no render-blocking third-party tag in either build."""
+    for res in (client_build(), investor_build()):
+        html = res['html']
+        head = html.split('<style>')[0]
+        assert re.search(r'<script async src="https://cdn\.jsdelivr\.net/npm/maplibre-gl@[\d.]+/dist/maplibre-gl\.js" '
+                         r'integrity="sha384-[A-Za-z0-9+/=]{64}" crossorigin="anonymous"', head)
+        assert re.search(r'rel="preload" as="style" href="https://cdn\.jsdelivr\.net/[^"]+maplibre-gl\.css" integrity="sha384-', head)
+        assert not re.search(r'rel="stylesheet"', re.sub(r'<noscript>.*?</noscript>', '', head))   # nothing render-blocking
+        assert '<script src=' not in html                   # every external script is async
+
+
+def test_fuel_palette_tokens_per_theme():
+    """T06/D1: one 9-colour fuel set per theme in tokens.css; theme.js reads the tokens (no hard-coded hues)."""
+    with open(os.path.join(ATLAS, 'core', 'css', 'tokens.css'), encoding='utf-8') as fh:
+        css = fh.read()
+    paper, night = css.split(':root[data-theme="night"]')
+    sets = []
+    for block in (paper, night):
+        vals = [re.search(r'--fuel-%d:\s*(#[0-9A-Fa-f]{6})' % i, block) for i in range(9)]
+        assert all(vals), 'missing --fuel-* token'
+        sets.append([v.group(1).upper() for v in vals])
+        assert len(set(sets[-1])) == 9
+    assert sets[0] != sets[1]
+    with open(os.path.join(ATLAS, 'core', 'js', 'theme.js'), encoding='utf-8') as fh:
+        assert 'FUEL_HUES' not in fh.read()
+
+
+def test_investor_display_names_clean_with_status_tag():
+    """DI1: investor display names carry no research note; a factual company status ships as opSt (muted tag)."""
+    data = build.assemble_investor({'switches': {}})
+    html = investor_build()['html']
+    build.investor_name_checks(data, html)               # the committed data and page pass
+    by = {r['key']: r for r in data['sam']}
+    assert by['FY85RP']['op'] == 'R-Group of Companies Limited' and by['FY85RP']['dev'] == 'R-Group of Companies Limited'
+    assert by['FY85RP']['opSt'] == 'in liquidation'
+    assert by['DN386EL']['dev'] == 'Castillium Ltd' and 'opSt' not in by['DN386EL']
+    for s in ('verify owner', 'SPV TBC', 'Farmgen', '(developer;'):
+        assert s not in html, s
+    for field, val in (('op', 'X Ltd (verify)'), ('dev', 'Castillium Ltd (developer; SPV TBC)'), ('name', 'Farm (site=Y)'),
+                       ('dev', 'R-Group Limited (in liquidation)'), ('opSt', 'probably bust')):
+        bad = copy.deepcopy(data)
+        bad['sam'][0][field] = val
+        try:
+            build.investor_name_checks(bad)
+        except build.BuildError:
+            pass
+        else:
+            raise AssertionError('%s=%r was not rejected' % (field, val))
+    try:
+        build.investor_name_checks(data, html + '<!-- R-GROUP (in liquidation; site=Farmgen, Warton - verify owner) -->')
+    except build.BuildError:
+        pass
+    else:
+        raise AssertionError('research-note fragment in the HTML was not rejected')
 
 
 if __name__ == '__main__':

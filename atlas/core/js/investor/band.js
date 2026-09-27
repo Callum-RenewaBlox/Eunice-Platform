@@ -48,7 +48,11 @@
     if (c.metric === 'tcvPot') {
       var big = rows.filter(function (r) { return r.big && r.bt > 0; });
       var btn = '<button type="button" class="band-i" id="tcvInfo" aria-haspopup="dialog" aria-expanded="false" aria-controls="tcvPop" aria-label="How TCV Potential is calculated">' + INFO + '</button>';
-      if (!big.length) return '<span>AD-scale only (&lt;10 MW)</span>' + btn;
+      if (!big.length) {
+        // T30: "AD-scale only" only when the Scale filter hides the ≥ 10 MW sites; otherwise none are in view
+        var adOnly = (RBX.state.hidden.scale || new Set()).has(1);
+        return '<span>' + (adOnly ? 'AD-scale only (&lt;10 MW)' : 'No sites ≥ 10 MW in view') + '</span>' + btn;
+      }
       return '<span>' + U.esc(U.abbr(I.tcvPot(big))) + ' of it from ' + U.int(big.length) + ' sites ≥ 10 MW</span>' + btn;
     }
     if (c.metric === 'win26') {
@@ -67,18 +71,44 @@
     var up = k.base12 ? Math.round((k.win26 / k.base12 - 1) * 100) : null;
     slot.innerHTML = '<div class="band" role="region" aria-label="Key figures">' +
       '<div class="band-cells" id="bandCells">' + cells.map(function (c, i) {
-        return '<div class="band-cell' + (c.metric === 'tcvPot' ? ' pot' : '') + '"><div class="band-l">' + U.esc(c.label) + '</div>' +
+        return '<div class="band-cell' + (c.metric === 'tcvPot' ? ' pot' : '') + '"><div class="band-l">' + U.caseSafe(c.label) + '</div>' +
           '<div class="band-v num" id="bandV' + i + '"></div><div class="band-s" id="bandS' + i + '"></div></div>';
       }).join('') +
       '<div class="band-cell band-asof">' + asOfHtml(asOf) + '</div></div>' +
       (k.base12 ? '<div class="band-mkt" aria-label="GB power market snapshot">' +
         '<div class="mkt-t">' + U.esc(((cfg().market || {}).title) || 'GB power') + '<span>' + U.esc(fmtIso(k.asOf)) + '</span></div>' +
-        '<div class="mkt-v num">Baseload 12m <b>' + U.num(k.base12, 2) + 'p</b><i>·</i>Win-26 <b>' + U.num(k.win26, 2) + 'p</b> <span class="mkt-up">▲' + up + '%</span>' +
-        '<i>·</i>Cal-28 <b>' + U.num(k.cal28, 2) + 'p</b><i>·</i>FiT <b>' + U.num(k.fit, 2) + 'p</b></div></div>' : '') +
+        '<div class="mkt-v num"><span class="mkt-k">Baseload 12m</span> <b>' + U.num(k.base12, 2) + 'p</b><i>·</i><span class="mkt-k">Win-26</span> <b>' + U.num(k.win26, 2) + 'p</b> <span class="mkt-up">▲' + up + '%</span>' +
+        '<i>·</i><span class="mkt-k">Cal-28</span> <b>' + U.num(k.cal28, 2) + 'p</b><i>·</i><span class="mkt-k">FiT</span> <b>' + U.num(k.fit, 2) + 'p</b></div></div>' : '') +
       '</div>';
     B.lastView = view;
     B.update(true);
+    B.fitMkt();
+    observeCells();
   };
+
+  /** T02: the GB power strip shows (≥ 1280 px by CSS) only while the band cells, as-of stamp included at its natural
+      width, clear the strip's left edge by 16 px; otherwise it is hidden. Measured with the strip shown, after
+      render, on resize (rAF-throttled) and whenever a cell's width changes (count-ups, filters, fonts). */
+  B.fitMkt = function () {
+    var band = document.querySelector('#bandSlot .band'), cells = document.getElementById('bandCells'), mkt = band && band.querySelector('.band-mkt');
+    if (!band || !cells || !mkt) return;
+    band.classList.remove('mkt-off');
+    if (getComputedStyle(mkt).display === 'none') return;          // below 1280 px, or presenting
+    band.classList.add('mkt-measure');                               // cells and as-of at their natural width
+    var need = cells.getBoundingClientRect().left + cells.scrollWidth, left = mkt.getBoundingClientRect().left;
+    var room = band.getBoundingClientRect().right - parseFloat(getComputedStyle(band).paddingRight || 0) - mkt.offsetWidth;
+    band.classList.remove('mkt-measure');
+    if (need + 16 > Math.min(left, room)) band.classList.add('mkt-off');
+  };
+  var fitSoon = U.rafThrottle(function () { B.fitMkt(); });
+  var ro = window.ResizeObserver ? new ResizeObserver(fitSoon) : null;
+  function observeCells() {
+    if (!ro) return;
+    ro.disconnect();
+    [].forEach.call(document.querySelectorAll('#bandCells > .band-cell'), function (c) { ro.observe(c); });
+  }
+  window.addEventListener('resize', fitSoon);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitSoon);
   /** "Model · 16 Jun 2026 · Indicative; not investment advice." → stamp on line 1, caveat on line 2. */
   function asOfHtml(s) {
     var p = String(s || '').split(' · ');
@@ -129,7 +159,7 @@
     return '<div class="pop-h"><h2 class="pop-t" id="tcvPopT">How TCV Potential is calculated</h2>' +
       '<button type="button" class="sh-x" data-pop-close="1" aria-label="Close (Esc)"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15"/></svg></button></div>' +
       '<p>Each TAM site’s available-for-BM capacity is valued at the priced SAM sites’ own Year-5 TCV per kW-available for its BM tier. Scotland sits outside the modelled tiers and is excluded.</p>' +
-      '<table class="pop-tbl"><caption>TCV rate by tier, £ per kW available for BM</caption><tbody>' + rows + '</tbody></table>' +
+      '<table class="pop-tbl"><caption>' + U.caseSafe('TCV rate by tier, £ per kW available for BM') + '</caption><tbody>' + rows + '</tbody></table>' +
       '<dl class="pop-kv"><dt>Available-for-BM ratio</dt><dd class="num">' + U.num(I.AVRATIO * 100, 1) + '% <span>(' + I.AVRATIO.toFixed(5) + ', Σ available ÷ Σ installed over priced SAM sites)</span></dd>' +
       '<dt>Available for BM, per site</dt><dd>the DNO maximum export capacity where the register gives one (' + U.int(t.bmKnown) + ' sites), otherwise installed capacity × the ratio</dd>' +
       '<dt>TCV Potential</dt><dd>Σ available-for-BM kW × TCV rate of the site’s tier, over tiers 1–5</dd></dl>' +
@@ -178,7 +208,7 @@
     if (sc) { B.setScale(sc.getAttribute('data-scale-set')); var pp = document.getElementById('tcvPop'); if (pp && !pp.hidden) pp.innerHTML = B.popHtml(); return; }
     if (e.target.closest('[data-pop-close]')) { B.closePop(); return; }
     if (e.target.closest('[data-foot="sources"]')) { RBX.drawer.open(); return; }
-    if (e.target.closest('#presentBtn')) { if (RBX.present) RBX.present.enter(); return; }
+    if (e.target.closest('#presentBtn')) { if (RBX.present) RBX.present.enter(0, { gesture: true }); return; }
     var pop = document.getElementById('tcvPop');
     if (pop && !pop.hidden && !e.target.closest('#tcvPop')) B.closePop(false);
   });
@@ -200,7 +230,7 @@
   H.drawerSections = function () {
     var c = cfg(), n = c.notes || {}, f = c.footers || {}, a = I.asOf || {}, r = I.TCVRATE, L = (c.labels || {}).tiers || {};
     var p = function (s) { return '<p>' + U.esc(s || '') + '</p>'; };
-    var tbl = '<table class="dr-tbl"><thead><tr><th scope="col">BM tier</th><th scope="col" class="num">TCV rate, £/kW available</th></tr></thead><tbody>' +
+    var tbl = '<table class="dr-tbl"><thead><tr><th scope="col">BM tier</th><th scope="col" class="num">TCV rate, £/<span class="nc">kW</span> available</th></tr></thead><tbody>' +
       [1, 2, 3, 4, 5].map(function (k) { return '<tr><td>' + U.esc(L[k]) + '</td><td class="num">' + U.num(r[k], 2) + '</td></tr>'; }).join('') + '</tbody></table>' +
       '<p><b>AVRATIO</b> ' + U.num(I.AVRATIO * 100, 1) + '% (' + I.AVRATIO.toFixed(5) + '): Σ available-for-BM ÷ Σ installed over the ' + U.int(I.priced) + ' priced SAM sites.</p>' +
       '<p><b>bmKw</b> = the DNO maximum export capacity where known, otherwise installed kW × AVRATIO.</p>' +

@@ -15,7 +15,7 @@
   "src": "FiT",
   "s": "Connected"
  },
- "tsevern-trent-gre-gcp": {
+ "tad-site-ox10-gcp": {
   "src": "FiT",
   "s": "Connected"
  },
@@ -31,7 +31,7 @@
   "src": "FiT",
   "s": "Connected"
  },
- "twessex-water-ser-gcn": {
+ "tad-site-dt28-gcn": {
   "src": "FiT",
   "s": "Connected"
  },
@@ -67,11 +67,11 @@
   "src": "FiT",
   "s": "Connected"
  },
- "tadam-balch-gcn": {
+ "tad-site-sp78-gcn": {
   "src": "FiT",
   "s": "Connected"
  },
- "twest-berkshire-c-gcp": {
+ "tad-site-rg73-gcp": {
   "src": "FiT",
   "s": "Connected"
  },
@@ -131,7 +131,7 @@
   "src": "FiT",
   "s": "Connected"
  },
- "texport-u12": {
+ "tbarley-brigg-bio-u12": {
   "src": "FiT",
   "s": "Connected"
  },
@@ -151,7 +151,7 @@
   "src": "FiT",
   "s": "Connected"
  },
- "timport-meter-u12": {
+ "tbiocow-ltd-u12": {
   "src": "FiT",
   "s": "Connected"
  },
@@ -167,7 +167,7 @@
   "src": "FiT",
   "s": "Connected"
  },
- "tfullcircle-energ-u10": {
+ "tad-site-co77-u10": {
   "src": "FiT",
   "s": "Connected"
  },
@@ -175,7 +175,7 @@
   "src": "FiT",
   "s": "Connected"
  },
- "tj-f-temple-son-l-u12": {
+ "tad-site-nr23-u12": {
   "src": "FiT",
   "s": "Connected"
  },
@@ -2127,7 +2127,7 @@
   "src": "ECR",
   "s": "Accepted to connect"
  },
- "texport-u13": {
+ "tunnamed-site-fit-u13": {
   "src": "FiT",
   "s": "Connected"
  },
@@ -4355,19 +4355,19 @@
   "src": "RO",
   "s": "Connected"
  },
- "tredacted-gcn": {
+ "tname-withheld-fi-gcn": {
   "src": "FiT",
   "s": "Connected"
  },
- "tredacted-u12": {
+ "tname-withheld-fi-u12": {
   "src": "FiT",
   "s": "Connected"
  },
- "tredacted-gcp": {
+ "tname-withheld-fi-gcp": {
   "src": "FiT",
   "s": "Connected"
  },
- "tredacted-u10": {
+ "tname-withheld-fi-u10": {
   "src": "FiT",
   "s": "Accepted to connect"
  },
@@ -4375,11 +4375,11 @@
   "src": "ECR",
   "s": "Connected"
  },
- "tredacted-gcr": {
+ "tname-withheld-fi-gcr": {
   "src": "FiT",
   "s": "Connected"
  },
- "tredacted-u13": {
+ "tname-withheld-fi-u13": {
   "src": "FiT",
   "s": "Connected"
  },

@@ -151,7 +151,7 @@
  },
  {
   "rank": 7,
-  "operator": "RAINBARROW FARM AD LLP (fka JV Energen; Engie)",
+  "operator": "Rainbarrow Farm AD LLP (fka JV Energen; Engie)",
   "site": "RAINBARROW FARM",
   "town": "Dorchester",
   "postcode": "DT2 9JF",
@@ -276,7 +276,7 @@
  },
  {
   "rank": 12,
-  "operator": "TAYLOR FARMS (SWALCLIFFE) (partnership; t/a Stour Energy)",
+  "operator": "Taylor Farms (Swalcliffe) (partnership; t/a Stour Energy)",
   "site": "Stourwell barn ad plant",
   "town": "Banbury",
   "postcode": "OX15 5EX",
@@ -351,7 +351,7 @@
  },
  {
   "rank": 15,
-  "operator": "Gaunts Estate (Glyn family)",
+  "operator": "Gaunts Estate",
   "site": "Gaunts Estate AD plant (1 of 3), nr Wimborne",
   "town": null,
   "postcode": "BH21 4",
@@ -401,7 +401,7 @@
  },
  {
   "rank": 17,
-  "operator": "VALENCIA WASTE MANAGEMENT LIMITED (fka Viridor)",
+  "operator": "Valencia Waste Management Limited (fka Viridor)",
   "site": "LANDFILL GAS GENERATOR",
   "town": "Dorchester",
   "postcode": "DT2 8BS",
@@ -451,7 +451,7 @@
  },
  {
   "rank": 19,
-  "operator": "WEST BERKSHIRE COUNCIL (local authority)",
+  "operator": "West Berkshire Council (local authority)",
   "site": "DATA NOT AVAILABLE",
   "town": "Reading",
   "postcode": "RG7 3XJ",
@@ -476,7 +476,7 @@
  },
  {
   "rank": 20,
-  "operator": "Gaunts Estate (Glyn family)",
+  "operator": "Gaunts Estate",
   "site": "Gaunts House AD plant, Petersham Lane, Wimborne",
   "town": null,
   "postcode": "BH21 4JQ",
@@ -1001,7 +1001,7 @@
  },
  {
   "rank": 41,
-  "operator": "AVOCET RENEWABLES LIMITED (site op.; Powersystems was contractor)",
+  "operator": "Avocet Renewables Limited",
   "site": "Coston Hall",
   "town": "Norwich",
   "postcode": "NR9 4DT",
@@ -1076,7 +1076,7 @@
  },
  {
   "rank": 44,
-  "operator": "HAIN CELESTIAL UK LIMITED (fka Histon Sweet Spreads)",
+  "operator": "Hain Celestial UK Limited (fka Histon Sweet Spreads)",
   "site": "PREMIER FOODS (CHIVERS)",
   "town": "Cambridge",
   "postcode": "CB24 9NR",
@@ -1101,7 +1101,7 @@
  },
  {
   "rank": 45,
-  "operator": "J.F. Temple & Son Ltd (Dr Stephen Temple)",
+  "operator": "J.F. Temple & Son Ltd",
   "site": "Data not available",
   "town": "Wells-Next-the-Sea",
   "postcode": "NR23 1NY",
@@ -1176,7 +1176,7 @@
  },
  {
   "rank": 48,
-  "operator": "Herefordshire biogas limited",
+  "operator": "Herefordshire Biogas Limited",
   "site": "Herefordshire Biogas AD plant, Pembridge Ind. Estate",
   "town": "Pembridge",
   "postcode": "HR6 9LA",
@@ -1201,7 +1201,7 @@
  },
  {
   "rank": 49,
-  "operator": "SEVERN TRENT WATER LIMITED (AD via ST Green Power)",
+  "operator": "Severn Trent Water Limited (AD via ST Green Power)",
   "site": "Coleshill stw food",
   "town": "Curdworth",
   "postcode": "B46 1NX",
@@ -1251,7 +1251,7 @@
  },
  {
   "rank": 51,
-  "operator": "DWR CYMRU CYFYNGEDIG (Welsh Water)",
+  "operator": "Dwr Cymru Cyfyngedig (Welsh Water)",
   "site": "Eign wwtw",
   "town": "Hereford",
   "postcode": "HR1 2RX",
@@ -1426,7 +1426,7 @@
  },
  {
   "rank": 58,
-  "operator": "D J & H M MORGAN (partnership)",
+  "operator": "D J & H M Morgan (partnership)",
   "site": "Penilan",
   "town": "Hereford",
   "postcode": "HR2 0SU",
@@ -1451,7 +1451,7 @@
  },
  {
   "rank": 59,
-  "operator": "GAMBER GENERATION LIMITED (fka MFG Generation)",
+  "operator": "Gamber Generation Limited (fka MFG Generation)",
   "site": "Pengethley ad plant mfg generation",
   "town": "Peterstow",
   "postcode": "HR9 6NB",
@@ -1678,7 +1678,7 @@
   "rank": 68,
   "operator": "Bio Dynamic (UK) Ltd",
   "site": "Bio Dynamic AD plant, Colwick Industrial Estate, Nottingham",
-  "town": "data not available",
+  "town": "Data Not Available",
   "postcode": "NG4 2JT",
   "installed_kw": 4949,
   "commissioned": 2014,
@@ -1703,7 +1703,7 @@
   "rank": 69,
   "operator": "A.C. Shropshire Limited",
   "site": "Greens lodge farm, huncote engine no 2",
-  "town": "data not available",
+  "town": "Data Not Available",
   "postcode": "LE9 3LE",
   "installed_kw": 3200,
   "commissioned": 2013,
@@ -1726,9 +1726,9 @@
  },
  {
   "rank": 70,
-  "operator": "SEVERN TRENT WIND POWER LIMITED (site run by ST Green Power)",
+  "operator": "Severn Trent Wind Power Limited (site run by ST Green Power)",
   "site": "Stoke lane, stoke bardolph",
-  "town": "Burton joyce",
+  "town": "Burton Joyce",
   "postcode": "NG14 5HL",
   "installed_kw": 2130,
   "commissioned": 2010,
@@ -1751,7 +1751,7 @@
  },
  {
   "rank": 71,
-  "operator": "DYSON FARMING LIMITED (fka Beeswax Dyson Farming)",
+  "operator": "Dyson Farming Limited (fka Beeswax Dyson Farming)",
   "site": "Nocton fen adj unit",
   "town": "Lincoln",
   "postcode": "LN4 2AY",
@@ -1801,7 +1801,7 @@
  },
  {
   "rank": 73,
-  "operator": "Mccain Foods (G.B.) Limited",
+  "operator": "McCain Foods (G.B.) Limited",
   "site": "Easton",
   "town": "Grantham",
   "postcode": "NG33 5AY",
@@ -1853,7 +1853,7 @@
   "rank": 75,
   "operator": "Grange Biopower Limited",
   "site": "Medbourne grange farm",
-  "town": "Market harborough",
+  "town": "Market Harborough",
   "postcode": "LE16 8EF",
   "installed_kw": 499,
   "commissioned": 2014,
@@ -1876,7 +1876,7 @@
  },
  {
   "rank": 76,
-  "operator": "GRANGE FARM ENERGY LIMITED (Future Biogas/JLEN)",
+  "operator": "Grange Farm Energy Limited (Future Biogas/JLEN)",
   "site": "Scampton AD, Grange Cliff Farm",
   "town": "Spridlington",
   "postcode": "LN8 2DN",
@@ -1976,7 +1976,7 @@
  },
  {
   "rank": 80,
-  "operator": "SEVERN TRENT WATER LIMITED (AD via ST Green Power)",
+  "operator": "Severn Trent Water Limited (AD via ST Green Power)",
   "site": "Alfreton sewage treatment works",
   "town": "Alfreton",
   "postcode": "DE55 5AH",
@@ -2203,7 +2203,7 @@
   "rank": 89,
   "operator": "Biogen Weston Super Mare Ltd (orig Cory/Enovert)",
   "site": "Waste transfer station, aisecombe way, hutton moor, weston-super-mare",
-  "town": "Weston-super-mare",
+  "town": "Weston-super-Mare",
   "postcode": "BS22 8NA",
   "installed_kw": 1099,
   "commissioned": 2013,
@@ -2276,7 +2276,7 @@
  },
  {
   "rank": 92,
-  "operator": "F W S CARTER & SONS LIMITED (landowner; AD op. Ixora/ENGIE)",
+  "operator": "F W S Carter & Sons Limited",
   "site": "Exeter, greendale, woodbury salterton",
   "town": "Exeter",
   "postcode": "EX5 1EW",
@@ -2351,9 +2351,9 @@
  },
  {
   "rank": 95,
-  "operator": "Buddleford broadoak limited",
+  "operator": "Buddleford Broadoak Limited",
   "site": "Broadoak Farm AD plant, Clyst Hydon, Cullompton",
-  "town": "Clyst hydon",
+  "town": "Clyst Hydon",
   "postcode": "EX15 2NH",
   "installed_kw": 581,
   "commissioned": 2012,
@@ -2376,7 +2376,7 @@
  },
  {
   "rank": 96,
-  "operator": "LANGAGE AD (UK) LLP (BioticNRG)",
+  "operator": "Langage AD (UK) LLP (BioticNRG)",
   "site": "Plymouth higher challonsleigh smithaleigh",
   "town": "Plymouth",
   "postcode": "PL7 5AY",
@@ -2426,7 +2426,7 @@
  },
  {
   "rank": 98,
-  "operator": "Distgen Wanstrow Lgc Ltd",
+  "operator": "Distgen Wanstrow LGC Ltd",
   "site": "LANDMARK FARM",
   "town": "Shepton Mallet",
   "postcode": "BA4 4TQ",
@@ -2476,7 +2476,7 @@
  },
  {
   "rank": 100,
-  "operator": "WYKE FARMS LTD (site owner; SSE was contractor)",
+  "operator": "Wyke Farms Ltd",
   "site": "BRUTON WHITE HOUSE FARM BIOMASS CHP",
   "town": "Bruton",
   "postcode": "BA10 0PU",
@@ -2501,7 +2501,7 @@
  },
  {
   "rank": 101,
-  "operator": "Pmf Poultry Limited",
+  "operator": "PMF Poultry Limited",
   "site": "Hill farm lydney",
   "town": "Lydney",
   "postcode": "GL15 4LR",
@@ -2526,9 +2526,9 @@
  },
  {
   "rank": 102,
-  "operator": "FRADDON BIOGAS LIMITED (owned Material Change)",
+  "operator": "Fraddon Biogas Limited (owned Material Change)",
   "site": "Greener for life energy biogas plant",
-  "town": "St columb",
+  "town": "St Columb",
   "postcode": "TR9 6NL",
   "installed_kw": 249,
   "commissioned": 2014,
@@ -2551,9 +2551,9 @@
  },
  {
   "rank": 103,
-  "operator": "EVERCREECH RENEWABLE ENERGY LIMITED (op. Adapt Biogas)",
+  "operator": "Evercreech Renewable Energy Limited (op. Adapt Biogas)",
   "site": "Evercreech renewable energy",
-  "town": "Shepton mallet",
+  "town": "Shepton Mallet",
   "postcode": "BA4 6NB",
   "installed_kw": 124,
   "commissioned": 2014,
@@ -2651,7 +2651,7 @@
  },
  {
   "rank": 107,
-  "operator": "SARIA LIMITED (fka Prosper De Mulder; ReFood)",
+  "operator": "Saria Limited (fka Prosper De Mulder; ReFood)",
   "site": "Prosper De Mulder Ltd",
   "town": "Doncaster",
   "postcode": "DN5 9SW",
@@ -2676,7 +2676,7 @@
  },
  {
   "rank": 108,
-  "operator": "Gwe Biogas Ltd (Edl)",
+  "operator": "Gwe Biogas Ltd (EDL)",
   "site": "Sandhill Add Biogas",
   "town": "Driffield",
   "postcode": "YO25 9DR",
@@ -2726,7 +2726,7 @@
  },
  {
   "rank": 110,
-  "operator": "Castillium Ltd (developer; SPV TBC)",
+  "operator": "Castillium Ltd",
   "site": "Prospect Farm, Bigby Rd, Barnetby le Wold",
   "town": null,
   "postcode": "DN38 6EL",
@@ -2751,7 +2751,7 @@
  },
  {
   "rank": 111,
-  "operator": "Clayton Hall Farm Bioenergy LLP (Neil Gemmell)",
+  "operator": "Clayton Hall Farm Bioenergy LLP",
   "site": "Clayton Hall Farm, Clayton West, Huddersfield",
   "town": "Clayton West",
   "postcode": "HD8 9QE",
@@ -2826,7 +2826,7 @@
  },
  {
   "rank": 114,
-  "operator": "Kanadevia Inova Biogas Westholme Farm Ltd (Fka Jfs)",
+  "operator": "Kanadevia Inova Biogas Westholme Farm Ltd (fka JFS)",
   "site": "Westholme Farm, Islebeck, Thirsk, North Yorkshire",
   "town": "Thirsk",
   "postcode": "YO7 3BP",
@@ -2851,7 +2851,7 @@
  },
  {
   "rank": 115,
-  "operator": "MERLIN RENEWABLES LIMITED (Future Biogas/JLEN)",
+  "operator": "Merlin Renewables Limited (Future Biogas/JLEN)",
   "site": "Hibalstow Airfield",
   "town": "Brigg",
   "postcode": "DN20 9NN",
@@ -2876,7 +2876,7 @@
  },
  {
   "rank": 116,
-  "operator": "VULCAN RENEWABLES LIMITED (Future Biogas)",
+  "operator": "Vulcan Renewables Limited (Future Biogas)",
   "site": "Lindholme Gas Generator",
   "town": "Doncaster",
   "postcode": "DN7 6BY",
@@ -2926,7 +2926,7 @@
  },
  {
   "rank": 118,
-  "operator": "UNITED UTILITIES WATER LIMITED (Lancaster WwTW sludge AD)",
+  "operator": "United Utilities Water Limited (Lancaster WwTW sludge AD)",
   "site": "AD site LA2 0AG",
   "town": "Lancaster",
   "postcode": "LA2 0AG",
@@ -2951,7 +2951,7 @@
  },
  {
   "rank": 119,
-  "operator": "R-GROUP OF COMPANIES LIMITED (in liquidation; site=Farmgen, Warton — verify owner)",
+  "operator": "R-Group of Companies Limited",
   "site": "CARR FARM",
   "town": "Lytham St. Annes",
   "postcode": "FY8 5RP",
@@ -3101,7 +3101,7 @@
  },
  {
   "rank": 125,
-  "operator": "GENERATION X ENERGY LIMITED (acq. Allium Energy 2020)",
+  "operator": "Generation X Energy Limited (acq. Allium Energy 2020)",
   "site": "Rotary Way",
   "town": "Consett",
   "postcode": "DH8 7ND",
@@ -3126,7 +3126,7 @@
  },
  {
   "rank": 126,
-  "operator": "HIGH HEDLEY BIOGAS LIMITED (fka WJ Drennan Ltd)",
+  "operator": "High Hedley Biogas Limited (fka WJ Drennan Ltd)",
   "site": "East Hedley Hope Farm, East Hedley Hope, Bishop Auckland, Durham",
   "town": "Bishop Auckland",
   "postcode": "DL13 4PR",

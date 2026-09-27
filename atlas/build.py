@@ -32,6 +32,25 @@ OUT = {'client': os.path.join(REPO, 'client_atlas.html'), 'investor': os.path.jo
 FONTS_URL = ('https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Newsreader:ital,opsz,wght@'
              '0,6..72,400..600;1,6..72,400..500&display=swap')
 INIT_MARKER = '/*__ATLAS_INIT__*/'
+# MapLibre from jsDelivr with Subresource Integrity. The hashes are of the npm tarball's dist files (jsDelivr /npm/
+# serves them byte for byte); the tarball was checked against the registry's sha512 integrity. Bump all three together.
+MAPLIBRE_VERSION = '4.7.1'
+MAPLIBRE_SRI = {'js': 'sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj',
+                'css': 'sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V'}
+
+
+def cdn_head():
+    """Third-party tags, all non-blocking (a hanging CDN must never freeze the shell): the fonts CSS and the
+    MapLibre CSS load as preload→stylesheet (with a <noscript> fallback), MapLibre JS loads async;
+    RBX.mapctl.init waits for window.maplibregl (8 s, then the fallback panel)."""
+    ml = 'https://cdn.jsdelivr.net/npm/maplibre-gl@%s/dist/maplibre-gl.' % MAPLIBRE_VERSION
+    sri = ' integrity="%s" crossorigin="anonymous"'
+    swap = ' onload="this.onload=null;this.rel=\'stylesheet\'"'
+    return ('<link rel="preload" as="style" href="%s"%s><noscript><link rel="stylesheet" href="%s"></noscript>\n'
+            '<link rel="preload" as="style" href="%scss"%s%s><noscript><link rel="stylesheet" href="%scss"%s></noscript>\n'
+            '<script async src="%sjs"%s onerror="window.__rbxMaplibreFailed=1"></script>'
+            % (FONTS_URL, swap, FONTS_URL, ml, sri % MAPLIBRE_SRI['css'], swap, ml, sri % MAPLIBRE_SRI['css'],
+               ml, sri % MAPLIBRE_SRI['js']))
 DATA_BUDGET = 170 * 1024
 HTML_BUDGET = int(1.2 * 1024 * 1024)
 
@@ -350,6 +369,16 @@ def investor_tokens(data):
     }
 
 
+def strip_private(obj):
+    """Drop every dict key that starts with '_' (config.json notes for maintainers: `_doc`, `_sam_kw_source`, …).
+    They document owner decisions and alternatives and must never be inlined into a page (either app)."""
+    if isinstance(obj, dict):
+        return {k: strip_private(v) for k, v in obj.items() if not (isinstance(k, str) and k.startswith('_'))}
+    if isinstance(obj, list):
+        return [strip_private(x) for x in obj]
+    return obj
+
+
 def fill_tokens(obj, tok):
     if isinstance(obj, str):
         def rep(m):
@@ -507,11 +536,77 @@ def client_deny_patterns(rego_mode):
         r'\bsupplier_1_certs\b', r'\bn_external\b', r'\bbm_tier\b', r'\byrs_old\b', r'\bwebsite\b', r'"gspc?"\s*:',
         r'\bTCVRATE\b', r'\bAVRATIO\b', r'\bWHOLESALE\b', r'\btcvPot\b', r'\bscores?\b', r'\binternal\b',
         r'RenewaBlox CRM', r'RenewaBlox_AD_BM_CRM', r'RenewaBlox_Hydro_Stranded', r'Scrivelsby peaker', r'\bModo\b',
+        r'\blagging\b', r'winding\s*down', r'\.rank\b', r'\(Dr [A-Z]', r'was contractor',
+        r'Owner decision', r'decisions pending', r'CVD-validated', r'client-safety', r'build\.py', r'\bREADME\b',
         r'\b17p\b', r'\b70p\b', r'[x×]\s?1\.20\b', r'\b1\.45\s*(?:T1|\.\.|…)', r'\b0\.79\s*T5', r'"src"\s*:', r'"s"\s*:',
     ]
     if rego_mode != 'raw':
         pats += [r'likely ceased', r'lagging/winding down']
     return [re.compile(p, re.I) for p in pats]
+
+
+NOTE_RX = re.compile(r'\bverify\b|\bTBC\b|\bTODO\b|site=|\?\?|was contractor|\blandowner\b|\bsite owner\b|'
+                     r'\bsite op\.|\(Dr [A-Z]|\bfamily\)', re.I)
+SMALL_WORDS = r'(?:and|of|the|at|on|in|for|to|de|by|nr|upon|le|with|via|en)\b'
+LOWER_WORD_RX = re.compile(r'(?:^|[\s,/])(?!' + SMALL_WORDS + r')[a-z]')
+NAME_FIELDS = {'sam': ('name', 'site', 'town'), 'hydro': ('name',), 'tam': ('n',)}
+
+
+def public_text_checks(app, data):
+    """Both apps (T08/T09): researcher notes never ship in any free-text field; public display names and towns
+    are title-cased (a lower-case significant word outside a parenthetical fails), are never a placeholder
+    ("Export", "Redacted") and never carry a trailing postcode."""
+    bad = []
+    for k, rows in data.items():
+        for r in (rows if isinstance(rows, list) else []):
+            for f, v in (r.items() if isinstance(r, dict) else []):
+                if f in ('offRaw',):
+                    continue                     # raw certificate-holder string (investor PPA register, verbatim v1)
+                if isinstance(v, str) and NOTE_RX.search(v):
+                    bad.append('%s.%s carries a research note: %r' % (k, f, v))
+            for f in NAME_FIELDS.get(k, ()):
+                v = r.get(f)
+                if not isinstance(v, str) or not v:
+                    continue
+                bare = re.sub(r'\([^)]*\)', '', v)
+                if LOWER_WORD_RX.search(bare) and not re.match(r'^(AD site|Name withheld|Unnamed site)\b', v):
+                    bad.append('%s.%s is not title-cased: %r' % (k, f, v))
+                if re.fullmatch(r'\s*(export|import meter)\s*', v, re.I) or re.search(r'redacted', v, re.I):
+                    bad.append('%s.%s is a placeholder: %r' % (k, f, v))
+                if f != 'name' and re.search(r'[\s,][A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$', v, re.I) and not v.startswith('AD site'):
+                    bad.append('%s.%s ends in a postcode: %r' % (k, f, v))
+    if bad:
+        fail('%s public-text check failed (%d):\n  ' % (app, len(bad)) + '\n  '.join(bad[:30]))
+
+
+# DI1 (investor build): every displayed name field (cards, search, Sites list, CSV) is a cleaned name. A company
+# status found in a research note ships only as `opSt`, from a closed vocabulary, shown as a separate muted tag.
+INV_NAME_FIELDS = {'sam': ('name', 'site', 'town', 'la', 'op', 'dev', 'off'), 'hydro': ('name',), 'tam': ('n',)}
+INV_NAME_NOTE_RX = re.compile(r'\bverify\b|\bTBC\b|\bTODO\b|site=|\?\?', re.I)
+OP_STATUSES = {'in liquidation', 'in administration', 'in receivership', 'dissolved', 'struck off'}
+# fragments of the v1 research notes that must never reach the investor page, in any form
+INV_NOTE_FRAGMENTS = re.compile(r'verify owner|SPV TBC|site=Farmgen|\(developer;|\(in liquidation', re.I)
+
+
+def investor_name_checks(data, html_out=None):
+    bad = []
+    for k, fields in INV_NAME_FIELDS.items():
+        for r in data.get(k) or []:
+            for f in fields:
+                v = r.get(f)
+                if isinstance(v, str) and INV_NAME_NOTE_RX.search(v):
+                    bad.append('%s.%s shows a research note: %r' % (k, f, v))
+                if isinstance(v, str) and re.search(r'\b(in liquidation|in administration|in receivership)\b', v, re.I):
+                    bad.append('%s.%s carries a company status inside the name (use opSt): %r' % (k, f, v))
+            st = r.get('opSt')
+            if st is not None and st not in OP_STATUSES:
+                bad.append('%s.opSt %r is not a known company status' % (k, st))
+    if html_out is not None:
+        m = INV_NOTE_FRAGMENTS.search(html_out)
+        if m:
+            bad.append('investor HTML carries a research-note fragment: …%s…' % html_out[max(0, m.start() - 60):m.end() + 60])
+    if bad:
+        fail('investor display-name check failed (%d):\n  ' % len(bad) + '\n  '.join(bad[:30]))
 
 
 def client_safety(data, html_out, rego_mode):
@@ -523,13 +618,7 @@ def client_safety(data, html_out, rego_mode):
         extra = keys - CLIENT_ALLOW[k]
         if extra:
             fail('client data %s: keys outside the allowlist: %s' % (k, sorted(extra)))
-    # 1b. research notes left in free-text fields (e.g. operator "(… verify owner)", "(SPV TBC)") never ship
-    note_rx = re.compile(r'\bverify\b|\bTBC\b|\bTODO\b|site=|\?\?', re.I)
-    for k, rows in data.items():
-        for r in (rows if isinstance(rows, list) else []):
-            for f, v in (r.items() if isinstance(r, dict) else []):
-                if isinstance(v, str) and note_rx.search(v):
-                    fail('client data %s.%s carries a research note: %r' % (k, f, v))
+    # 1b. research notes / display names: see public_text_checks (run for both apps)
     # 2. textual: whole output (comments included); the init marker is whitelisted
     body = html_out.replace(INIT_MARKER, '')
     hits = []
@@ -596,7 +685,7 @@ def build_app(app, warnings):
         # Present-mode chapters (spec 10.3) ship as ATLAS_CONFIG.story
         if os.path.exists(os.path.join(adir, 'story.json')):
             cfg['story'] = load(adir, 'story.json')
-    cfg = fill_tokens(cfg, tok)
+    cfg = strip_private(fill_tokens(cfg, tok))
     left_tok = re.findall(r'\{\{[A-Za-z0-9_]+\}\}', json.dumps(cfg, ensure_ascii=False))
     if left_tok:
         fail('unfilled copy tokens in %s config: %s' % (app, sorted(set(left_tok))))
@@ -610,6 +699,7 @@ def build_app(app, warnings):
             if s != want[v]:
                 fail('Universe string for %s is %r, expected %r' % (v, s, want[v]))
 
+    public_text_checks(app, data)
     packed = pack_data(data)
     data_js = js_json(packed)
     cfg_js = js_json(cfg)
@@ -624,7 +714,7 @@ def build_app(app, warnings):
     fav = 'data:image/svg+xml;base64,' + base64.b64encode(FAVICON_SVG.encode()).decode()
     repl = {
         '{{DEFAULT_THEME}}': cfg.get('defaultTheme', 'paper'), '{{TITLE}}': htmllib.escape(cfg['title']),
-        '{{FAVICON_DATA_URI}}': fav, '{{FONTS_URL}}': FONTS_URL, '{{CSS}}': css, '{{SHELL}}': shell,
+        '{{FAVICON_DATA_URI}}': fav, '{{FONTS_URL}}': FONTS_URL, '{{CDN_HEAD}}': cdn_head(), '{{CSS}}': css, '{{SHELL}}': shell,
         '{{CONFIG}}': cfg_js, '{{DATA}}': data_js,
         '{{NE_PACK}}': read(HERE, 'core', 'basemap', 'ne_pack.js').strip(),
         '{{BASEMAP}}': read(HERE, 'core', 'basemap', 'basemap.js').strip(), '{{JS}}': js,
@@ -646,6 +736,8 @@ def build_app(app, warnings):
         ppa_copy_check(warnings)
     if app == 'client':
         client_safety(data, out, rego_mode)
+    else:
+        investor_name_checks(data, out)
     size = len(out.encode('utf-8'))
     if size > HTML_BUDGET:
         fail('%s HTML %d B exceeds the %d B budget' % (app, size, HTML_BUDGET))

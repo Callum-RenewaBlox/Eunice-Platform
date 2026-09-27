@@ -52,14 +52,21 @@
 
   // ------------------------------------------------------------------ keyboard shortcuts ("?")
   var KEYS = [
-    [['/'], 'Search sites, towns, postcodes'], [['⌘', 'K'], 'Search (also Ctrl-K)'], [['1'], 'Peaker Model'], [['2'], 'Hydro'], [['3'], 'PPA Benchmark'],
+    [['/'], 'Search sites, towns, postcodes'], [['⌘', 'K'], 'Search (also Ctrl-K)'], [['1'], 'TAB:peaker'], [['2'], 'TAB:hydro'], [['3'], 'TAB:ppa'],
     [['S'], 'Switch TAM ↔ SAM (Peaker)'], [['T'], 'Paper / Night theme'], [['R'], 'Reset the map view'], [['L'], 'Collapse or expand the panel'],
     [['J'], 'Next site in the card'], [['K'], 'Previous site in the card'], [['←', '→'], 'Previous / next site (focus in the card)'],
     [['Esc'], 'Close search, card, drawer or dialog'], [['?'], 'This list']
   ];
   M.shortcuts = function () {
-    var rows = KEYS.slice();
-    if (RBX.present && RBX.present.enter) rows.splice(rows.length - 1, 0, [['P'], 'Present']);
+    // view keys are named after this build's tabs (e.g. "Peaker plants" in the investor build)
+    var tabs = {};
+    (RBX.config.tabs || []).forEach(function (t) { tabs[t.id] = String(t.label || '').replace(/\s*·\s*[\d,]+$/, ''); });
+    var dflt = { peaker: 'Peaker Model', hydro: 'Hydro', ppa: 'PPA Benchmark' };
+    var rows = KEYS.map(function (r) { var m = /^TAB:(\w+)$/.exec(r[1]); return m ? [r[0], tabs[m[1]] || dflt[m[1]]] : r; });
+    if (RBX.present && RBX.present.enter) {
+      rows.splice(rows.length - 1, 0, [['P'], 'Present'], [['←', '→'], 'Previous / next chapter (while presenting)'],
+        [['Space'], 'Next chapter (while presenting)']);
+    }
     M.open({ title: 'Keyboard shortcuts', cls: 'modal-sm', sub: 'Shortcuts are ignored while you type in a field. When the map has focus, arrow keys pan and + / − zoom.',
       html: '<table class="keys"><tbody>' + rows.map(function (r) {
         return '<tr><th scope="row">' + r[0].map(function (k) { return '<span class="kbd">' + U.esc(k) + '</span>'; }).join(' ') + '</th><td>' + U.esc(r[1]) + '</td></tr>';
@@ -109,15 +116,15 @@
     var cols = COLS[view];
     var c = cols.filter(function (x) { return x.k === sort.key; })[0];
     if (c) rows = rows.slice().sort(function (a, b) { var x = c.v(a), y = c.v(b); return (x < y ? -1 : x > y ? 1 : 0) * sort.dir; });
-    return '<table class="sites-t"><caption class="sr-only">Sites shown, ' + rows.length + ' rows. Select a column header to sort.</caption><thead><tr>' + cols.map(function (x) {
+    return '<table class="sites-t" data-view="' + view + '"><caption class="sr-only">Sites shown, ' + rows.length + ' rows. Select a column header to sort.</caption><thead><tr>' + cols.map(function (x) {
       var s = x.k === sort.key ? (sort.dir > 0 ? 'ascending' : 'descending') : 'none';
-      return '<th scope="col" aria-sort="' + s + '"' + (x.n ? ' class="n"' : '') + '><button type="button" data-sort="' + x.k + '">' + U.esc(x.l) +
+      return '<th scope="col" aria-sort="' + s + '" class="c-' + x.k + (x.n ? ' n' : '') + '"><button type="button" data-sort="' + x.k + '"><span>' + U.caseSafe(x.l) + '</span>' +
         '<span class="st" aria-hidden="true">' + (s === 'ascending' ? '▲' : s === 'descending' ? '▼' : '') + '</span></button></th>';
     }).join('') + '</tr></thead><tbody>' + rows.map(function (r) {
       return '<tr>' + cols.map(function (x, i) {
         var v = x.f ? x.f(r) : x.v(r);
-        if (i === (view === 'sam' ? 1 : 0)) return '<th scope="row"><button type="button" class="st-open" data-open="' + r.kind + ':' + r.id + '">' + RBX.icons.forRow(r, 12) + '<span>' + U.esc(v) + '</span></button></th>';
-        return '<td' + (x.n ? ' class="n"' : '') + '>' + U.esc(v) + '</td>';
+        if (i === (view === 'sam' ? 1 : 0)) return '<th scope="row" class="c-' + x.k + '"><button type="button" class="st-open" data-open="' + r.kind + ':' + r.id + '">' + RBX.icons.forRow(r, 12) + '<span>' + U.esc(v) + '</span></button></th>';
+        return '<td class="c-' + x.k + (x.n ? ' n' : '') + '">' + U.esc(v) + '</td>';
       }).join('') + '</tr>';
     }).join('') + '</tbody></table>';
   }
@@ -126,7 +133,7 @@
     var rows = listRows(view), all = RBX.data.rows[view].length;
     sort = { key: view === 'sam' ? 'ref' : 'kw', dir: view === 'sam' ? 1 : -1 };
     var grp = ((RBX.config.views || {})[view] || {}).searchGroup || view.toUpperCase();
-    M.open({ title: 'Sites list', cls: 'modal-wide', sub: U.esc(grp) + ' · ' + U.int(rows.length) + ' of ' + U.int(all) + ' sites shown' + (RBX.state.inView ? ' (in view)' : '') + ' · the current filters apply',
+    M.open({ title: 'Sites list', cls: 'modal-wide modal-sites', sub: U.esc(grp) + ' · ' + U.int(rows.length) + ' of ' + U.int(all) + ' sites shown' + (RBX.state.inView ? ' (in view)' : '') + ' · the current filters apply',
       html: '<div class="modal-acts top"><button type="button" class="btn" data-csv="1">' + (RBX.exporter ? RBX.exporter.ICON : '') + 'Download CSV</button></div><div class="sites-wrap" id="sitesWrap">' + tableHTML(view, rows) + '</div>',
       onOpen: function (box) {
         box.addEventListener('click', function (e) {

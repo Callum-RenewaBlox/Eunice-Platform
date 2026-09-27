@@ -119,7 +119,7 @@
   var ATTR = {
     ne: '<a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a>',
     dem: 'Terrain: <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Mapzen / AWS Terrain Tiles</a>',
-    ofm: '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'
+    ofm: '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">© OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
   };
 
   var DATA_BEFORE = 'rbx-slot-labels';
@@ -230,6 +230,19 @@
   // metadata['rbx:offline'] = paint overrides applied when vector tiles are unreachable
   // metadata['rbx:group']   = 'ne' | 'ofm' | 'dem' | 'slot'
   // ------------------------------------------------------------------------------------------
+  function hillshadeLayer(p) {
+    return { id: 'rbx-hillshade', type: 'hillshade', source: 'rbx-dem', metadata: { 'rbx:group': 'dem' },
+      paint: {
+        'hillshade-exaggeration': zi.apply(null, p.hsExaggeration),
+        'hillshade-shadow-color': p.hsShadow,
+        'hillshade-highlight-color': p.hsHighlight,
+        'hillshade-accent-color': p.hsAccent,
+        'hillshade-illumination-direction': 315,
+        'hillshade-illumination-anchor': 'map'
+      } };
+  }
+  function demSource(o) { return { type: 'raster-dem', tiles: [o.demUrl], encoding: 'terrarium', tileSize: 256, maxzoom: 12, attribution: ATTR.dem }; }
+
   function buildLayers(p, o) {
     var V = o.vectorZoom, L = [];
     var vec = o.vector !== false;
@@ -254,17 +267,7 @@
         paint: { 'fill-color': p.residential, 'fill-opacity': fadeIn(8, 10, 0.85), 'fill-antialias': false } });
     }
 
-    if (o.terrain !== false) {
-      L.push({ id: 'rbx-hillshade', type: 'hillshade', source: 'rbx-dem', metadata: { 'rbx:group': 'dem' },
-        paint: {
-          'hillshade-exaggeration': zi.apply(null, p.hsExaggeration),
-          'hillshade-shadow-color': p.hsShadow,
-          'hillshade-highlight-color': p.hsHighlight,
-          'hillshade-accent-color': p.hsAccent,
-          'hillshade-illumination-direction': 315,
-          'hillshade-illumination-anchor': 'map'
-        } });
-    }
+    if (o.terrain !== false && !o.deferTerrain) L.push(hillshadeLayer(p));
 
     // Context veil: sits ABOVE the hillshade, so it both tints and mutes relief outside the focus area.
     var ctxFilter = o.focus === 'gbi' ? ['==', ['get', 'c'], 'CTX'] : ['match', ['get', 'c'], ['CTX', 'IRL'], true, false];
@@ -377,7 +380,7 @@
     S['rbx-lakes'] = gj(pack.lakes);
     S['rbx-rivers'] = gj(pack.rivers);
     S['rbx-borders'] = gj(pack.borders);
-    if (o.terrain !== false) S['rbx-dem'] = { type: 'raster-dem', tiles: [o.demUrl], encoding: 'terrarium', tileSize: 256, maxzoom: 12, attribution: ATTR.dem };
+    if (o.terrain !== false && !o.deferTerrain) S['rbx-dem'] = demSource(o);
     if (o.vector !== false) S['rbx-ofm'] = { type: 'vector', url: o.ofmUrl, attribution: ATTR.ofm };
     return S;
   }
@@ -521,11 +524,21 @@
       return list;
     }
 
-    function buildImages() {
-      var p = pal(state.theme), feats = { city: [], region: [], sea: [] };
-      state.imgs.forEach(function (id) { if (map.hasImage(id)) map.removeImage(id); });
-      state.imgs = [];
-      function add(id, r) { map.addImage(id, r.img, { pixelRatio: dpr }); state.imgs.push(id); }
+    // Rasterised label images are cached per theme, so switching back and forth does not re-rasterise them
+    // (and prewarm() can build the other theme's set while the page is idle).
+    var rcache = {}, rasterRaw = rasterLabel;
+    function buildImages(themeOverride, dry) {
+      var th = themeOverride || state.theme, p = pal(th), feats = { city: [], region: [], sea: [] };
+      if (!dry) {
+        state.imgs.forEach(function (id) { if (map.hasImage(id)) map.removeImage(id); });
+        state.imgs = [];
+      }
+      function add(id, r) { if (dry) return; map.addImage(id, r.img, { pixelRatio: dpr }); state.imgs.push(id); }
+      // keyed by text + style (the style carries the theme's colours and the fonts)
+      var rasterLabel = function (lines, st) {
+        var k = JSON.stringify([lines, st]);
+        return rcache[k] || (rcache[k] = rasterRaw(lines, st, dpr));
+      };
       if (opts.cityLabels !== false) cityList().forEach(function (c, i) {
         var tier = c[3], cap = c[5], id = 'rbx-lbl-c' + i;
         var r = rasterLabel([c[0]], {
@@ -600,19 +613,26 @@
 
     function styleReady() { return !!(map.style && map.style._loaded); }
 
+    // Timers are declared before goOffline so it can always clear them.
+    var watchdog = null, bootTimer = null, bootTimer2 = null, holdTimer = null;
+    function clearTimers() { clearTimeout(watchdog); clearTimeout(bootTimer); clearTimeout(bootTimer2); clearTimeout(holdTimer); watchdog = bootTimer = bootTimer2 = holdTimer = null; }
+
     function goOffline(reason) {
       if (state.mode === 'offline' || state.destroyed) return;
       if (!styleReady()) { map.once('style.load', function () { goOffline(reason); }); return; }
+      clearTimers();
+      state.slow = false; map.__rbxBasemapSlow = false;
       state.mode = 'offline'; map.__rbxBasemapMode = 'offline'; map.__rbxBasemapOfflineReason = reason || 'vector source error';
       var layers = map.getStyle().layers;
       layers.forEach(function (l) {
         var m = l.metadata || {};
         // Remove (not just hide) vector layers + source: an unreachable TileJSON otherwise keeps
-        // map.isStyleLoaded() false forever and the map 'load' event would never fire.
+        // map.isStyleLoaded() false forever (no 'idle', no 'load').
         if (m['rbx:group'] === 'ofm') { try { map.removeLayer(l.id); } catch (e) {} return; }
         if (m['rbx:offline']) Object.keys(m['rbx:offline']).forEach(function (k) { map.setPaintProperty(l.id, k, m['rbx:offline'][k]); });
       });
       try { if (map.getSource('rbx-ofm')) map.removeSource('rbx-ofm'); } catch (e) {}
+      state.hold = false;
       // city labels take over at all zooms, with extra Natural Earth places
       if (state.fontsReady) {
         install();
@@ -621,34 +641,101 @@
       if (opts.onMode) opts.onMode('offline', reason);
     }
 
+    // "Slow" is not "offline": the vector source stays; a pill says detail is still loading. Only a second
+    // consecutive timeout with no tile loaded (or a source-level failure) takes the basemap offline.
+    function setSlow(on, reason) {
+      if (state.mode === 'offline' || state.destroyed || !!state.slow === !!on) return;
+      state.slow = !!on; map.__rbxBasemapSlow = !!on;
+      try { map.fire('rbx:basemapmode', { mode: on ? 'slow' : 'online', reason: reason }); } catch (e) {}
+      if (opts.onMode) opts.onMode(on ? 'slow' : 'online', reason);
+    }
+    function ofmSource() { try { return map.getSource('rbx-ofm'); } catch (e) { return null; } }
+    function loadedTiles() {
+      try {
+        var sc = map.style && map.style.sourceCaches && map.style.sourceCaches['rbx-ofm'];
+        if (!sc) return 0;
+        return Object.keys(sc._tiles || {}).filter(function (k) { return sc._tiles[k].state === 'loaded'; }).length;
+      } catch (e) { return 0; }
+    }
+
+    // Tile errors are counted: 3+ errors and no tile loaded within 20 s → offline. A single transient 5xx is ignored.
+    var errs = [], gerrs = [], lastLoad = 0;
     function onError(e) {
+      if (state.mode === 'offline' || state.destroyed) return;
       var err = (e && e.error) || {}, msg = String(err.message || err || ''), url = String(err.url || '');
-      if (e && e.sourceId === 'rbx-ofm') return goOffline('vector tiles unreachable');
-      if (/openfreemap|\/fonts\/|\.pbf/i.test(msg + ' ' + url)) return goOffline('vector tiles/glyphs unreachable');
+      var isOfm = (e && e.sourceId === 'rbx-ofm') || /openfreemap|\.pbf/i.test(msg + ' ' + url);
+      var isGlyph = /\/fonts\/|glyph/i.test(msg + ' ' + url);
+      if (!isOfm && !isGlyph) return;
+      // source-level failure (TileJSON unreachable): there is nothing to wait for
+      if (e && e.sourceId === 'rbx-ofm' && !e.tile) return goOffline('vector tiles unreachable');
+      var now = Date.now(), recent = function (t) { return now - t < 20000; };
+      if (isGlyph) { gerrs.push(now); gerrs = gerrs.filter(recent); if (gerrs.length >= 3) goOffline('vector glyphs unreachable'); return; }
+      errs.push(now); errs = errs.filter(recent);
+      if (errs.length >= 3 && now - lastLoad > 20000 && loadedTiles() === 0) goOffline('vector tiles unreachable');
     }
     map.on('error', onError);
 
-    // Safety net: if we are zoomed in and the vector source never loads, fall back.
-    var watchdog = null;
+    // Natural Earth sea / lakes / coast / rivers hand over to the vector tiles by zoom. While the vector tiles for the
+    // viewport are still loading, hold the Natural Earth layers at their offline (opaque) values so the sea never
+    // renders land-coloured; release them once the source reports loaded.
+    function neHold(on) {
+      if (state.mode === 'offline' || !!state.hold === !!on) return;
+      state.hold = !!on;
+      try {
+        var meta = styleMeta(), o = opts0({ vectorZoom: meta['rbx:vectorZoom'], focus: meta['rbx:focus'], vector: meta['rbx:vector'], terrain: meta['rbx:terrain'] });
+        buildLayers(pal(state.theme), o).forEach(function (d) {
+          var off = d.metadata && d.metadata['rbx:offline'];
+          if (!off || !map.getLayer(d.id)) return;
+          Object.keys(off).forEach(function (k) { map.setPaintProperty(d.id, k, on ? off[k] : d.paint[k]); });
+        });
+      } catch (e) {}
+    }
+    function ofmLoaded() { try { return !!ofmSource() && map.isSourceLoaded('rbx-ofm'); } catch (e) { return false; } }
+    function onSourceData(e) {
+      if (!e || e.sourceId !== 'rbx-ofm' || state.mode === 'offline') return;
+      if (e.tile && e.dataType === 'source') { lastLoad = Date.now(); if (state.slow) setSlow(false); }
+      if (state.hold && ofmLoaded()) neHold(false);
+    }
+    map.on('sourcedata', onSourceData);
+    function checkHold() {
+      if (state.mode === 'offline' || !state.vector || state.destroyed || !ofmSource()) return;
+      clearTimeout(holdTimer);
+      if (map.getZoom() < state.V) { neHold(false); return; }
+      holdTimer = setTimeout(function () { if (!ofmLoaded() && map.getZoom() >= state.V) neHold(true); }, 350);
+    }
+
+    // Safety net when zoomed in: first timeout with no vector tile loaded → "slow"; a second consecutive one → offline.
+    var strikes = 0;
     function checkLoaded() {
-      if (state.mode === 'offline' || !state.vector || state.destroyed) return;
+      if (state.mode === 'offline' || !state.vector || state.destroyed || !ofmSource()) return;
+      checkHold();
       if (map.getZoom() < state.V) return;
       if (watchdog) return;
       watchdog = setTimeout(function () {
         watchdog = null;
-        try { if (map.getZoom() >= state.V && !map.isSourceLoaded('rbx-ofm')) {
-          var sc = map.style && map.style.sourceCaches && map.style.sourceCaches['rbx-ofm'];
-          var tiles = sc ? Object.keys(sc._tiles || {}).length : 1;
-          var loaded = sc ? Object.keys(sc._tiles || {}).filter(function (k) { return sc._tiles[k].state === 'loaded'; }).length : 1;
-          if (tiles > 0 && loaded === 0) goOffline('vector tiles timed out');
-        } } catch (e) {}
+        if (state.mode === 'offline' || state.destroyed || !ofmSource()) return;
+        try {
+          if (map.getZoom() >= state.V && !map.isSourceLoaded('rbx-ofm')) {
+            if (loadedTiles() === 0 && Date.now() - lastLoad > (opts.timeoutMs || 9000)) {
+              strikes++;
+              if (strikes >= 2) goOffline('vector tiles timed out');
+              else { setSlow(true, 'detail tiles loading slowly'); checkLoaded(); }
+            }
+          } else strikes = 0;
+        } catch (e) {}
       }, opts.timeoutMs || 9000);
     }
     map.on('moveend', checkLoaded);
-    // If the TileJSON hangs (firewall silently dropping), don't hold up the map's 'load' event.
-    var bootTimer = state.vector ? setTimeout(function () {
-      try { var src = map.getSource('rbx-ofm'); if (src && !src.loaded()) goOffline('vector TileJSON timed out'); } catch (e) {}
-    }, opts.bootTimeoutMs || 6000) : null;
+    // TileJSON slow (firewall silently dropping): mark slow after 6 s, go offline if it still has not loaded 10 s later.
+    if (state.vector) {
+      bootTimer = setTimeout(function () {
+        var src = ofmSource();
+        if (src && !src.loaded()) {
+          setSlow(true, 'vector TileJSON slow');
+          bootTimer2 = setTimeout(function () { var s2 = ofmSource(); if (s2 && !s2.loaded()) goOffline('vector TileJSON timed out'); }, opts.bootTimeout2Ms || 10000);
+        }
+      }, opts.bootTimeoutMs || 6000);
+    }
 
     var ready = (document.fonts && document.fonts.load) ? Promise.all([
       document.fonts.load('600 12px ' + fonts.label), document.fonts.load('500 12px ' + fonts.label),
@@ -664,15 +751,33 @@
     var ctl = {
       ready: installed,
       mode: function () { return state.mode || 'online'; },
-      setTheme: function (t) { state.theme = t; state.themeSet = true; applyTheme(map, t, { skipLabels: true }); install(); return ctl; },
+      setTheme: function (t) { var h = state.hold; state.theme = t; state.themeSet = true; state.hold = false; applyTheme(map, t, { skipLabels: true }); if (h) neHold(true); install(); return ctl; },
+      slow: function () { return !!state.slow; },
+      /** Rasterise another theme's labels ahead of time (call when idle); the next setTheme reuses them. */
+      prewarm: function (t) { if (state.fontsReady && !state.destroyed) { try { buildImages(t, true); } catch (e) {} } },
       destroy: function () {
-        state.destroyed = true; clearTimeout(bootTimer); map.off('error', onError); map.off('moveend', checkLoaded);
+        state.destroyed = true; clearTimers(); map.off('error', onError); map.off('moveend', checkLoaded); map.off('sourcedata', onSourceData);
         CITY_LAYERS.concat(ANN_LAYERS).forEach(function (id) { if (map.getLayer(id)) map.removeLayer(id); });
         state.imgs.forEach(function (id) { if (map.hasImage(id)) map.removeImage(id); });
       }
     };
     map.__rbxBasemap = ctl;
     return ctl;
+  }
+
+  // Add the DEM source + hillshade to a map whose style was built with { deferTerrain: true }, e.g. once the data
+  // layers are on the map, so a slow or failing third-party DEM host can never hold up the map's first render.
+  function addTerrain(map, theme, opts) {
+    try {
+      if (map.getLayer('rbx-hillshade')) return true;
+      var meta = (map.getStyle() || {}).metadata || {};
+      if (meta['rbx:terrain'] === false) return false;
+      var o = opts0(opts);
+      if (!map.getSource('rbx-dem')) map.addSource('rbx-dem', demSource(o));
+      var before = map.getLayer('rbx-land-context') ? 'rbx-land-context' : undefined;
+      map.addLayer(hillshadeLayer(pal(theme || meta['rbx:theme'])), before);
+      return true;
+    } catch (e) { return false; }
   }
 
   // Re-apply a palette to an existing map (no setStyle, your data layers are untouched)
@@ -696,6 +801,7 @@
     style: style,
     attach: attach,
     applyTheme: applyTheme,
+    addTerrain: addTerrain,
     palettes: palettes,
     decode: decode,
     _rasterLabel: rasterLabel,

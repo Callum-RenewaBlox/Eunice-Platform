@@ -24,9 +24,6 @@
     });
   }
 
-  /** v1 per-fuel colours, used only when switches.tam_colour_mode === 'fuels' (not CVD-validated). */
-  var FUEL_HUES = ['#8c6d31', '#7b3294', '#e08214', '#d73027', '#1a9850', '#6a51a3', '#2166ac', '#4d9221', '#999999'];
-
   var cache = {};
   /** Data colours for the current theme, read from the CSS custom properties in tokens.css. */
   T.pal = function () {
@@ -38,7 +35,7 @@
       tier: [1, 2, 3, 4, 5].map(function (i) { return v('--tier-' + i); }),
       tierHot: [1, 2, 3, 4, 5].map(function (i) { return v('--tier-hot-' + i); }),
       fam: [0, 1, 2, 3].map(function (i) { return v('--fam-' + i); }),
-      fuel: FUEL_HUES.slice(),
+      fuel: [0, 1, 2, 3, 4, 5, 6, 7, 8].map(function (i) { return v('--fuel-' + i); }),
       hyd: [0, 1, 2].map(function (i) { return v('--hyd-' + i); }),
       hydHot: [0, 1, 2].map(function (i) { return v('--hyd-hot-' + i); }),
       unv: v('--hyd-unv'), tamFill: v('--tam-fill'), tamHalo: v('--tam-halo'),

@@ -1,7 +1,7 @@
 [
  {
   "key": "ttrumps-farm-ad-p-gcp",
-  "n": "Trumps Farm AD plant, Kitsmead Lane, Longcross, Chertsey",
+  "n": "Trumps Farm AD Plant, Kitsmead Lane, Longcross, Chertsey",
   "f": "Biogas (AD)",
   "kw": 2378,
   "bm": 1188,
@@ -15,7 +15,7 @@
  },
  {
   "key": "triverside-south-gcp",
-  "n": "Riverside / South London AD plant, Osier Way, Mitcham",
+  "n": "Riverside / South London AD Plant, Osier Way, Mitcham",
   "f": "Biogas (AD)",
   "kw": 1700,
   "bm": 1187,
@@ -56,8 +56,8 @@
   "lon": 1.24376
  },
  {
-  "key": "tsevern-trent-gre-gcp",
-  "n": "Severn Trent Green Power Limited",
+  "key": "tad-site-ox10-gcp",
+  "n": "AD site (OX10)",
   "f": "Biogas (AD)",
   "kw": 2378,
   "bm": 2280,
@@ -112,8 +112,8 @@
   "lon": -1.12568
  },
  {
-  "key": "twessex-water-ser-gcn",
-  "n": "Wessex Water Services Limited",
+  "key": "tad-site-dt28-gcn",
+  "n": "AD site (DT28)",
   "f": "Biogas (AD)",
   "kw": 1100,
   "bm": 1100,
@@ -155,7 +155,7 @@
  },
  {
   "key": "tstourwell-barn-a-gcn",
-  "n": "Stourwell barn ad plant",
+  "n": "Stourwell Barn AD Plant",
   "f": "Biogas (AD)",
   "kw": 499,
   "bm": 475,
@@ -183,7 +183,7 @@
  },
  {
   "key": "tmarston-power-gcr",
-  "n": "Marston power",
+  "n": "Marston Power",
   "f": "Biogas (AD)",
   "kw": 498,
   "bm": 498,
@@ -197,7 +197,7 @@
  },
  {
   "key": "tgaunts-estate-ad-gcn",
-  "n": "Gaunts Estate AD plant (1 of 3), nr Wimborne",
+  "n": "Gaunts Estate AD Plant (1 of 3), nr Wimborne",
   "f": "Biogas (AD)",
   "kw": 338,
   "bm": null,
@@ -211,7 +211,7 @@
  },
  {
   "key": "tbanbury-ad-plant-gcr",
-  "n": "Banbury ad plant",
+  "n": "Banbury AD Plant",
   "f": "Biogas (AD)",
   "kw": 260,
   "bm": null,
@@ -238,8 +238,8 @@
   "lon": -2.32525
  },
  {
-  "key": "tadam-balch-gcn",
-  "n": "Adam Balch",
+  "key": "tad-site-sp78-gcn",
+  "n": "AD site (SP78)",
   "f": "Biogas (AD)",
   "kw": 190,
   "bm": 190,
@@ -252,8 +252,8 @@
   "lon": -2.18886
  },
  {
-  "key": "twest-berkshire-c-gcp",
-  "n": "WEST BERKSHIRE COUNCIL (local authority)",
+  "key": "tad-site-rg73-gcp",
+  "n": "AD site (RG73)",
   "f": "Biogas (AD)",
   "kw": 190,
   "bm": 190,
@@ -267,7 +267,7 @@
  },
  {
   "key": "tgaunts-house-ad-gcn",
-  "n": "Gaunts House AD plant, Petersham Lane, Wimborne",
+  "n": "Gaunts House AD Plant, Petersham Lane, Wimborne",
   "f": "Biogas (AD)",
   "kw": 125,
   "bm": null,
@@ -281,7 +281,7 @@
  },
  {
   "key": "tstation-farm-u12",
-  "n": "Station farm",
+  "n": "Station Farm",
   "f": "Biogas (AD)",
   "kw": 5936,
   "bm": 1140,
@@ -295,7 +295,7 @@
  },
  {
   "key": "tagri-gen-ad-plan-u13",
-  "n": "Agri-Gen AD plant, Bentwaters Parks, Rendlesham",
+  "n": "Agri-Gen AD Plant, Bentwaters Parks, Rendlesham",
   "f": "Biogas (AD)",
   "kw": 4498,
   "bm": 3400,
@@ -337,7 +337,7 @@
  },
  {
   "key": "tmay-farm-ad-plan-u12",
-  "n": "May Farm AD plant, Littleport",
+  "n": "May Farm AD Plant, Littleport",
   "f": "Biogas (AD)",
   "kw": 3142,
   "bm": 2400,
@@ -393,7 +393,7 @@
  },
  {
   "key": "tad-plant-main-ro-gcr",
-  "n": "Ad plant main road langrick",
+  "n": "AD Plant Main Road Langrick",
   "f": "Biogas (AD)",
   "kw": 1524,
   "bm": 474,
@@ -407,7 +407,7 @@
  },
  {
   "key": "tmanor-farm-u12",
-  "n": "Manor farm",
+  "n": "Manor Farm",
   "f": "Biogas (AD)",
   "kw": 1487,
   "bm": 760,
@@ -435,7 +435,7 @@
  },
  {
   "key": "teast-kirkby-east-u12",
-  "n": "East kirkby , east kirkby airfield",
+  "n": "East Kirkby, East Kirkby Airfield",
   "f": "Biogas (AD)",
   "kw": 1200,
   "bm": 1140,
@@ -462,8 +462,8 @@
   "lon": 1.5295
  },
  {
-  "key": "texport-u12",
-  "n": "Export",
+  "key": "tbarley-brigg-bio-u12",
+  "n": "Barley Brigg Biogas Ltd",
   "f": "Biogas (AD)",
   "kw": 1099,
   "bm": 479,
@@ -532,8 +532,8 @@
   "lon": 1.08175
  },
  {
-  "key": "timport-meter-u12",
-  "n": "Import Meter",
+  "key": "tbiocow-ltd-u12",
+  "n": "Biocow Ltd",
   "f": "Biogas (AD)",
   "kw": 500,
   "bm": 480,
@@ -588,8 +588,8 @@
   "lon": 1.60912
  },
  {
-  "key": "tfullcircle-energ-u10",
-  "n": "Fullcircle Energy Ltd",
+  "key": "tad-site-co77-u10",
+  "n": "AD site (CO77)",
   "f": "Biogas (AD)",
   "kw": 499,
   "bm": 479,
@@ -616,8 +616,8 @@
   "lon": 0.10401
  },
  {
-  "key": "tj-f-temple-son-l-u12",
-  "n": "J.F. Temple & Son Ltd (Dr Stephen Temple)",
+  "key": "tad-site-nr23-u12",
+  "n": "AD site (NR23)",
   "f": "Biogas (AD)",
   "kw": 170,
   "bm": 163,
@@ -631,7 +631,7 @@
  },
  {
   "key": "tswancote-energy-gcq",
-  "n": "Swancote Energy AD plant, Swancote Farm, Bridgnorth",
+  "n": "Swancote Energy AD Plant, Swancote Farm, Bridgnorth",
   "f": "Biogas (AD)",
   "kw": 3420,
   "bm": 2242,
@@ -645,7 +645,7 @@
  },
  {
   "key": "tlongner-energy-l-gcq",
-  "n": "Longner energy ltd",
+  "n": "Longner Energy Ltd",
   "f": "Biogas (AD)",
   "kw": 3378,
   "bm": 475,
@@ -659,7 +659,7 @@
  },
  {
   "key": "therefordshire-bi-gcm",
-  "n": "Herefordshire Biogas AD plant, Pembridge Ind. Estate",
+  "n": "Herefordshire Biogas AD Plant, Pembridge Ind. Estate",
   "f": "Biogas (AD)",
   "kw": 2495,
   "bm": 484,
@@ -673,7 +673,7 @@
  },
  {
   "key": "tcoleshill-stw-fo-gcq",
-  "n": "Coleshill stw food",
+  "n": "Coleshill STW Food",
   "f": "Biogas (AD)",
   "kw": 2400,
   "bm": 2400,
@@ -687,7 +687,7 @@
  },
  {
   "key": "tbitterley-warthi-gcq",
-  "n": "Bitterley warthill farm",
+  "n": "Bitterley Warthill Farm",
   "f": "Biogas (AD)",
   "kw": 1598,
   "bm": 474,
@@ -701,7 +701,7 @@
  },
  {
   "key": "teign-wwtw-gcq",
-  "n": "Eign wwtw",
+  "n": "Eign WWTW",
   "f": "Biogas (AD)",
   "kw": 1570,
   "bm": 1570,
@@ -729,7 +729,7 @@
  },
  {
   "key": "trotherdale-farm-gcq",
-  "n": "Rotherdale Farm AD plant, Throckmorton, Pershore",
+  "n": "Rotherdale Farm AD Plant, Throckmorton, Pershore",
   "f": "Biogas (AD)",
   "kw": 499,
   "bm": 499,
@@ -743,7 +743,7 @@
  },
  {
   "key": "tbagley-biogas-ad-gcm",
-  "n": "Bagley Biogas AD plant, Oaklands, Bagley, Ellesmere",
+  "n": "Bagley Biogas AD Plant, Oaklands, Bagley, Ellesmere",
   "f": "Biogas (AD)",
   "kw": 849,
   "bm": null,
@@ -757,7 +757,7 @@
  },
  {
   "key": "tad-plant-gcn",
-  "n": "Ad plant",
+  "n": "AD Plant",
   "f": "Biogas (AD)",
   "kw": 748,
   "bm": 356,
@@ -771,7 +771,7 @@
  },
  {
   "key": "tmanor-farm-ad-pl-gcm",
-  "n": "Manor Farm AD plant, Wistanstow, Craven Arms",
+  "n": "Manor Farm AD Plant, Wistanstow, Craven Arms",
   "f": "Biogas (AD)",
   "kw": 550,
   "bm": 238,
@@ -785,7 +785,7 @@
  },
  {
   "key": "tbretford-road-br-gcr",
-  "n": "Bretford road brandon",
+  "n": "Bretford Road Brandon",
   "f": "Biogas (AD)",
   "kw": 499,
   "bm": 475,
@@ -813,7 +813,7 @@
  },
  {
   "key": "tpengethley-ad-pl-gcn",
-  "n": "Pengethley ad plant mfg generation",
+  "n": "Pengethley AD Plant Mfg Generation",
   "f": "Biogas (AD)",
   "kw": 499,
   "bm": 474,
@@ -827,7 +827,7 @@
  },
  {
   "key": "tpembridge-the-le-gcm",
-  "n": "Pembridge the leen dairy",
+  "n": "Pembridge the Leen Dairy",
   "f": "Biogas (AD)",
   "kw": 499,
   "bm": 474,
@@ -841,7 +841,7 @@
  },
  {
   "key": "thome-farm-ad-pla-gcq",
-  "n": "Home Farm AD plant, Leebotwood, Church Stretton",
+  "n": "Home Farm AD Plant, Leebotwood, Church Stretton",
   "f": "Biogas (AD)",
   "kw": 499,
   "bm": 48,
@@ -855,7 +855,7 @@
  },
  {
   "key": "twytheford-poultr-gcq",
-  "n": "Wytheford poultry units",
+  "n": "Wytheford Poultry Units",
   "f": "Biogas (AD)",
   "kw": 490,
   "bm": 189,
@@ -869,7 +869,7 @@
  },
  {
   "key": "tstockton-grange-gcq",
-  "n": "Stockton Grange AD plant, Stockton, Newport",
+  "n": "Stockton Grange AD Plant, Stockton, Newport",
   "f": "Biogas (AD)",
   "kw": 439,
   "bm": 439,
@@ -883,7 +883,7 @@
  },
  {
   "key": "teardisley-eardis-gcm",
-  "n": "Eardisley eardisley park farm",
+  "n": "Eardisley Eardisley Park Farm",
   "f": "Biogas (AD)",
   "kw": 400,
   "bm": 332,
@@ -897,7 +897,7 @@
  },
  {
   "key": "tunit-1-wharton-c-gcq",
-  "n": "Unit 1 wharton court",
+  "n": "Unit 1 Wharton Court",
   "f": "Biogas (AD)",
   "kw": 249,
   "bm": 249,
@@ -911,7 +911,7 @@
  },
  {
   "key": "tpriors-halton-fa-gcq",
-  "n": "Priors halton farm",
+  "n": "Priors Halton Farm",
   "f": "Biogas (AD)",
   "kw": 125,
   "bm": 125,
@@ -925,7 +925,7 @@
  },
  {
   "key": "tbatchacre-hall-a-gcq",
-  "n": "Batchacre Hall AD plant, Shebdon, Stafford",
+  "n": "Batchacre Hall AD Plant, Shebdon, Stafford",
   "f": "Biogas (AD)",
   "kw": 100,
   "bm": 100,
@@ -939,7 +939,7 @@
  },
  {
   "key": "tbio-dynamic-ad-p-gcr",
-  "n": "Bio Dynamic AD plant, Colwick Industrial Estate, Nottingham",
+  "n": "Bio Dynamic AD Plant, Colwick Industrial Estate, Nottingham",
   "f": "Biogas (AD)",
   "kw": 4949,
   "bm": 3800,
@@ -953,7 +953,7 @@
  },
  {
   "key": "tgreens-lodge-far-gcr",
-  "n": "Greens lodge farm, huncote engine no 2",
+  "n": "Greens Lodge Farm, Huncote Engine No 2",
   "f": "Biogas (AD)",
   "kw": 3200,
   "bm": 1900,
@@ -967,7 +967,7 @@
  },
  {
   "key": "tstoke-lane-stoke-gcr",
-  "n": "Stoke lane, stoke bardolph",
+  "n": "Stoke Lane, Stoke Bardolph",
   "f": "Biogas (AD)",
   "kw": 2130,
   "bm": 2130,
@@ -981,7 +981,7 @@
  },
  {
   "key": "tnocton-fen-adj-u-gcr",
-  "n": "Nocton fen adj unit",
+  "n": "Nocton Fen Adj Unit",
   "f": "Biogas (AD)",
   "kw": 2066,
   "bm": 1900,
@@ -995,7 +995,7 @@
  },
  {
   "key": "tfernbrook-bio-ad-gcr",
-  "n": "Fernbrook Bio AD plant, Rothwell Lodge Farm, Kettering",
+  "n": "Fernbrook Bio AD Plant, Rothwell Lodge Farm, Kettering",
   "f": "Biogas (AD)",
   "kw": 1566,
   "bm": null,
@@ -1023,7 +1023,7 @@
  },
  {
   "key": "tscrivelsby-home-gcr",
-  "n": "Scrivelsby home farm rectory lane ln9 6jc",
+  "n": "Scrivelsby Home Farm Rectory Lane",
   "f": "Biogas (AD)",
   "kw": 499,
   "bm": 350,
@@ -1037,7 +1037,7 @@
  },
  {
   "key": "tmedbourne-grange-gcr",
-  "n": "Medbourne grange farm",
+  "n": "Medbourne Grange Farm",
   "f": "Biogas (AD)",
   "kw": 499,
   "bm": 475,
@@ -1079,7 +1079,7 @@
  },
  {
   "key": "tweldon-turbine-gcr",
-  "n": "Weldon turbine",
+  "n": "Weldon Turbine",
   "f": "Biogas (AD)",
   "kw": 360,
   "bm": 360,
@@ -1107,7 +1107,7 @@
  },
  {
   "key": "talfreton-sewage-gcr",
-  "n": "Alfreton sewage treatment works",
+  "n": "Alfreton Sewage Treatment Works",
   "f": "Biogas (AD)",
   "kw": 249,
   "bm": 249,
@@ -1135,7 +1135,7 @@
  },
  {
   "key": "thoneypot-energy-gcr",
-  "n": "Honeypot energy, honeypot lane, colsterworth",
+  "n": "Honeypot Energy, Honeypot Lane, Colsterworth",
   "f": "Biogas (AD)",
   "kw": 165,
   "bm": 165,
@@ -1177,7 +1177,7 @@
  },
  {
   "key": "tvale-bio-energy-gcj",
-  "n": "Vale bio energy, pancross farm, llancarfan, barry, cf61 1uh",
+  "n": "Vale Bio Energy, Pancross Farm, Llancarfan, Barry",
   "f": "Biogas (AD)",
   "kw": 500,
   "bm": 475,
@@ -1191,7 +1191,7 @@
  },
  {
   "key": "ttesco-magor-dist-gcj",
-  "n": "Tesco magor distribution centre",
+  "n": "Tesco Magor Distribution Centre",
   "f": "Biogas (AD)",
   "kw": 360,
   "bm": 285,
@@ -1205,7 +1205,7 @@
  },
  {
   "key": "tcannington-bio-e-gcj",
-  "n": "Cannington Bio-Energy AD plant, Bridgwater",
+  "n": "Cannington Bio-Energy AD Plant, Bridgwater",
   "f": "Biogas (AD)",
   "kw": 3100,
   "bm": 1900,
@@ -1219,7 +1219,7 @@
  },
  {
   "key": "tmark-yardwall-ma-gcj",
-  "n": "Mark yardwall manor farm solar park",
+  "n": "Mark Yardwall Manor Farm Solar Park",
   "f": "Biogas (AD)",
   "kw": 2120,
   "bm": 2120,
@@ -1233,7 +1233,7 @@
  },
  {
   "key": "twaste-transfer-s-gcj",
-  "n": "Waste transfer station, aisecombe way, hutton moor, weston-super-mare",
+  "n": "Waste Transfer Station, Aisecombe Way, Hutton Moor, Weston-super-Mare",
   "f": "Biogas (AD)",
   "kw": 1099,
   "bm": 950,
@@ -1247,7 +1247,7 @@
  },
  {
   "key": "tgreat-dunkilns-f-gcn",
-  "n": "Great dunkilns farm",
+  "n": "Great Dunkilns Farm",
   "f": "Biogas (AD)",
   "kw": 998,
   "bm": 475,
@@ -1275,7 +1275,7 @@
  },
  {
   "key": "texeter-greendale-gcj",
-  "n": "Exeter, greendale, woodbury salterton",
+  "n": "Exeter, Greendale, Woodbury Salterton",
   "f": "Biogas (AD)",
   "kw": 834,
   "bm": 712,
@@ -1289,7 +1289,7 @@
  },
  {
   "key": "thartnollfarm-ad-gcj",
-  "n": "Hartnollfarm ad plant, halberton",
+  "n": "Hartnollfarm AD Plant, Halberton",
   "f": "Biogas (AD)",
   "kw": 800,
   "bm": 800,
@@ -1303,7 +1303,7 @@
  },
  {
   "key": "tcrewkerne-rushyw-gcn",
-  "n": "Crewkerne rushywood farm",
+  "n": "Crewkerne Rushywood Farm",
   "f": "Biogas (AD)",
   "kw": 749,
   "bm": 332,
@@ -1317,7 +1317,7 @@
  },
  {
   "key": "tbroadoak-farm-ad-gcj",
-  "n": "Broadoak Farm AD plant, Clyst Hydon, Cullompton",
+  "n": "Broadoak Farm AD Plant, Clyst Hydon, Cullompton",
   "f": "Biogas (AD)",
   "kw": 581,
   "bm": 475,
@@ -1331,7 +1331,7 @@
  },
  {
   "key": "tplymouth-higher-gbv",
-  "n": "Plymouth higher challonsleigh smithaleigh",
+  "n": "Plymouth Higher Challonsleigh Smithaleigh",
   "f": "Biogas (AD)",
   "kw": 500,
   "bm": 500,
@@ -1345,7 +1345,7 @@
  },
  {
   "key": "taston-manor-cide-gcj",
-  "n": "Aston manor cider",
+  "n": "Aston Manor Cider",
   "f": "Biogas (AD)",
   "kw": 499,
   "bm": 285,
@@ -1401,7 +1401,7 @@
  },
  {
   "key": "thill-farm-lydney-gcn",
-  "n": "Hill farm lydney",
+  "n": "Hill Farm Lydney",
   "f": "Biogas (AD)",
   "kw": 250,
   "bm": 238,
@@ -1415,7 +1415,7 @@
  },
  {
   "key": "tgreener-for-life-gbu",
-  "n": "Greener for life energy biogas plant",
+  "n": "Greener for Life Energy Biogas Plant",
   "f": "Biogas (AD)",
   "kw": 249,
   "bm": 238,
@@ -1429,7 +1429,7 @@
  },
  {
   "key": "tevercreech-renew-gcn",
-  "n": "Evercreech renewable energy",
+  "n": "Evercreech Renewable Energy",
   "f": "Biogas (AD)",
   "kw": 124,
   "bm": 86,
@@ -1443,7 +1443,7 @@
  },
  {
   "key": "twaen-ad-plant-fo-gcm",
-  "n": "Waen AD plant (former abattoir), St Asaph",
+  "n": "Waen AD Plant (former abattoir), St Asaph",
   "f": "Biogas (AD)",
   "kw": 1064,
   "bm": null,
@@ -1457,7 +1457,7 @@
  },
  {
   "key": "tllwyn-isaf-ad-pl-gck",
-  "n": "Llwyn Isaf AD plant (GwyriAD), Clynnog Fawr, Caernarfon",
+  "n": "Llwyn Isaf AD Plant (GwyriAD), Clynnog Fawr, Caernarfon",
   "f": "Biogas (AD)",
   "kw": 499,
   "bm": null,
@@ -1471,7 +1471,7 @@
  },
  {
   "key": "tlodge-farm-ad-pl-gcm",
-  "n": "Lodge Farm AD plant, Commonwood, Holt, Wrexham",
+  "n": "Lodge Farm AD Plant, Commonwood, Holt, Wrexham",
   "f": "Biogas (AD)",
   "kw": 176,
   "bm": null,
@@ -1513,7 +1513,7 @@
  },
  {
   "key": "tlow-farm-gcr",
-  "n": "Low farm",
+  "n": "Low Farm",
   "f": "Biogas (AD)",
   "kw": 2974,
   "bm": 2850,
@@ -1863,7 +1863,7 @@
  },
  {
   "key": "R00062RAWA",
-  "n": "Western wood biomass 2",
+  "n": "Western Wood Biomass 2",
   "f": "Biomass",
   "kw": 48960,
   "bm": 44600,
@@ -1919,7 +1919,7 @@
  },
  {
   "key": "R00202RAEN",
-  "n": "Sleaford renewable energy plant",
+  "n": "Sleaford Renewable Energy Plant",
   "f": "Biomass",
   "kw": 45000,
   "bm": 42750,
@@ -2003,7 +2003,7 @@
  },
  {
   "key": "R00002SJSC",
-  "n": "Drumgray Energy from Waste",
+  "n": "Drumgray Energy From Waste",
   "f": "Landfill gas",
   "kw": 32082,
   "bm": null,
@@ -2059,7 +2059,7 @@
  },
  {
   "key": "R00003RAEN",
-  "n": "Goosey lodge",
+  "n": "Goosey Lodge",
   "f": "Waste / EfW",
   "kw": 25600,
   "bm": 23750,
@@ -2087,7 +2087,7 @@
  },
  {
   "key": "R00500RJEN",
-  "n": "Hartlebury efw",
+  "n": "Hartlebury EfW",
   "f": "Waste / EfW",
   "kw": 25000,
   "bm": 23750,
@@ -2227,7 +2227,7 @@
  },
  {
   "key": "R00580RAEN",
-  "n": "Derby and derbyshire new waste (nwft)",
+  "n": "Derby and Derbyshire New Waste (nwft)",
   "f": "Waste / EfW",
   "kw": 19500,
   "bm": 15001,
@@ -2255,7 +2255,7 @@
  },
  {
   "key": "R00002RAWA",
-  "n": "Port talbot steel works",
+  "n": "Port Talbot Steel Works",
   "f": "Waste / EfW",
   "kw": 19000,
   "bm": null,
@@ -2269,7 +2269,7 @@
  },
  {
   "key": "R00002RAWA-2",
-  "n": "Biomass generation site margam",
+  "n": "Biomass Generation Site Margam",
   "f": "Biomass",
   "kw": 19000,
   "bm": 15010,
@@ -2353,7 +2353,7 @@
  },
  {
   "key": "R00246RAEN",
-  "n": "Bristol 33kv kingsweston lane lawrence weston",
+  "n": "Bristol 33kv Kingsweston Lane Lawrence Weston",
   "f": "Waste / EfW",
   "kw": 15600,
   "bm": 13300,
@@ -2395,7 +2395,7 @@
  },
  {
   "key": "R00072RJEN",
-  "n": "Lincolnshire energy from waste facility",
+  "n": "Lincolnshire Energy From Waste Facility",
   "f": "Waste / EfW",
   "kw": 13100,
   "bm": 12445,
@@ -2409,7 +2409,7 @@
  },
  {
   "key": "R00373RAEN",
-  "n": "Facility at incinerator road",
+  "n": "Facility at Incinerator Road",
   "f": "Waste / EfW",
   "kw": 13000,
   "bm": null,
@@ -2437,7 +2437,7 @@
  },
  {
   "key": "R00097RREN",
-  "n": "Great billing sewage treatment works",
+  "n": "Great Billing Sewage Treatment Works",
   "f": "Sewage gas",
   "kw": 11900,
   "bm": 7600,
@@ -2451,7 +2451,7 @@
  },
  {
   "key": "R00029RAWA",
-  "n": "Barry, david davies road, barry docks",
+  "n": "Barry, David Davies Road, Barry Docks",
   "f": "Biomass",
   "kw": 11705,
   "bm": 10750,
@@ -2535,7 +2535,7 @@
  },
  {
   "key": "R00260RAEN",
-  "n": "Birmingham bio power ltd",
+  "n": "Birmingham Bio Power Ltd",
   "f": "Biomass",
   "kw": 10300,
   "bm": 9785,
@@ -2549,7 +2549,7 @@
  },
  {
   "key": "R00457RAEN",
-  "n": "Horseley Fen AD Generation aka FDG A-15",
+  "n": "Horseley Fen AD Generation Aka Fdg A-15",
   "f": "Landfill gas",
   "kw": 10000,
   "bm": 10000,
@@ -2647,7 +2647,7 @@
  },
  {
   "key": "R00269RAEN",
-  "n": "Energy recovery services (west midlands) ltd",
+  "n": "Energy Recovery Services (west midlands) Ltd",
   "f": "Biomass",
   "kw": 8000,
   "bm": 3800,
@@ -2689,7 +2689,7 @@
  },
  {
   "key": "R00427RAEN",
-  "n": "John brookes sawmill",
+  "n": "John Brookes Sawmill",
   "f": "Waste / EfW",
   "kw": 7800,
   "bm": 6650,
@@ -2703,7 +2703,7 @@
  },
  {
   "key": "R00558RJWA",
-  "n": "Trecatti landfill site 33kv generation scheme",
+  "n": "Trecatti Landfill Site 33kv Generation Scheme",
   "f": "Landfill gas",
   "kw": 7750,
   "bm": 4845,
@@ -2759,7 +2759,7 @@
  },
  {
   "key": "R00395RAEN",
-  "n": "Waste to energy",
+  "n": "Waste to Energy",
   "f": "Waste / EfW",
   "kw": 7000,
   "bm": 6650,
@@ -2801,7 +2801,7 @@
  },
  {
   "key": "R00150RREN",
-  "n": "Netheridge water treatment works",
+  "n": "Netheridge Water Treatment Works",
   "f": "Sewage gas",
   "kw": 6668,
   "bm": 4750,
@@ -2899,7 +2899,7 @@
  },
  {
   "key": "R00426RAEN",
-  "n": "Holbrook community renewable energy centre",
+  "n": "Holbrook Community Renewable Energy Centre",
   "f": "Biomass",
   "kw": 5850,
   "bm": 5558,
@@ -2969,7 +2969,7 @@
  },
  {
   "key": "R00075RAEN",
-  "n": "Holsworthy manworthy import/export site",
+  "n": "Holsworthy Manworthy Import/Export Site",
   "f": "Landfill gas",
   "kw": 5139,
   "bm": 4750,
@@ -2983,7 +2983,7 @@
  },
  {
   "key": "R00055RJEN",
-  "n": "Cotesbach landfill generation",
+  "n": "Cotesbach Landfill Generation",
   "f": "Landfill gas",
   "kw": 5100,
   "bm": 4845,
@@ -3081,7 +3081,7 @@
  },
  {
   "key": "tstaples-vegetabl-u12",
-  "n": "Staples vegetables",
+  "n": "Staples Vegetables",
   "f": "Biomass",
   "kw": 4976,
   "bm": 3325,
@@ -3305,7 +3305,7 @@
  },
  {
   "key": "R00068RAEN",
-  "n": "Avonmouth waste water treatment works",
+  "n": "Avonmouth Waste Water Treatment Works",
   "f": "Landfill gas",
   "kw": 4000,
   "bm": 3800,
@@ -3347,7 +3347,7 @@
  },
  {
   "key": "R00302RAEN",
-  "n": "Syntech energy",
+  "n": "Syntech Energy",
   "f": "Landfill gas",
   "kw": 3800,
   "bm": 3610,
@@ -3375,7 +3375,7 @@
  },
  {
   "key": "R00065RJEN",
-  "n": "Redruth landfill import/export site",
+  "n": "Redruth Landfill Import/Export Site",
   "f": "Landfill gas",
   "kw": 3726,
   "bm": 2992,
@@ -3389,7 +3389,7 @@
  },
  {
   "key": "tstourbridge-road-gcq",
-  "n": "Stourbridge road",
+  "n": "Stourbridge Road",
   "f": "Landfill gas",
   "kw": 3620,
   "bm": 3439,
@@ -3417,7 +3417,7 @@
  },
  {
   "key": "R00014RAWA",
-  "n": "Volac factory",
+  "n": "Volac Factory",
   "f": "Biomass",
   "kw": 3500,
   "bm": 949,
@@ -3599,7 +3599,7 @@
  },
  {
   "key": "R00129RAEN",
-  "n": "Higham park",
+  "n": "Higham Park",
   "f": "Landfill gas",
   "kw": 3034,
   "bm": 2708,
@@ -3655,7 +3655,7 @@
  },
  {
   "key": "R00589RAEN",
-  "n": "Calverton energy park",
+  "n": "Calverton Energy Park",
   "f": "Landfill gas",
   "kw": 3000,
   "bm": 2945,
@@ -3683,7 +3683,7 @@
  },
  {
   "key": "tcrowland-spaldin-gcr",
-  "n": "Crowland spalding road",
+  "n": "Crowland Spalding Road",
   "f": "Landfill gas",
   "kw": 3000,
   "bm": 3000,
@@ -3697,7 +3697,7 @@
  },
  {
   "key": "ta-d-plant-beeche-gcr",
-  "n": "A d plant beeches lane",
+  "n": "A D Plant Beeches Lane",
   "f": "Biomass",
   "kw": 3000,
   "bm": 2850,
@@ -3767,7 +3767,7 @@
  },
  {
   "key": "R00151RREN",
-  "n": "Awa cotton valley stw",
+  "n": "Awa Cotton Valley STW",
   "f": "Sewage gas",
   "kw": 2750,
   "bm": 2612,
@@ -3781,7 +3781,7 @@
  },
  {
   "key": "R00122RREN",
-  "n": "Roundhill sewage treatment works",
+  "n": "Roundhill Sewage Treatment Works",
   "f": "Sewage gas",
   "kw": 2728,
   "bm": 1806,
@@ -3795,7 +3795,7 @@
  },
  {
   "key": "tbiogen-merevale-gcq",
-  "n": "Biogen merevale",
+  "n": "Biogen Merevale",
   "f": "Landfill gas",
   "kw": 2676,
   "bm": 2518,
@@ -3837,7 +3837,7 @@
  },
  {
   "key": "R00348RAEN",
-  "n": "Hill barton business park efw",
+  "n": "Hill Barton Business Park EfW",
   "f": "Waste / EfW",
   "kw": 2610,
   "bm": 2610,
@@ -3865,7 +3865,7 @@
  },
  {
   "key": "R00442RJWA",
-  "n": "Ebbw vale, cwm, silent valley waste services (gas)",
+  "n": "Ebbw Vale, Cwm, Silent Valley Waste Services (gas)",
   "f": "Landfill gas",
   "kw": 2600,
   "bm": 2470,
@@ -4089,7 +4089,7 @@
  },
  {
   "key": "R00126RJEN",
-  "n": "Newton abbot supply c heathfield landfill import/expor…",
+  "n": "Newton Abbot Supply C Heathfield Landfill Import/Expor…",
   "f": "Sewage gas",
   "kw": 2300,
   "bm": 2300,
@@ -4215,7 +4215,7 @@
  },
  {
   "key": "R00506RJEN",
-  "n": "Bridgwater, viridor landfill, pawlett",
+  "n": "Bridgwater, Viridor Landfill, Pawlett",
   "f": "Landfill gas",
   "kw": 2242,
   "bm": 1805,
@@ -4313,7 +4313,7 @@
  },
  {
   "key": "R00638RJEN",
-  "n": "Highfields south landfill site",
+  "n": "Highfields South Landfill Site",
   "f": "Landfill gas",
   "kw": 2200,
   "bm": 2090,
@@ -4425,7 +4425,7 @@
  },
  {
   "key": "R00154RJEN",
-  "n": "Bletchley landfill site",
+  "n": "Bletchley Landfill Site",
   "f": "Landfill gas",
   "kw": 2113,
   "bm": 2023,
@@ -4453,7 +4453,7 @@
  },
  {
   "key": "R00535RJEN",
-  "n": "Vigo utopia landfill generating site",
+  "n": "Vigo Utopia Landfill Generating Site",
   "f": "Landfill gas",
   "kw": 2100,
   "bm": 1995,
@@ -4509,7 +4509,7 @@
  },
  {
   "key": "R00094RJEN",
-  "n": "Waverley wood landfill site, weston lane, bubbenhall…",
+  "n": "Waverley Wood Landfill Site, Weston Lane, Bubbenhall…",
   "f": "Landfill gas",
   "kw": 2073,
   "bm": 1776,
@@ -4523,7 +4523,7 @@
  },
  {
   "key": "R00202RJEN",
-  "n": "Ling hall quarry generation rmu b",
+  "n": "Ling Hall Quarry Generation Rmu B",
   "f": "Landfill gas",
   "kw": 2070,
   "bm": 1425,
@@ -4551,7 +4551,7 @@
  },
  {
   "key": "R00072RJEN-2",
-  "n": "Doddington road",
+  "n": "Doddington Road",
   "f": "Biofuel - other",
   "kw": 2022,
   "bm": 433,
@@ -4607,7 +4607,7 @@
  },
  {
   "key": "R00111RREN",
-  "n": "Strongford sewage works",
+  "n": "Strongford Sewage Works",
   "f": "Sewage gas",
   "kw": 2000,
   "bm": 1900,
@@ -4663,7 +4663,7 @@
  },
  {
   "key": "R00629RJEN",
-  "n": "Walleys quarry landfill site",
+  "n": "Walleys Quarry Landfill Site",
   "f": "Landfill gas",
   "kw": 2000,
   "bm": 1900,
@@ -4859,7 +4859,7 @@
  },
  {
   "key": "R00118RREN",
-  "n": "Stwa clay mills, meadow lane, stretton",
+  "n": "Stwa Clay Mills, Meadow Lane, Stretton",
   "f": "Sewage gas",
   "kw": 1900,
   "bm": 948,
@@ -4985,7 +4985,7 @@
  },
  {
   "key": "R00144RREN",
-  "n": "Spondon water treatment works",
+  "n": "Spondon Water Treatment Works",
   "f": "Sewage gas",
   "kw": 1700,
   "bm": 1700,
@@ -5041,7 +5041,7 @@
  },
  {
   "key": "R00559RJWA",
-  "n": "Withyhedges landfill site, haverfordwest",
+  "n": "Withyhedges Landfill Site, Haverfordwest",
   "f": "Landfill gas",
   "kw": 1540,
   "bm": 1540,
@@ -5195,7 +5195,7 @@
  },
  {
   "key": "R00438RJEN",
-  "n": "Betton abbots landfill",
+  "n": "Betton Abbots Landfill",
   "f": "Landfill gas",
   "kw": 1370,
   "bm": 1302,
@@ -5293,7 +5293,7 @@
  },
  {
   "key": "R00151RJEN",
-  "n": "Tythegston landfill generation",
+  "n": "Tythegston Landfill Generation",
   "f": "Landfill gas",
   "kw": 1236,
   "bm": 1205,
@@ -5391,7 +5391,7 @@
  },
  {
   "key": "R00445RJWA",
-  "n": "Bryn pica waste",
+  "n": "Bryn Pica Waste",
   "f": "Landfill gas",
   "kw": 1189,
   "bm": 1189,
@@ -5405,7 +5405,7 @@
  },
  {
   "key": "R00087RAEN",
-  "n": "Wanlip (stw)",
+  "n": "Wanlip (STW)",
   "f": "Sewage gas",
   "kw": 1156,
   "bm": 1156,
@@ -5461,7 +5461,7 @@
  },
  {
   "key": "R00140RREN",
-  "n": "Rushmoor sewage treatment works",
+  "n": "Rushmoor Sewage Treatment Works",
   "f": "Sewage gas",
   "kw": 1141,
   "bm": 855,
@@ -5559,7 +5559,7 @@
  },
  {
   "key": "R00021RJEN",
-  "n": "Cold meece landfill site",
+  "n": "Cold Meece Landfill Site",
   "f": "Landfill gas",
   "kw": 1065,
   "bm": 1012,
@@ -5601,7 +5601,7 @@
  },
  {
   "key": "R00106RJEN",
-  "n": "Yanley landfill main import/export site",
+  "n": "Yanley Landfill Main Import/Export Site",
   "f": "Landfill gas",
   "kw": 1052,
   "bm": 1052,
@@ -5629,7 +5629,7 @@
  },
  {
   "key": "R00091RJEN",
-  "n": "Wellingborough sidegate lane (edl)",
+  "n": "Wellingborough Sidegate Lane (edl)",
   "f": "Landfill gas",
   "kw": 1048,
   "bm": 1048,
@@ -5671,7 +5671,7 @@
  },
  {
   "key": "R00092RJEN",
-  "n": "BIFFA Generation S/S, Metering CB No 2 on Crawley shee…",
+  "n": "BIFFA Generation S/S, Metering CB No 2 on Crawley Shee…",
   "f": "Landfill gas",
   "kw": 1024,
   "bm": 1024,
@@ -5755,7 +5755,7 @@
  },
  {
   "key": "tstragglethorpe-a-gcr",
-  "n": "Stragglethorpe anaerobic digestion plant",
+  "n": "Stragglethorpe Anaerobic Digestion Plant",
   "f": "Landfill gas",
   "kw": 1000,
   "bm": 950,
@@ -5783,7 +5783,7 @@
  },
  {
   "key": "tland-off-park-la-gcq",
-  "n": "Land off park lane woofferton",
+  "n": "Land Off Park Lane Woofferton",
   "f": "Biomass",
   "kw": 1000,
   "bm": 950,
@@ -5797,7 +5797,7 @@
  },
  {
   "key": "tatherstone-austr-gcq",
-  "n": "Atherstone, austrey house farm ad plant",
+  "n": "Atherstone, Austrey House Farm AD Plant",
   "f": "Landfill gas",
   "kw": 1000,
   "bm": 950,
@@ -5853,7 +5853,7 @@
  },
  {
   "key": "R00592RJEN",
-  "n": "Eye Landfill site",
+  "n": "Eye Landfill Site",
   "f": "Landfill gas",
   "kw": 1000,
   "bm": 1000,
@@ -5881,7 +5881,7 @@
  },
  {
   "key": "R00010RJEN",
-  "n": "Spring vale holiday park",
+  "n": "Spring Vale Holiday Park",
   "f": "Biomass",
   "kw": 1000,
   "bm": 950,
@@ -5895,7 +5895,7 @@
  },
  {
   "key": "R00001RJEN",
-  "n": "Ebet export site 2",
+  "n": "Ebet Export Site 2",
   "f": "Landfill gas",
   "kw": 1000,
   "bm": 1000,
@@ -5937,7 +5937,7 @@
  },
  {
   "key": "tlincoln-roe-hous-gcr",
-  "n": "Lincoln roe house boundary road south hykeham",
+  "n": "Lincoln Roe House Boundary Road South Hykeham",
   "f": "Landfill gas",
   "kw": 999,
   "bm": 949,
@@ -5951,7 +5951,7 @@
  },
  {
   "key": "tpengelly-anaerob-gbu",
-  "n": "Pengelly anaerobic digestion facility",
+  "n": "Pengelly Anaerobic Digestion Facility",
   "f": "Biomass",
   "kw": 998,
   "bm": 950,
@@ -5965,7 +5965,7 @@
  },
  {
   "key": "tcrugmore-farm-bi-gck",
-  "n": "Crugmore farm biogas generation",
+  "n": "Crugmore Farm Biogas Generation",
   "f": "Biomass",
   "kw": 998,
   "bm": 998,
@@ -5979,7 +5979,7 @@
  },
  {
   "key": "tcondate-biogas-l-gcj",
-  "n": "Condate biogas ltd, great hele barton, alswear road, s…",
+  "n": "Condate Biogas Ltd, Great Hele Barton, Alswear Road, S…",
   "f": "Landfill gas",
   "kw": 998,
   "bm": 475,
@@ -6021,7 +6021,7 @@
  },
  {
   "key": "R00031RJEN",
-  "n": "Highwood farm, ad plant, import",
+  "n": "Highwood Farm, AD Plant, Import",
   "f": "Landfill gas",
   "kw": 940,
   "bm": 475,
@@ -6035,7 +6035,7 @@
  },
  {
   "key": "R00058RAWA",
-  "n": "Langdon mill",
+  "n": "Langdon Mill",
   "f": "Landfill gas",
   "kw": 900,
   "bm": 95,
@@ -6049,7 +6049,7 @@
  },
  {
   "key": "tplusterwine-hous-gcn",
-  "n": "Plusterwine house farm",
+  "n": "Plusterwine House Farm",
   "f": "Biomass",
   "kw": 850,
   "bm": 808,
@@ -6063,7 +6063,7 @@
  },
  {
   "key": "tshepton-mallet-s-gcn",
-  "n": "Shepton mallet stw wells road",
+  "n": "Shepton Mallet STW Wells Road",
   "f": "Sewage gas",
   "kw": 800,
   "bm": 760,
@@ -6077,7 +6077,7 @@
  },
  {
   "key": "R00220RREN",
-  "n": "Worksop, rayton lane",
+  "n": "Worksop, Rayton Lane",
   "f": "Biomass",
   "kw": 800,
   "bm": 760,
@@ -6091,7 +6091,7 @@
  },
  {
   "key": "R00106RJEN-2",
-  "n": "Yanley landfill 2nd supply import/export site",
+  "n": "Yanley Landfill 2ND Supply Import/Export Site",
   "f": "Landfill gas",
   "kw": 788,
   "bm": 788,
@@ -6105,7 +6105,7 @@
  },
  {
   "key": "R00093RAEN",
-  "n": "Oakley Bio Gas Gen, Clapham IMPORT on Bedford sheet N4…",
+  "n": "Oakley Bio Gas Gen, Clapham IMPORT on Bedford Sheet N4…",
   "f": "Biomass",
   "kw": 768,
   "bm": 768,
@@ -6203,7 +6203,7 @@
  },
  {
   "key": "R00168RJEN",
-  "n": "Himley wood generation",
+  "n": "Himley Wood Generation",
   "f": "Landfill gas",
   "kw": 676,
   "bm": 676,
@@ -6231,7 +6231,7 @@
  },
  {
   "key": "R00509RJEN",
-  "n": "Grunty Fen Landfill Generation EXPORT on Cambridge she…",
+  "n": "Grunty Fen Landfill Generation EXPORT on Cambridge She…",
   "f": "Landfill gas",
   "kw": 634,
   "bm": 634,
@@ -6301,7 +6301,7 @@
  },
  {
   "key": "R00452RJEN",
-  "n": "Liskeard connon bridge 11kv landfill import/export sit…",
+  "n": "Liskeard Connon Bridge 11kv Landfill Import/Export Sit…",
   "f": "Landfill gas",
   "kw": 626,
   "bm": 589,
@@ -6315,7 +6315,7 @@
  },
  {
   "key": "R00505RJEN",
-  "n": "Leadenham landfill site",
+  "n": "Leadenham Landfill Site",
   "f": "Landfill gas",
   "kw": 598,
   "bm": 598,
@@ -6329,7 +6329,7 @@
  },
  {
   "key": "R00033RJEN",
-  "n": "Marchington landfill site moreton lane",
+  "n": "Marchington Landfill Site Moreton Lane",
   "f": "Landfill gas",
   "kw": 598,
   "bm": 598,
@@ -6371,7 +6371,7 @@
  },
  {
   "key": "ttelford-hortonwo-gcq",
-  "n": "Telford, hortonwood 45",
+  "n": "Telford, Hortonwood 45",
   "f": "Landfill gas",
   "kw": 526,
   "bm": 500,
@@ -6413,7 +6413,7 @@
  },
  {
   "key": "tworks-lane-gcr",
-  "n": "Works lane",
+  "n": "Works Lane",
   "f": "Landfill gas",
   "kw": 500,
   "bm": 475,
@@ -6441,7 +6441,7 @@
  },
  {
   "key": "tlong-belt-farm-gcr",
-  "n": "Long belt farm",
+  "n": "Long Belt Farm",
   "f": "Biomass",
   "kw": 500,
   "bm": 500,
@@ -6553,7 +6553,7 @@
  },
  {
   "key": "tgreat-hele-farm-gcj",
-  "n": "Great hele farm",
+  "n": "Great Hele Farm",
   "f": "Landfill gas",
   "kw": 500,
   "bm": 475,
@@ -6581,7 +6581,7 @@
  },
  {
   "key": "thighwood-farm-co-gcr",
-  "n": "Highwood farm, coventry road, brinklow",
+  "n": "Highwood Farm, Coventry Road, Brinklow",
   "f": "Landfill gas",
   "kw": 500,
   "bm": 475,
@@ -6609,7 +6609,7 @@
  },
  {
   "key": "tcrewkerne-biogas-gcj",
-  "n": "Crewkerne biogas plant higher berechapel farm",
+  "n": "Crewkerne Biogas Plant Higher Berechapel Farm",
   "f": "Landfill gas",
   "kw": 499,
   "bm": 499,
@@ -6623,7 +6623,7 @@
  },
  {
   "key": "tkirkbride-house-gcv",
-  "n": "Kirkbride House, Wigton, Carlisle, CA7 5JR",
+  "n": "Kirkbride House, Wigton, Carlisle",
   "f": "Biogas (AD)",
   "kw": 499,
   "bm": 474,
@@ -6637,7 +6637,7 @@
  },
  {
   "key": "tshobdon-the-airf-gcm",
-  "n": "Shobdon the airfield",
+  "n": "Shobdon the Airfield",
   "f": "Biomass",
   "kw": 499,
   "bm": 474,
@@ -6651,7 +6651,7 @@
  },
  {
   "key": "thaunton-cleat-hi-gcq",
-  "n": "Haunton cleat hill farm",
+  "n": "Haunton Cleat Hill Farm",
   "f": "Biomass",
   "kw": 499,
   "bm": 474,
@@ -6665,7 +6665,7 @@
  },
  {
   "key": "ttrevase-farm-gcn",
-  "n": "Trevase farm",
+  "n": "Trevase Farm",
   "f": "Biomass",
   "kw": 499,
   "bm": 474,
@@ -6679,7 +6679,7 @@
  },
  {
   "key": "tludlow-wigley-fa-gcq",
-  "n": "Ludlow wigley farm",
+  "n": "Ludlow Wigley Farm",
   "f": "Biomass",
   "kw": 499,
   "bm": 499,
@@ -6917,7 +6917,7 @@
  },
  {
   "key": "R00154RREN",
-  "n": "Sewage treatment works",
+  "n": "Sewage Treatment Works",
   "f": "Landfill gas",
   "kw": 454,
   "bm": 431,
@@ -6931,7 +6931,7 @@
  },
  {
   "key": "R00137RREN",
-  "n": "Mansfield, old mill lane",
+  "n": "Mansfield, Old Mill Lane",
   "f": "Sewage gas",
   "kw": 450,
   "bm": 428,
@@ -7029,7 +7029,7 @@
  },
  {
   "key": "tmagor-effluent-t-gcj",
-  "n": "Magor effluent treatment plant",
+  "n": "Magor Effluent Treatment Plant",
   "f": "Landfill gas",
   "kw": 360,
   "bm": 95,
@@ -7113,7 +7113,7 @@
  },
  {
   "key": "R00177RJWA",
-  "n": "Nantycaws landfill gas generator",
+  "n": "Nantycaws Landfill Gas Generator",
   "f": "Landfill gas",
   "kw": 330,
   "bm": 330,
@@ -7141,7 +7141,7 @@
  },
  {
   "key": "R00498RJEN",
-  "n": "Staveley landfill site, hall lane, stave",
+  "n": "Staveley Landfill Site, Hall Lane, Stave",
   "f": "Landfill gas",
   "kw": 330,
   "bm": 330,
@@ -7281,7 +7281,7 @@
  },
  {
   "key": "tpoultry-units-th-gcq",
-  "n": "Poultry units, the vinnals, sy5 8hq",
+  "n": "Poultry Units, the Vinnals",
   "f": "Landfill gas",
   "kw": 240,
   "bm": 228,
@@ -7309,7 +7309,7 @@
  },
  {
   "key": "R00097RAEN",
-  "n": "Ludlow, ludlow business park",
+  "n": "Ludlow, Ludlow Business Park",
   "f": "Biomass",
   "kw": 210,
   "bm": 200,
@@ -7351,7 +7351,7 @@
  },
  {
   "key": "tedgeworthy-farm-gcj",
-  "n": "Edgeworthy farm ad plant, nomansland",
+  "n": "Edgeworthy Farm AD Plant, Nomansland",
   "f": "Biofuel - other",
   "kw": 200,
   "bm": 190,
@@ -7448,8 +7448,8 @@
   "lon": -0.42874
  },
  {
-  "key": "texport-u13",
-  "n": "Export",
+  "key": "tunnamed-site-fit-u13",
+  "n": "Unnamed site (FiT register)",
   "f": "Landfill gas",
   "kw": 192,
   "bm": 192,
@@ -7505,7 +7505,7 @@
  },
  {
   "key": "tmoy-park-gcr",
-  "n": "Moy park",
+  "n": "Moy Park",
   "f": "Landfill gas",
   "kw": 165,
   "bm": 157,
@@ -7799,7 +7799,7 @@
  },
  {
   "key": "R00491RJEN",
-  "n": "Skegness, middlemarsh landfill, middlemarsh lane, burg…",
+  "n": "Skegness, Middlemarsh Landfill, Middlemarsh Lane, Burg…",
   "f": "Landfill gas",
   "kw": 100,
   "bm": 95,
@@ -7827,7 +7827,7 @@
  },
  {
   "key": "R00050RAWA",
-  "n": "Love 2 stay, salop leisure, emstrey, shrewsbury, sy5 6…",
+  "n": "Love 2 Stay, Salop Leisure, Emstrey, Shrewsbury, SY5 6…",
   "f": "Biofuel - other",
   "kw": 90,
   "bm": 86,
@@ -7841,7 +7841,7 @@
  },
  {
   "key": "R00015RJWA",
-  "n": "Leachate side pumping station, ferry road, cardiff bay…",
+  "n": "Leachate Side Pumping Station, Ferry Road, Cardiff Bay…",
   "f": "Landfill gas",
   "kw": 65,
   "bm": 62,
@@ -7883,7 +7883,7 @@
  },
  {
   "key": "R00570RJEN-2",
-  "n": "Processing Plant S/S on Cambridge sheet N4146",
+  "n": "Processing Plant S/S on Cambridge Sheet N4146",
   "f": "Landfill gas",
   "kw": null,
   "bm": 4500,
@@ -10333,7 +10333,7 @@
  },
  {
   "key": "R00037RAEN",
-  "n": "Wilton 10 Biomass Gen station (RA) - A",
+  "n": "Wilton 10 Biomass Gen Station (RA) - A",
   "f": "Fuelled (biomass/AD/EfW)",
   "kw": 33276,
   "bm": null,
@@ -10837,7 +10837,7 @@
  },
  {
   "key": "R00556RJEN",
-  "n": "Star Works Landfill - A,",
+  "n": "Star Works Landfill - A",
   "f": "Landfill gas",
   "kw": 1057,
   "bm": null,
@@ -12083,7 +12083,7 @@
  },
  {
   "key": "R00216RAEN",
-  "n": "Ian and Caroline Bond on behalf of Northwick Estate",
+  "n": "Ian and Caroline Bond on Behalf of Northwick Estate",
   "f": "Fuelled (biomass/AD/EfW)",
   "kw": 3285,
   "bm": null,
@@ -12111,7 +12111,7 @@
  },
  {
   "key": "R00180RAEN",
-  "n": "Greenford.com",
+  "n": "Greenford.Com",
   "f": "Fuelled (biomass/AD/EfW)",
   "kw": 234,
   "bm": null,
@@ -12167,7 +12167,7 @@
  },
  {
   "key": "R00193RAEN",
-  "n": "Lincoln site – Branston AD",
+  "n": "Lincoln Site – Branston AD",
   "f": "Fuelled (biomass/AD/EfW)",
   "kw": 380,
   "bm": 380,
@@ -12237,7 +12237,7 @@
  },
  {
   "key": "R00211RAEN",
-  "n": "Co-operative Group Head Office CHP",
+  "n": "Co-Operative Group Head Office CHP",
   "f": "Fuelled (biomass/AD/EfW)",
   "kw": 722,
   "bm": null,
@@ -12321,7 +12321,7 @@
  },
  {
   "key": "R00228RAEN",
-  "n": "Basingstoke skip hire",
+  "n": "Basingstoke Skip Hire",
   "f": "Fuelled (biomass/AD/EfW)",
   "kw": 670,
   "bm": null,
@@ -13105,7 +13105,7 @@
  },
  {
   "key": "R00039SASC",
-  "n": "RAH Heliex steam turbine",
+  "n": "RAH Heliex Steam Turbine",
   "f": "Fuelled (biomass/AD/EfW)",
   "kw": 82,
   "bm": null,
@@ -13287,7 +13287,7 @@
  },
  {
   "key": "R00368RAEN",
-  "n": "bfgc orc",
+  "n": "Bfgc Orc",
   "f": "Fuelled (biomass/AD/EfW)",
   "kw": 100,
   "bm": null,
@@ -15205,7 +15205,7 @@
  },
  {
   "key": "R00588RAEN",
-  "n": "Minworth STW Dual Fuel Generating station",
+  "n": "Minworth STW Dual Fuel Generating Station",
   "f": "Fuelled (biomass/AD/EfW)",
   "kw": 8664,
   "bm": null,
@@ -15246,8 +15246,8 @@
   "lon": 0.83087
  },
  {
-  "key": "tredacted-gcn",
-  "n": "--Redacted--",
+  "key": "tname-withheld-fi-gcn",
+  "n": "Name withheld (FiT register)",
   "f": "Biomass",
   "kw": 1200,
   "bm": 1140,
@@ -15260,8 +15260,8 @@
   "lon": -2.41458
  },
  {
-  "key": "tredacted-u12",
-  "n": "Redacted",
+  "key": "tname-withheld-fi-u12",
+  "n": "Name withheld (FiT register)",
   "f": "Biomass",
   "kw": 672,
   "bm": 672,
@@ -15274,8 +15274,8 @@
   "lon": 1.10956
  },
  {
-  "key": "tredacted-gcp",
-  "n": "Redacted",
+  "key": "tname-withheld-fi-gcp",
+  "n": "Name withheld (FiT register)",
   "f": "Waste / EfW",
   "kw": 480,
   "bm": 480,
@@ -15288,8 +15288,8 @@
   "lon": -0.32293
  },
  {
-  "key": "tredacted-u10",
-  "n": "Redacted",
+  "key": "tname-withheld-fi-u10",
+  "n": "Name withheld (FiT register)",
   "f": "Biomass",
   "kw": 479,
   "bm": null,
@@ -15303,7 +15303,7 @@
  },
  {
   "key": "R00096RREN",
-  "n": "--Redacted--",
+  "n": "Name withheld (FiT register)",
   "f": "Landfill gas",
   "kw": 450,
   "bm": 428,
@@ -15316,8 +15316,8 @@
   "lon": -3.9368
  },
  {
-  "key": "tredacted-gcr",
-  "n": "--Redacted--",
+  "key": "tname-withheld-fi-gcr",
+  "n": "Name withheld (FiT register)",
   "f": "Landfill gas",
   "kw": 250,
   "bm": 238,
@@ -15330,8 +15330,8 @@
   "lon": -1.37295
  },
  {
-  "key": "tredacted-u13",
-  "n": "Redacted",
+  "key": "tname-withheld-fi-u13",
+  "n": "Name withheld (FiT register)",
   "f": "Waste / EfW",
   "kw": 192,
   "bm": 192,
@@ -15345,7 +15345,7 @@
  },
  {
   "key": "R00495RJEN-3",
-  "n": "Redacted",
+  "n": "Name withheld (FiT register)",
   "f": "Biomass",
   "kw": 144,
   "bm": 144,

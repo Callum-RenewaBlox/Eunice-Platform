@@ -10,13 +10,13 @@
   "contactEmail": "callum@renewablox.com",
   "publicUrl": "https://renewablox-investor-atlas.streamlit.app/",
   "switches": {
-    "_doc": "Owner decisions pending (see atlas/README.md). Each is one switch; rebuild with python3 atlas/build.py after changing.",
+    "_doc": "Owner decisions (final, 27 Sep 2026; see atlas/README.md). Each is one switch; rebuild with python3 atlas/build.py after changing. Keys starting with _ are maintainer notes: build.py strips them before inlining the config.",
     "sam_kw_source": "fit_register",
     "_sam_kw_source": "fit_register = Rotherdale Farm & Scrivelsby at 998 kW (FiT register; SAM 143.6 MW everywhere) | dno_split = 499 kW (onsite + BM split; SAM 142.6 MW)",
     "rego_labels": "raw",
     "_rego_labels": "The investor build keeps the raw v1 REGO status labels (active / lagging/winding down / likely ceased / no REGO certs).",
     "tam_colour_mode": "fuels",
-    "_tam_colour_mode": "families = 3 technology families + Other (validated CVD-safe) | fuels = 9 per-fuel hues (v1 colours; not CVD-validated)"
+    "_tam_colour_mode": "fuels (owner decision) = 9 per-fuel ring colours, one validated set per theme (--fuel-0..8 in core/css/tokens.css) | families = 3 technology families + Other"
   },
   "tabs": [
     {
@@ -90,7 +90,8 @@
       "highlandsChip": "Zoom to Highlands · {{highlands_n}} sites"
     },
     "ppa": {
-      "kicker": "PPA & PRICE BENCHMARK"
+      "kicker": "PPA & PRICE BENCHMARK",
+      "standfirst": "PPA & price benchmark · {{sam_n}} SAM sites · applies across peakers and hydro"
     }
   },
   "band": {
@@ -307,6 +308,7 @@
       "tierTitle": "BM TIER · INDICATIVE",
       "scaleTitle": "SCALE",
       "techNote": "Colours group fuels into three families for colour-blind legibility; each site card names its exact fuel.",
+      "techNoteFuels": "Ring colour shows each site's fuel; shape shows its subsidy. Each site card names its fuel.",
       "tierCaption": "Filter only; not shown by colour on the map."
     },
     "hydro": {
@@ -399,7 +401,7 @@
   "attribution": "Geocoding: <a href=\"https://postcodes.io\">postcodes.io</a>",
   "ppaPlaceholder": "The PPA Benchmark module loads here.",
   "csvHeader": "Confidential — investor use only",
-  "imageBadge": "Confidential — investor use only",
+  "imageBadge": "Confidential — investor use only · Indicative; not investment advice",
   "about": {
     "title": "About this map",
     "body": [

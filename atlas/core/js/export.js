@@ -35,7 +35,7 @@
       ['Latitude', function (r) { return r.lat; }], ['Longitude', function (r) { return r.lon; }]
     ],
     register: [
-      ['Ref', function (o) { return o.ref != null ? o.ref : o.rank; }], ['Operator', function (o) { return o.operator; }], ['Site', function (o) { return o.site; }],
+      ['Ref', function (o) { return o.ref; }], ['Operator', function (o) { return o.operator; }], ['Site', function (o) { return o.site; }],
       ['Town', function (o) { return o.town; }], ['Postcode', function (o) { return o.postcode; }], ['Installed kW', function (o) { return o.installed_kw; }],
       ['Commissioned', function (o) { return o.commissioned; }], ['Export arrangement', function (o) { return o.ppa_class; }],
       ['Certificate counterparty (inferred)', function (o) { return o.offtaker; }], ['Generator also holds own certificates', function (o) { return o.self_certs ? 'Yes' : 'No'; }],
@@ -91,9 +91,26 @@
   function legendRows(view) {
     var P = RBX.theme.pal(), rows = RBX.filters.active(view), lab = L(), out = [];
     var cnt = function (f) { var s = rows.filter(f), kw = U.sum(s, function (r) { return r.kw; }); return U.int(s.length) + ' · ' + (kw >= 100000 ? U.int(kw / 1000) : U.num(kw / 1000, 1)) + ' MW'; };
-    if (view === 'sam') [1, 2, 3, 4, 5].forEach(function (t) { out.push({ shape: 'dot', col: P.tier[t - 1], label: lab.tiers[t], right: cnt(function (r) { return r.t === t; }) }); });
+    if (view === 'sam') {
+      // unpriced rows (pr === 0, audience builds only) are drawn hollow: key them, and count the tiers over priced rows
+      var aw = ((RBX.config.legend || {}).sam || {}).awaiting, hollow = aw ? rows.filter(function (r) { return r.pr === 0; }) : [];
+      [1, 2, 3, 4, 5].forEach(function (t) { out.push({ shape: 'dot', col: P.tier[t - 1], label: lab.tiers[t], right: cnt(function (r) { return r.t === t && (!hollow.length || r.pr !== 0); }) }); });
+      if (hollow.length) out.push({ shape: 'ring', col: P.ink2, label: String(aw), right: cnt(function (r) { return r.pr === 0; }) });
+    }
     if (view === 'tam') {
-      [0, 1, 2, 3].forEach(function (f) { out.push({ shape: 'ring', col: P.fam[f], label: lab.families[f], right: cnt(function (r) { return r.fam === f; }) }); });
+      if (RBX.theme.tamMode() === 'fuels') {
+        // per-fuel rows (the map colours each fuel): the six largest by MW, then the rest aggregated
+        var fr = (lab.fuels || []).map(function (f, j) {
+          var s = rows.filter(function (r) { return r.fu === j; });
+          return { j: j, n: s.length, kw: U.sum(s, function (r) { return r.kw; }) };
+        }).filter(function (x) { return x.n > 0; }).sort(function (a, b) { return b.kw - a.kw || b.n - a.n; });
+        fr.slice(0, 6).forEach(function (x) { out.push({ shape: 'ring', col: P.fuel[x.j], label: lab.fuels[x.j], right: cnt(function (r) { return r.fu === x.j; }) }); });
+        var rest = fr.slice(6).map(function (x) { return x.j; });
+        if (rest.length === 1) out.push({ shape: 'ring', col: P.fuel[rest[0]], label: lab.fuels[rest[0]], right: cnt(function (r) { return r.fu === rest[0]; }) });
+        else if (rest.length) out.push({ shape: 'ring', col: P.ink3, label: 'Other fuels (' + rest.length + ')', right: cnt(function (r) { return rest.indexOf(r.fu) >= 0; }) });
+      } else {
+        [0, 1, 2, 3].forEach(function (f) { out.push({ shape: 'ring', col: P.fam[f], label: lab.families[f], right: cnt(function (r) { return r.fam === f; }) }); });
+      }
       out.push({ shape: 'tri', col: P.ink2, label: 'RO accredited', right: U.int(rows.filter(function (r) { return r.ro; }).length) });
       out.push({ shape: 'ring', col: P.ink2, label: 'FiT accredited', right: U.int(rows.filter(function (r) { return !r.ro; }).length) });
     }
@@ -216,7 +233,7 @@
     var src = 'Sources: ' + (d.sources || []).join(' · ');
     while (g.measureText(src).width > W - 460 && src.length > 20) src = src.replace(/\s·\s[^·]*$/, '') + '';
     g.fillText(src, 28, H - 19);
-    g.textAlign = 'right'; g.fillStyle = ink2; g.font = '500 11.5px ' + UI; g.fillText((d.asOf || '') + ' · © OpenStreetMap contributors · Natural Earth', W - 28, H - 19); g.textAlign = 'left';
+    g.textAlign = 'right'; g.fillStyle = ink2; g.font = '500 11.5px ' + UI; g.fillText((d.asOf || '') + ' · © OpenStreetMap contributors' + (RBX.map && RBX.map.__rbxBasemapMode === 'online' ? ' · © OpenMapTiles' : '') + ' · Natural Earth', W - 28, H - 19); g.textAlign = 'left';
     return cv;
   };
   E.image = function () {

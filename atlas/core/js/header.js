@@ -35,8 +35,8 @@
         '<span class="t-long">' + U.esc(t.label) + '</span><span class="t-short">' + U.esc(t.short || t.label) + extra + '</span></button>';
     };
     var scope = '<div class="scope" id="scope" role="radiogroup" aria-label="Peaker market scope">' +
-      '<button type="button" class="scope-opt" role="radio" data-scope="tam" aria-checked="false"><span class="t-long">' + U.esc(sc.tam) + '</span></button>' +
-      '<button type="button" class="scope-opt" role="radio" data-scope="sam" aria-checked="true"><span class="t-long">' + U.esc(sc.sam) + '</span></button></div>';
+      '<button type="button" class="scope-opt" role="radio" data-scope="tam" aria-checked="false" aria-label="' + U.esc(sc.tam) + '"><span class="t-long">' + U.esc(sc.tam) + '</span><span class="t-short" aria-hidden="true">' + U.esc(sc.tamShort || sc.tam) + '</span></button>' +
+      '<button type="button" class="scope-opt" role="radio" data-scope="sam" aria-checked="true" aria-label="' + U.esc(sc.sam) + '"><span class="t-long">' + U.esc(sc.sam) + '</span><span class="t-short" aria-hidden="true">' + U.esc(sc.samShort || sc.sam) + '</span></button></div>';
     var nav = '';
     tabs.forEach(function (t) {
       if (t.id === 'ppa') nav += '<span class="tab-div" aria-hidden="true"></span>';
@@ -71,6 +71,12 @@
       e.preventDefault();
       list[(i + (e.key === 'ArrowRight' ? 1 : -1) + list.length) % list.length].focus();
     });
+    var navEl = el.querySelector('.hdr-nav');
+    navEl.addEventListener('scroll', U.rafThrottle(function () {
+      navEl.classList.toggle('fade-r', navEl.scrollLeft + navEl.clientWidth < navEl.scrollWidth - 2);
+      navEl.classList.toggle('fade-l', navEl.scrollLeft > 2);
+    }), { passive: true });
+    window.addEventListener('resize', U.rafThrottle(Hd.navOverflow));
     Hd.sync();
     RBX.bus.on('view', Hd.sync);
     RBX.bus.on('theme', Hd.sync);
@@ -95,6 +101,23 @@
     }
     var tb = document.getElementById('themeBtn');
     if (tb) tb.setAttribute('aria-pressed', String(S.theme === 'night'));
+    Hd.navOverflow();
+  };
+  /** Narrow screens: the tab strip scrolls; keep the active tab in view and fade the clipped edge. */
+  Hd.navOverflow = function () {
+    var nav = document.querySelector('.hdr-nav'); if (!nav) return;
+    var over = nav.scrollWidth > nav.clientWidth + 1;
+    if (over) {
+      var act = nav.querySelector('.tab[aria-selected="true"]'), sc = document.getElementById('scope');
+      var target = RBX.state.view === 'sam' || RBX.state.view === 'tam' ? (sc && sc.querySelector('[aria-checked="true"]')) || act : act;
+      if (target) {
+        var nr = nav.getBoundingClientRect(), tr = target.getBoundingClientRect();
+        if (tr.right > nr.right - 16) nav.scrollLeft += tr.right - nr.right + 24;
+        else if (tr.left < nr.left + 8) nav.scrollLeft -= nr.left - tr.left + 16;
+      }
+    }
+    nav.classList.toggle('fade-r', over && nav.scrollLeft + nav.clientWidth < nav.scrollWidth - 2);
+    nav.classList.toggle('fade-l', over && nav.scrollLeft > 2);
   };
 
   // ------------------------------------------------------------------ overflow menu

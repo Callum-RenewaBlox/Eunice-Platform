@@ -96,9 +96,21 @@
   function scrollPpa(name) {
     var pp = document.getElementById('ppa'), el = pp && pp.querySelector('[data-sec="' + name + '"]');
     if (!el) return;
-    var bar = pp.querySelector('.ppa-filters'), top = el.getBoundingClientRect().top - pp.getBoundingClientRect().top + pp.scrollTop;
-    var off = bar && bar.getBoundingClientRect().top - pp.getBoundingClientRect().top + pp.scrollTop < top ? bar.offsetHeight : 0;
-    try { pp.scrollTo({ top: Math.max(0, top - off - 16), behavior: RBX.reduced ? 'auto' : 'smooth' }); } catch (e) { pp.scrollTop = Math.max(0, top - off - 16); }
+    var pr = pp.getBoundingClientRect(), bar = pp.querySelector('.ppa-filters'), top = el.getBoundingClientRect().top - pr.top + pp.scrollTop;
+    var off = bar && bar.getBoundingClientRect().top - pr.top + pp.scrollTop < top ? bar.offsetHeight : 0;
+    var t = top - off - 16;
+    // T14: where the card still overlaps the page (docked / phone), scroll on until the section's chart clears the
+    // card's top edge, but never past the chart's own top
+    var card = document.getElementById('presentCard'), chart = el.querySelector('.ppa-chart');
+    if (card && chart && !card.hidden) {
+      var cr = card.getBoundingClientRect(), hr = chart.getBoundingClientRect();
+      if (cr.left < hr.right && cr.right > hr.left) {
+        var cTop = hr.top - pr.top + pp.scrollTop, cBot = hr.bottom - pr.top + pp.scrollTop, room = cr.top - pr.top - 12;
+        if (cBot - t > room) t = Math.min(cBot - room, cTop - off - 8);
+        t = Math.max(t, 0);
+      }
+    }
+    try { pp.scrollTo({ top: Math.max(0, t), behavior: RBX.reduced ? 'auto' : 'smooth' }); } catch (e) { pp.scrollTop = Math.max(0, t); }
   }
   /** Stat value → html, with a trailing unit set small ("34.5 MW", "7.64p"). */
   function statHtml(v) {
@@ -125,6 +137,7 @@
       el.id = 'presentCard'; el.className = 'present-card';
       el.setAttribute('role', 'region'); el.setAttribute('aria-label', 'Presentation'); el.setAttribute('aria-live', 'polite');
       document.getElementById('stage').appendChild(el);
+      observeCard(el);
       el.addEventListener('click', function (e) {
         var b = e.target.closest('[data-pc]'); if (!b) return;
         var a = b.getAttribute('data-pc');
@@ -143,14 +156,16 @@
   };
   function render() {
     var ch = chapters(), c = ch[idx], el = cardEl(), n = ch.length, last = idx === n - 1, ms = story().autoplayMs || 9000;
+    // T14: keep keyboard focus on the same control across the innerHTML swap (it would otherwise drop to <body>)
+    var fa = document.activeElement, fk = fa && el.contains(fa) ? fa.getAttribute('data-pc') : null;
     el.hidden = false;
     el.setAttribute('data-view', c.view);
-    el.innerHTML = '<div class="pc-top"><span class="pc-n">Chapter ' + (idx + 1) + ' / ' + n + '</span>' +
+    el.innerHTML = '<div class="pc-a"><div class="pc-top"><span class="pc-n">Chapter ' + (idx + 1) + ' / ' + n + '</span>' +
       '<button type="button" class="pc-exit" data-pc="exit">Exit · Esc</button></div>' +
       '<h2 class="pc-title">' + title(c.title) + '</h2>' +
-      '<p class="pc-body">' + U.esc(fill(c.body)) + '</p>' +
-      '<div class="pc-stats">' + (c.stats || []).map(function (s) {
-        return '<div><b class="num">' + statHtml(STAT[s.expr] ? STAT[s.expr]() : '—') + '</b><span>' + U.esc(fill(s.label)) + '</span></div>';
+      '<p class="pc-body">' + U.esc(fill(c.body)) + '</p></div>' +
+      '<div class="pc-b"><div class="pc-stats">' + (c.stats || []).map(function (s) {
+        return '<div><b class="num">' + statHtml(STAT[s.expr] ? STAT[s.expr]() : '—') + '</b><span>' + U.caseSafe(fill(s.label)) + '</span></div>';
       }).join('') + '</div>' +
       '<div class="pc-prog' + (playing ? ' playing' : '') + '" style="--pc-dur:' + ms + 'ms">' + ch.map(function (x, j) {
         return '<button type="button" data-pc="' + j + '" class="' + (j < idx ? 'done' : j === idx ? 'cur' : '') + '" aria-label="Chapter ' + (j + 1) + '"' + (j === idx ? ' aria-current="step"' : '') + '><span></span></button>';
@@ -158,8 +173,38 @@
       '<div class="pc-ctl"><button type="button" class="pc-btn" data-pc="prev" aria-label="Previous chapter"' + (idx === 0 ? ' disabled' : '') + '>' + ICON.prev + '</button>' +
       '<button type="button" class="pc-btn pri" data-pc="next">' + (last ? 'Finish' : 'Next') + ICON.next + '</button>' +
       (RBX.reduced ? '' : '<button type="button" class="pc-btn" data-pc="play" aria-pressed="' + playing + '">' + (playing ? '❚❚ Pause' : '▶ Play') + '</button>') +
-      '<span class="pc-kb" aria-hidden="true">← → · Esc</span></div>';
+      '<span class="pc-kb" aria-hidden="true">← → · Esc</span></div></div>';
+    if (fk != null) {
+      var fb = el.querySelector('[data-pc="' + fk + '"]');
+      if (!fb || fb.disabled) fb = el.querySelector('[data-pc="next"]');
+      if (fb) fb.focus({ preventScroll: true });
+    }
+    layout();
   }
+
+  /** T14: reserve room for the card on the PPA page so it never covers the chart it narrates. Wide stages (the page
+      keeps ≥ 900 px beside the card, ~1400 px and up): the card sits bottom-right and the page is padded on the
+      right by its width (.pc-side). Narrower desktops: a compact full-width card docks at the bottom (.pc-dock,
+      present.css) and the page is padded below by its height. Phones: the mobile card, page padded below. */
+  var SIDE_MIN_PAGE = 900;
+  function layout() {
+    var app = document.getElementById('app'), el = document.getElementById('presentCard');
+    if (!app) return;
+    if (!on || !el || el.hidden) {
+      app.style.removeProperty('--pc-w'); app.style.removeProperty('--pc-h'); app.classList.remove('pc-side', 'pc-dock');
+      return;
+    }
+    var st = el.offsetParent || document.getElementById('stage');    // offsets ignore the card's entry transform
+    if (!st) return;
+    var side = !U.isMobile() && st.clientWidth - 504 >= SIDE_MIN_PAGE;
+    app.classList.toggle('pc-side', side);
+    app.classList.toggle('pc-dock', !side && !U.isMobile());
+    app.style.setProperty('--pc-w', Math.max(0, st.clientWidth - el.offsetLeft + 32) + 'px');
+    app.style.setProperty('--pc-h', Math.max(0, st.clientHeight - el.offsetTop + 24) + 'px');
+  }
+  var layoutSoon = U.rafThrottle(layout);
+  window.addEventListener('resize', layoutSoon);
+  function observeCard(el) { if (window.ResizeObserver && !el.__ro) { el.__ro = new ResizeObserver(layoutSoon); el.__ro.observe(el); } }
 
   // ------------------------------------------------------------------ public API
   Pr.active = function () { return on; };
@@ -182,8 +227,14 @@
     RBX.state.writeHash();
   };
   Pr.play = function (p) { playing = !!p && !RBX.reduced; Pr.go(idx); };
-  Pr.enter = function (start) {
+  function fsEl() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  /** T31: the F11 tip only on a desktop pointer device, and only when the entry was a user gesture. */
+  function fsTip() { if (!U.isTouch() && !U.isMobile()) RBX.toast('Tip: press F11 for full screen'); }
+  /** opts.gesture: true from the ▶ button, false from the ?present=1 boot; otherwise the browser's user activation. */
+  Pr.enter = function (start, opts) {
     if (on || !chapters().length) return;
+    opts = opts || {};
+    var ua = navigator.userActivation, gesture = opts.gesture != null ? !!opts.gesture : (ua ? !!ua.isActive : true);
     var S = RBX.state, m = RBX.map;
     prior = { view: S.view, filters: RBX.filters.snapshot(), theme: S.theme, site: S.site, rail: S.railCollapsed,
       cam: m ? { center: m.getCenter(), zoom: m.getZoom(), pitch: m.getPitch(), bearing: m.getBearing() } : null, cams: JSON.parse(JSON.stringify(S.cams)),
@@ -199,14 +250,18 @@
     // chapter framing leaves room for the card, so lift the pan clamp (maxBounds) and allow a wider zoom while presenting
     if (m) { m.resize(); prior.minZoom = m.getMinZoom(); prior.maxBounds = m.getMaxBounds(); m.setMaxBounds(null); m.setMinZoom(Math.min(prior.minZoom, 3.4)); }
     fsEntered = false;
-    try {
-      var de = document.documentElement;
-      if (de.requestFullscreen && !document.fullscreenElement) {
-        var p = de.requestFullscreen();
-        fsEntered = true;
-        if (p && p.catch) p.catch(function () { fsEntered = false; RBX.toast('Tip: press F11 for full screen'); });
-      } else if (!document.fullscreenElement) RBX.toast('Tip: press F11 for full screen');
-    } catch (e) { RBX.toast('Tip: press F11 for full screen'); }
+    // full screen needs a user gesture: never attempted (and no tip) after the no-gesture ?present=1 boot; on touch
+    // devices (iPhone Safari has no element full screen) it is tried silently
+    var de = document.documentElement, req = de.requestFullscreen || de.webkitRequestFullscreen;
+    if (gesture && !fsEl()) {
+      if (req) {
+        try {
+          var p = req.call(de);
+          fsEntered = true;
+          if (p && p.catch) p.catch(function () { fsEntered = false; fsTip(); });
+        } catch (e) { fsEntered = false; fsTip(); }
+      } else fsTip();
+    }
     Pr.go(start || 0);
     setTimeout(function () { var n = document.querySelector('#presentCard [data-pc="next"]'); if (n) n.focus({ preventScroll: true }); }, 50);
   };
@@ -229,8 +284,12 @@
     else if (m) m.jumpTo({ pitch: 0, bearing: 0 });
     if (p.view === 'ppa') { var pp = document.getElementById('ppa'); if (pp) pp.scrollTop = p.scroll || 0; }
     if (p.site) { var row = RBX.data.find(p.site, p.view); if (row && RBX.filters.pass(row)) RBX.app.openSite(row, { fly: false, focus: false }); }
-    try { if (fsEntered && document.fullscreenElement && document.exitFullscreen) document.exitFullscreen(); } catch (e) { /* ignore */ }
+    try {
+      var ex = document.exitFullscreen || document.webkitExitFullscreen;
+      if (fsEntered && fsEl() && ex) { var q = ex.call(document); if (q && q.catch) q.catch(function () { /* ignore */ }); }
+    } catch (e) { /* ignore */ }
     fsEntered = false;
+    layout();
     S.writeHash();
     var b = document.getElementById('presentBtn'); if (b) b.focus({ preventScroll: true });
   };
@@ -244,7 +303,9 @@
     return false;
   };
   // leaving full screen with the browser's own Esc also ends the presentation
-  document.addEventListener('fullscreenchange', function () { if (on && fsEntered && !document.fullscreenElement) { fsEntered = false; Pr.exit(); } });
+  function onFs() { if (on && fsEntered && !fsEl()) { fsEntered = false; Pr.exit(); } }
+  document.addEventListener('fullscreenchange', onFs);
+  document.addEventListener('webkitfullscreenchange', onFs);
   // user interaction on the map pauses autoplay
   RBX.bus.on('mapready', function (m) { m.on('movestart', function (e) { if (on && playing && e && e.originalEvent) Pr.play(false); }); });
 })();

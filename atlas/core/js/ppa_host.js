@@ -21,7 +21,8 @@
           onChips: function (c) { RBX.hooks.ppaChips(c); RBX.bus.emit('ppaChips', c); },
           onChange: function (st) { RBX.state.ppa = st; },
           onSiteClick: function (row) { var r = row && (RBX.data.byKey.sam[row.key] || RBX.data.byKey.sam[U.compactPc(row.postcode)]); if (r) RBX.app.openSite(r, { fly: true }); },
-          util: RBX.util
+          util: RBX.util,
+          copy: ((RBX.config.views || {}).ppa || {}).standfirst ? { standfirst: RBX.config.views.ppa.standfirst } : null
         });
       } catch (e) {
         if (window.console) console.error('[atlas] PPA module failed to mount', e);

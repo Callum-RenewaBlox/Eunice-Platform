@@ -4,7 +4,7 @@
   'use strict';
   var RBX = window.RBX, U = RBX.util;
   var Sk = RBX.sizekey = {};
-  /** Map a key value to the layer's size value `sv` (audience hook; investor keys are in £). */
+  /** Map a key value to the layer's size value `sv` (audience hook; an audience may key other units). */
   RBX.hooks.sizeValue = RBX.hooks.sizeValue || function (view, v) {
     var m = RBX.data.meta;
     return Math.sqrt(v / (view === 'sam' ? m.samMax : m.hydroMax));
@@ -42,7 +42,37 @@
   Sk.render = function () {
     var el = document.getElementById('sizekey'); if (!el) return;
     var view = RBX.state.view, vc = (RBX.config.views || {})[view] || {};
-    if (!RBX.map || view === 'ppa' || !vc.sizeKey) { el.innerHTML = ''; return; }
+    if (!RBX.map || view === 'ppa' || !vc.sizeKey) { el.innerHTML = ''; Sk.clearLabels(); return; }
     el.innerHTML = view === 'tam' ? bands(vc.sizeKey) : nested(view, vc.sizeKey);
+    Sk.clearLabels();
   };
+
+  /** The basemap's sea labels are drawn on the map canvas; hide any whose box would sit under the size key
+      (e.g. "Celtic Sea" at 1440 × 820 in TAM) instead of letting the key clip it. */
+  var SEA_SRC = 'rbx-lbl-sea';
+  function seaLayers(m) { return ((m.getStyle() || {}).layers || []).filter(function (l) { return l.source === SEA_SRC && l.type === 'symbol'; }); }
+  Sk.clearLabels = U.rafThrottle(function () {
+    var m = RBX.map, key = document.getElementById('sizekey'); if (!m || !m.getSource(SEA_SRC)) return;
+    var hide = [];
+    if (key && key.innerHTML && key.offsetParent !== null) {
+      var kr = key.getBoundingClientRect(), mr = m.getContainer().getBoundingClientRect(), z = m.getZoom(), feats = [];
+      try { feats = (m.getSource(SEA_SRC).serialize().data || {}).features || []; } catch (e) { feats = []; }
+      feats.forEach(function (f) {
+        var id = f.properties.img, img = null;
+        try { img = m.getImage ? m.getImage(id) : null; } catch (e) { img = null; }
+        var pr = (img && img.pixelRatio) || 2, w = img && img.data ? img.data.width / pr : 110, h = img && img.data ? img.data.height / pr : 24;
+        var p = m.project(f.geometry.coordinates), x = p.x + mr.left, y = p.y + mr.top;
+        if (x + w / 2 > kr.left - 6 && x - w / 2 < kr.right + 6 && y + h / 2 > kr.top - 6 && y - h / 2 < kr.bottom + 6) hide.push(id);
+      });
+    }
+    seaLayers(m).forEach(function (l) {
+      var f = m.getFilter(l.id), orig = f && f[0] === 'all' && f.length === 3 && f[2] && f[2][0] === '!' ? f[1] : f;
+      var next = hide.length ? ['all', orig, ['!', ['in', ['get', 'img'], ['literal', hide]]]] : orig;
+      if (JSON.stringify(next) !== JSON.stringify(f)) { try { m.setFilter(l.id, next); } catch (e) { /* layer rebuilt by the basemap */ } }
+    });
+  });
+  RBX.bus.on('mapready', function (map) {
+    map.on('moveend', Sk.clearLabels);
+    map.on('styledata', function () { Sk.clearLabels(); });
+  });
 })();

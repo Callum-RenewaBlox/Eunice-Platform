@@ -17,7 +17,6 @@
   /* ------------------------------------------------------------------ copy (verbatim from v1) */
   var COPY = {
     kicker: 'PPA & Price Benchmark',
-    standfirstInvestor: 'PPA & price benchmark · 129 SAM sites · applies across peakers and hydro',
     deck: 'At 3% CPI, the guaranteed FiT export rate overtakes the forward curve by 2028',
     intro: "Where each SAM site's export sits against the GB market. Realised prices are settlement data; the forward curve is exchange settlement; the FiT export tariff is a published statutory rate. No contracted PPA price is shown anywhere — those are private bilateral contracts and are not obtainable from any source.",
     asOf: 'Data as of',
@@ -74,13 +73,11 @@
      The label shown is always the label the build supplied (client rows arrive softened). */
   var ST_ORDER = { a: 0, w: 1, c: 2, n: 3 };
   var ST_SOFT = { a: 'Active', w: 'Certificates declining', c: 'No recent certificates', n: 'No REGO certificates' };
+  /* neutral codes only (the build ships `rego` as active / declining / ceased / none; a/w/c/n also accepted) */
+  var ST_CODE = { active: 'a', a: 'a', declining: 'w', w: 'w', ceased: 'c', c: 'c', none: 'n', n: 'n' };
   function statusOf(v) {
     var s = String(v == null ? '' : v).toLowerCase();
-    if (!s) return 'n';
-    if (/^activ/.test(s) || s === 'a') return 'a';
-    if (/lagging|winding|declin/.test(s) || s === 'w') return 'w';
-    if (/ceased|no.?recent|^c$/.test(s)) return 'c';
-    return 'n';
+    return ST_CODE[s] || 'n';
   }
   function statusLabel(v, code) {
     if (v == null || v === '') return ST_SOFT.n;
@@ -96,6 +93,8 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  /* units / mixed-case acronyms keep their case under text-transform:uppercase (.nc in base.css) */
+  function caseSafe(s) { return escF(s).replace(/\b(kW|MW|GW|kWh|MWh|FiT|EfW)\b/g, '<span class="nc">$1</span>'); }
   function first() { for (var i = 0; i < arguments.length; i++) if (arguments[i] !== undefined) return arguments[i]; return undefined; }
   function num(v) { if (v == null || v === '') return null; var n = +v; return isFinite(n) ? n : null; }
   function fmtInt(n) { return n == null ? '' : Math.round(n).toLocaleString('en-GB'); }
@@ -187,18 +186,19 @@
       else if (offRaw == null || offRaw === false || offRaw === '' || /^(none|not identified)$/i.test(String(offRaw))) { kind = 'none'; off = NONE; }
       else off = cleanName(offRaw);
       var selfCerts = (num(r.self_certs) || 0) > 0 || r.self === true;
-      var ord = num(first(r.ref, r.rank));
+      var ord = num(r.ref);
       var op = displayCase(first(r.operator, r.op) || '');
       var town = townCase(r.town);
       var pc = first(r.postcode, r.pc) || '';
       var stRaw = first(r.rego_status, r.rego);
-      var stCode = statusOf(stRaw);
+      var stCode = statusOf(r.rego);
       var cls = classOf(first(r.ppa_class, r.ppa));
       var site = r.site || '';
-      var hay = [op, first(r.operator, r.op), town, r.town, pc, compact(pc), site, off, offRaw === true ? '' : offRaw]
+      var opSt = r.op_status || null;       // audience modules may pass a short company status (shown muted under the operator)
+      var hay = [op, first(r.operator, r.op), opSt, town, r.town, pc, compact(pc), site, off, offRaw === true ? '' : offRaw]
         .filter(function (x) { return x != null && x !== ''; }).join(' \u0001 ').toLowerCase();
       return {
-        i: i, ord: ord == null ? i + 1 : ord, op: op || '—', town: town, pc: pc, key: r.key || compact(pc), site: site,
+        i: i, ord: ord == null ? i + 1 : ord, op: op || '—', opSt: opSt, town: town, pc: pc, key: r.key || compact(pc), site: site,
         kw: kw, comm: num(first(r.commissioned, r.comm)), cls: cls, kind: kind, off: off, self: selfCerts,
         fitGen: num(first(r.gen_tariff_p_kwh_2026_27, r.fitGen)),
         fitEnd: first(r.fit_end_date, r.fitEnd) || null,
@@ -259,7 +259,7 @@
       var v = tileVals[i][0], unit = tileVals[i][1];
       var vs = v == null ? '—' : unit === '%' ? String(Math.round(v)) : (+v).toFixed(2);
       var note = i === 4 && P.spread.note ? P.spread.note : tl.note;
-      return '<div class="ppa-tile" role="listitem"><div class="ppa-eyebrow ppa-tl">' + esc(tl.label) + '</div>' +
+      return '<div class="ppa-tile" role="listitem"><div class="ppa-eyebrow ppa-tl">' + caseSafe(tl.label) + '</div>' +
         '<div class="ppa-fig num">' + esc(vs) + '<small>' + (unit === '%' ? '%' : ' ' + unit) + '</small></div>' +
         '<div class="ppa-note">' + esc(note) + '</div></div>';
     }).join('');
@@ -276,7 +276,7 @@
     root.innerHTML =
       '<div class="ppa-page">' +
       '<header class="ppa-intro">' +
-      (aud === 'investor' ? '<p class="ppa-standfirst">' + esc(C.standfirstInvestor) + '</p>' : '') +
+      (C.standfirst ? '<p class="ppa-standfirst">' + esc(C.standfirst) + '</p>' : '') +
       '<h2 class="ppa-kicker">' + esc(C.kicker) + '</h2>' +
       '<p class="ppa-deck">' + esc(C.deck) + '</p>' +
       '<p class="ppa-lede">' + esc(C.intro) + '</p>' +
@@ -512,7 +512,7 @@
     function cell(r, k) {
       switch (k) {
         case 'ord': return '<span class="ref">' + esc(r.ord) + '</span>';
-        case 'op': return '<span class="op" title="' + esc(r.op) + '">' + esc(r.op) + '</span>';
+        case 'op': return '<span class="op" title="' + esc(r.op) + '">' + esc(r.op) + '</span>' + (r.opSt ? '<span class="op-st">' + esc(r.opSt) + '</span>' : '');
         case 'town': return r.town ? esc(r.town) : na();
         case 'kw': return r.kw != null ? fmtInt(r.kw) : na();
         case 'comm': return r.comm != null ? esc(r.comm) : na();

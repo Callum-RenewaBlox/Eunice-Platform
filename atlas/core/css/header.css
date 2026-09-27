@@ -29,6 +29,7 @@
 .scope-opt:hover{color:var(--header-ink)}
 .scope-opt[aria-checked="true"]{background:var(--lime);color:#0B2E2A;font-weight:600}
 .scope-opt .n{font-variant-numeric:tabular-nums lining-nums}
+.scope-opt .t-short{display:none}
 
 .hdr-search{margin-left:auto;display:flex;align-items:center;gap:8px;width:240px;height:36px;padding:0 8px 0 12px;border-radius:var(--r-pill);background:rgba(255,255,255,.08);
   color:var(--header-ink-2);font:400 12.5px/1 var(--font-ui);flex:none;transition:background var(--dur-1)}

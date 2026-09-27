@@ -7,7 +7,9 @@
 .app.presenting .hdr{opacity:.6;transition:opacity var(--dur-4) var(--ease)}
 .app.presenting .hdr:hover,.app.presenting .hdr:focus-within{opacity:1}
 .app.presenting .maplibregl-ctrl-bottom-left{opacity:0}
-.app.presenting #ppa{padding-bottom:300px}
+.app.presenting #ppa{padding-bottom:var(--pc-h,300px)}
+/* T14: wide stages, the card sits bottom-right beside the page, which is padded on the right by the card's width */
+.app.presenting.pc-side #ppa{padding-right:var(--pc-w,504px)}
 
 .present-card{position:absolute;z-index:80;left:22px;bottom:22px;width:min(480px,calc(100% - 44px));padding:20px 24px 16px;border-radius:var(--r-4);
   background:var(--surface-1);color:var(--ink-1);border:1px solid var(--rule-2);box-shadow:var(--sh-3);animation:pcIn var(--dur-4) var(--ease)}
@@ -30,6 +32,7 @@
 .pc-stats b{font:500 25px/1 var(--font-display);font-variation-settings:"opsz" 48;letter-spacing:-.02em;color:var(--ink-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pc-stats b small{font:500 12px var(--font-ui);letter-spacing:0;color:var(--ink-2);margin-left:3px}
 .pc-stats span{font:600 10.5px/1.2 var(--font-ui);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.pc-stats span .nc{font:inherit;text-transform:none}
 .pc-prog{display:flex;gap:5px;margin:16px 0 12px}
 .pc-prog button{flex:1;height:14px;display:flex;align-items:center;padding:0}
 .pc-prog button span{display:block;position:relative;width:100%;height:3px;border-radius:2px;background:var(--rule-2);overflow:hidden}
@@ -46,6 +49,17 @@
 .pc-btn.pri:hover{background:#9EDB60}
 .pc-btn .i{width:14px;height:14px}
 .pc-kb{margin-left:auto;font:400 11px/1 var(--font-ui);color:var(--ink-3)}
+.pc-a,.pc-b{display:contents}
+/* T14: narrower desktops (present.js sets .pc-dock), PPA chapters: a compact full-width card docked at the bottom
+   (text left, figures right); the page is padded below by its height (--pc-h) so the chart it narrates stays clear */
+.app.pc-dock .present-card[data-view="ppa"]{left:16px;right:16px;bottom:16px;width:auto;display:flex;align-items:stretch;gap:28px;padding:14px 20px 12px}
+.app.pc-dock .present-card[data-view="ppa"] .pc-a{display:block;flex:1.2 1 0;min-width:0}
+.app.pc-dock .present-card[data-view="ppa"] .pc-b{display:flex;flex-direction:column;justify-content:flex-end;flex:1 1 0;min-width:0}
+.app.pc-dock .present-card[data-view="ppa"] .pc-title{font-size:28px;margin:6px 0 6px}
+.app.pc-dock .present-card[data-view="ppa"] .pc-body{font-size:13px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.app.pc-dock .present-card[data-view="ppa"] .pc-stats{margin:0}
+.app.pc-dock .present-card[data-view="ppa"] .pc-stats b{font-size:22px}
+.app.pc-dock .present-card[data-view="ppa"] .pc-prog{margin:12px 0 10px}
 @media (max-width:1180px){ .pc-title{font-size:34px} }
 @media (max-width:760px){
   .present-card,.present-card[data-view="ppa"]{left:10px;right:10px;bottom:10px;width:auto;padding:14px 16px 12px}
@@ -55,5 +69,5 @@
   .pc-prog{margin:12px 0 10px}
   .pc-stats b{font-size:19px}
   .pc-kb{display:none}
-  .app.presenting #ppa{padding-bottom:340px}
+  .app.presenting #ppa{padding-bottom:var(--pc-h,340px)}
 }

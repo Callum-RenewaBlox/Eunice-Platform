@@ -242,17 +242,6 @@
   "ref": 22
  },
  {
-  "key": "SP116LZ",
-  "ppa": "neg",
-  "off": "Brook Green Trading Limited",
-  "self": true,
-  "fitGen": 23.04,
-  "fitEnd": "2032-10-11",
-  "yrsLeft": 6.2,
-  "rego": "active",
-  "ref": 23
- },
- {
   "key": "IP215NQ",
   "ppa": "neg",
   "off": "TotalEnergies Gas & Power Limited",
@@ -260,6 +249,17 @@
   "fitGen": 16.6,
   "fitEnd": "2034-12-10",
   "yrsLeft": 8.3,
+  "rego": "active",
+  "ref": 23
+ },
+ {
+  "key": "SP116LZ",
+  "ppa": "neg",
+  "off": "Brook Green Trading Limited",
+  "self": true,
+  "fitGen": 23.04,
+  "fitEnd": "2032-10-11",
+  "yrsLeft": 6.2,
   "rego": "active",
   "ref": 24
  },
@@ -319,6 +319,17 @@
   "ref": 29
  },
  {
+  "key": "CO77BN",
+  "ppa": "neg",
+  "off": "Drax Energy Solutions Limited",
+  "self": true,
+  "fitGen": 18.42,
+  "fitEnd": "2034-08-01",
+  "yrsLeft": 8.0,
+  "rego": "active",
+  "ref": 30
+ },
+ {
   "key": "NR347SP",
   "ppa": "neg",
   "off": null,
@@ -327,7 +338,7 @@
   "fitEnd": "2034-12-13",
   "yrsLeft": 8.3,
   "rego": "none",
-  "ref": 30
+  "ref": 31
  },
  {
   "key": "NR94DT",
@@ -337,17 +348,6 @@
   "fitGen": 16.6,
   "fitEnd": "2034-12-18",
   "yrsLeft": 8.4,
-  "rego": "active",
-  "ref": 31
- },
- {
-  "key": "CO77BN",
-  "ppa": "neg",
-  "off": "Drax Energy Solutions Limited",
-  "self": true,
-  "fitGen": 18.42,
-  "fitEnd": "2034-08-01",
-  "yrsLeft": 8.0,
   "rego": "active",
   "ref": 32
  },
@@ -451,17 +451,6 @@
   "ref": 41
  },
  {
-  "key": "SP78PX",
-  "ppa": "neg",
-  "off": null,
-  "self": false,
-  "fitGen": 21.5,
-  "fitEnd": "2031-01-01",
-  "yrsLeft": 4.4,
-  "rego": "none",
-  "ref": 42
- },
- {
   "key": "RG73XJ",
   "ppa": "neg",
   "off": null,
@@ -469,6 +458,17 @@
   "fitGen": 24.9,
   "fitEnd": "2033-06-18",
   "yrsLeft": 6.9,
+  "rego": "none",
+  "ref": 42
+ },
+ {
+  "key": "SP78PX",
+  "ppa": "neg",
+  "off": null,
+  "self": false,
+  "fitGen": 21.5,
+  "fitEnd": "2031-01-01",
+  "yrsLeft": 4.4,
   "rego": "none",
   "ref": 43
  },

@@ -232,7 +232,7 @@
  },
  {
   "key": "h-main-foundry-babbage-road-totnes",
-  "name": "Main foundry babbage road totnes",
+  "name": "Main Foundry Babbage Road Totnes",
   "exp": "Export",
   "conf": "High",
   "kw": 218,
@@ -452,7 +452,7 @@
  },
  {
   "key": "h-yelverton-huckworthy-mill",
-  "name": "Yelverton huckworthy mill",
+  "name": "Yelverton Huckworthy Mill",
   "exp": "Export",
   "conf": "High",
   "kw": 65,
@@ -496,7 +496,7 @@
  },
  {
   "key": "h-corrour-estate-hydro",
-  "name": "Corrour Estate hydro",
+  "name": "Corrour Estate Hydro",
   "exp": "No export",
   "conf": "Unverified",
   "kw": 55,
@@ -562,7 +562,7 @@
  },
  {
   "key": "h-beneco-energy-ltd",
-  "name": "Beneco energy ltd",
+  "name": "Beneco Energy Ltd",
   "exp": "Export",
   "conf": "High",
   "kw": 18,
@@ -595,7 +595,7 @@
  },
  {
   "key": "h-barbuie-estate-hydro",
-  "name": "Barbuie Estate hydro",
+  "name": "Barbuie Estate Hydro",
   "exp": "No export",
   "conf": "Unverified",
   "kw": 12,

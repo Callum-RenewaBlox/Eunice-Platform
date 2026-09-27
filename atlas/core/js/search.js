@@ -33,40 +33,56 @@
   };
 
   function subseq(tok, s) { var i = 0; for (var j = 0; j < s.length && i < tok.length; j++) if (s[j] === tok[i]) i++; return i === tok.length; }
-  /** Points for one token against one entry (best field), 0 when it does not match. */
-  function tokPts(e, t) {
+  /** Fuzzy (subsequence) match that must begin at a word start: "bwf" → "Bitterley Warthill Farm". */
+  function subseqWord(tok, w) {
+    for (var i = w.indexOf(' ' + tok[0]); i >= 0; i = w.indexOf(' ' + tok[0], i + 1)) {
+      if (subseq(tok.slice(1), w.slice(i + 2).replace(/ /g, ''))) return true;
+    }
+    return false;
+  }
+  /** Points for one token against one entry (best field), 0 when it does not match. Fuzzy matches only when allowed. */
+  function tokPts(e, t, fuzzy) {
     var best = 0;
     for (var i = 0; i < e.f.length; i++) {
       var f = e.f[i], p = 0;
       if (f.n.indexOf(t) === 0) p = 100;
       else if (f.w.indexOf(' ' + t) >= 0) p = 82;
       else if (f.n.indexOf(t) >= 0) p = 55;
-      else if (f.name && t.length >= 3 && subseq(t, f.n.replace(/ /g, ''))) p = 30;
+      else if (fuzzy && f.name && t.length >= 3 && subseqWord(t, f.w)) p = 30;
       p *= f.wt;
       if (p > best) best = p;
     }
     return best;
   }
-  Sr.query = function (q) {
+  /** Scored results [{r, s}], best first. Exact (prefix / word / substring) matches win outright: fuzzy
+      subsequence matches are only offered when nothing matches every token exactly. */
+  Sr.queryScored = function (q) {
     var raw = (q || '').trim();
     if (!raw) return [];
-    var out = [], view = RBX.state.view;
+    var view = RBX.state.view;
     var qc = U.compactPc(raw), isPc = PC_FULL.test(raw), isOut = PC_OUT.test(raw);
     var toks = U.norm(raw).split(' ').filter(Boolean);
     if (!toks.length && !isPc) return [];
-    IDX.forEach(function (e) {
-      var pts = 0;
-      if (isPc && e.pc) { if (e.pc === qc) pts = 100 * 0.95 * 2; else if (e.pc.indexOf(qc) === 0) pts = 70; }
-      if (!pts && isOut && e.out === qc) pts = 100 * 0.95;
-      if (!pts && e.pc && qc.length >= 4 && e.pc.indexOf(qc) === 0) pts = 70;
-      if (!pts) {
-        for (var i = 0; i < toks.length; i++) { var p = tokPts(e, toks[i]); if (!p) { pts = 0; break; } pts += p; }
-      }
-      if (pts > 0) out.push({ e: e, s: pts + (e.r.kind === view ? 10 : 0) });
-    });
-    out.sort(function (a, b) { return (b.s - a.s) || ((b.e.r.kw || 0) - (a.e.r.kw || 0)); });
-    return out.map(function (x) { return x.e.r; });
+    var run = function (fuzzy) {
+      var out = [];
+      IDX.forEach(function (e) {
+        var pts = 0;
+        if (isPc && e.pc) { if (e.pc === qc) pts = 100 * 0.95 * 2; else if (e.pc.indexOf(qc) === 0) pts = 70; }
+        if (!pts && isOut && e.out === qc) pts = 100 * 0.95;
+        if (!pts && e.pc && qc.length >= 4 && e.pc.indexOf(qc) === 0) pts = 70;
+        if (!pts) {
+          for (var i = 0; i < toks.length; i++) { var p = tokPts(e, toks[i], fuzzy); if (!p) { pts = 0; break; } pts += p; }
+        }
+        if (pts > 0) out.push({ r: e.r, s: pts + (e.r.kind === view ? 10 : 0) });
+      });
+      return out;
+    };
+    var out = run(false);
+    if (!out.length) out = run(true);
+    out.sort(function (a, b) { return (b.s - a.s) || ((b.r.kw || 0) - (a.r.kw || 0)); });
+    return out;
   };
+  Sr.query = function (q) { return Sr.queryScored(q).map(function (x) { return x.r; }); };
 
   // ------------------------------------------------------------------ UI
   var GROUP_ORDER = ['sam', 'hydro', 'tam'];
@@ -94,7 +110,7 @@
   }
   function optHTML(r, i, raw) {
     return '<div class="pal-opt" role="option" id="po' + i + '" data-h="' + i + '" aria-selected="false"><span class="pal-ic">' + RBX.icons.forRow(r, 14) + '</span>' +
-      '<span style="min-width:0"><div class="pal-n">' + hl(r.name, raw) + '</div><div class="pal-s">' + U.esc(sub(r)) + '</div></span><span class="pal-v">' + right(r) + '</span></div>';
+      '<span style="min-width:0"><div class="pal-n">' + hl(r.name, raw) + '</div><div class="pal-s">' + U.esc(sub(r)) + (RBX.hooks.searchTag ? RBX.hooks.searchTag(r) || '' : '') + '</div></span><span class="pal-v">' + right(r) + '</span></div>';
   }
 
   Sr.render = function () {
@@ -119,9 +135,10 @@
             '<span style="min-width:0"><div class="pal-n">' + U.esc(x.label) + '</div><div class="pal-s">' + U.esc(x.sub || '') + '</div></span><span class="pal-v"></span></div>';
         }).join('');
       };
-      var order = [view].concat(GROUP_ORDER).filter(function (k, i, a) { return k !== 'ppa' && GROUP_ORDER.indexOf(k) >= 0 && a.indexOf(k) === i; });
-      var groups = {};
-      res.forEach(function (r) { (groups[r.kind] = groups[r.kind] || []).push(r); });
+      // groups follow their best match (results are sorted; the current view's +10 only breaks ties), so the
+      // pre-selected row is the strongest result overall
+      var groups = {}, order = [];
+      res.forEach(function (r) { if (!groups[r.kind]) { groups[r.kind] = []; order.push(r.kind); } groups[r.kind].push(r); });
       var firstK = order.filter(function (k) { return groups[k]; })[0];
       if (firstK && groups[firstK].length > 1) {
         hits.push({ zoom: firstK, rows: groups[firstK] });
@@ -207,8 +224,10 @@
     expanded = {};
     pal.hidden = false;
     inp.value = q || '';
+    // focus synchronously so keys typed straight after "/" land in the input (a card may be open behind it)
+    try { inp.focus({ preventScroll: true }); } catch (e) { inp.focus(); }
     Sr.render();
-    setTimeout(function () { inp.focus(); if (q) inp.setSelectionRange(q.length, q.length); }, 0);
+    setTimeout(function () { if (document.activeElement !== inp) inp.focus(); if (q) inp.setSelectionRange(q.length, q.length); }, 0);
   };
   Sr.close = function (keepFocus) {
     var pal = document.getElementById('palette');

@@ -6,7 +6,7 @@
   var RBX = window.RBX;
   var F = RBX.filters = {};
 
-  /** Dimensions per view. Investor modules push extra ones (pricing, export class, scale) before boot.
+  /** Dimensions per view. Audience modules push extra ones (pricing, export class, scale) before boot.
       `prop` is the GeoJSON feature property; `rowProp` (optional) the row field when it differs. */
   F.dims = {
     sam: [{ set: 'tiers', prop: 't', values: [1, 2, 3, 4, 5] }],

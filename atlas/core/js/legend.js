@@ -32,12 +32,14 @@
       { type: 'chips', set: 'precision', prop: 'ap', items: [
         { value: 0, label: 'Exact location', swatch: sw({ shape: 'ring', color: ink }) },
         { value: 1, label: 'Postcode district', swatch: sw({ shape: 'ring', color: ink, dashed: true }) }] },
+      // family quick-filter (spec 6.3). In 'fuels' mode the map colours each fuel, so the family chips are
+      // neutral (the per-fuel rows below carry the colour key).
       { type: 'famChips', title: lc.techTitle, set: 'fuels', items: fams.map(function (f, i) {
         return { label: f, values: fuels.map(function (x, j) { return famOf[x] === i ? j : -1; }).filter(function (j) { return j >= 0; }),
-          swatch: sw({ shape: 'ring', color: P.fam[i], dot: i === 3 }), fam: i };
+          swatch: mode === 'fuels' ? sw({ shape: 'ring', color: ink }) : sw({ shape: 'ring', color: P.fam[i], dot: i === 3 }), fam: i };
       }) },
-      { type: 'rows', set: 'fuels', prop: 'fu', mwDigits: 0, note: lc.techNote, items: fuels.map(function (f, j) {
-        var fam = famOf[f] != null ? famOf[f] : 3, col = mode === 'fuels' ? P.fuel[j] : P.fam[fam];
+      { type: 'rows', set: 'fuels', prop: 'fu', mwDigits: 0, note: mode === 'fuels' ? lc.techNoteFuels : lc.techNote, items: fuelOrder().map(function (j) {
+        var f = fuels[j], fam = famOf[f] != null ? famOf[f] : 3, col = mode === 'fuels' ? P.fuel[j] : P.fam[fam];
         return { value: j, label: f, swatch: sw({ shape: 'ring', color: col, dot: mode === 'families' && fam === 3 }), color: col };
       }) },
       { type: 'stack', title: lc.tierTitle, set: 'tamTiers', prop: 'bt', caption: lc.tierCaption, items: [1, 2, 3, 4, 5, 0].map(function (t) {
@@ -54,6 +56,16 @@
     }] };
   };
   Lg.defaults = DEF;
+  /** Fuel indices ordered by site count over the whole TAM (then MW), fixed for the session so rows never jump. */
+  var FUEL_ORDER = null;
+  function fuelOrder() {
+    if (FUEL_ORDER) return FUEL_ORDER;
+    var n = (RBX.config.labels.fuels || []).map(function () { return [0, 0]; });
+    (RBX.data.rows.tam || []).forEach(function (r) { if (n[r.fu]) { n[r.fu][0]++; n[r.fu][1] += r.kw || 0; } });
+    FUEL_ORDER = n.map(function (_, j) { return j; }).sort(function (a, b) { return (n[b][0] - n[a][0]) || (n[b][1] - n[a][1]) || a - b; });
+    return FUEL_ORDER;
+  }
+  Lg.fuelOrder = fuelOrder;
 
   // ------------------------------------------------------------------ render
   function rowsHTML(view, g) {

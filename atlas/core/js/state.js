@@ -30,10 +30,14 @@
     if (h.th === 'paper' || h.th === 'night') out.theme = h.th;
     if (h.s && /^[A-Za-z0-9-]{1,48}$/.test(h.s)) out.site = h.s;
     if (h.z && h.c) {
+      // only a camera inside the map's maxBounds is honoured; zoom is clamped to the map's range
       var c = h.c.split(',').map(Number), z = +h.z;
-      if (c.length === 2 && isFinite(c[0]) && isFinite(c[1]) && isFinite(z)) out.cam = { c: c, z: z };
+      if (c.length === 2 && isFinite(c[0]) && isFinite(c[1]) && isFinite(z) &&
+          c[0] >= -28 && c[0] <= 18 && c[1] >= 44.5 && c[1] <= 63.5) out.cam = { c: c, z: Math.max(4.2, Math.min(15, z)) };
     }
     if (h.present === '1') out.present = true;
+    // ?present=1 on a direct link (the Streamlit wrapper passes it through __ATLAS_INIT__; srcdoc has no search)
+    try { if (new URLSearchParams(location.search || '').get('present') === '1') out.present = true; } catch (e) { /* ignore */ }
     var init = window.__ATLAS_INIT__ || {};
     if (VIEWS.indexOf(init.view) >= 0) { out.view = init.view; out.cam = null; }
     if (init.theme === 'paper' || init.theme === 'night') out.theme = init.theme;

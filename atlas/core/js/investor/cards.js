@@ -61,7 +61,7 @@
     var op = r.dev || r.op;
     var exp = r.ppa ? '<span class="expchip ' + r.ppa + '">' + U.esc(L().export[r.ppa] || 'Unknown') + '</span>' : 'Unknown';
     return C.sec('Route to market', '', kv([
-      op ? ['Operator', '<span class="ell" title="' + U.esc(op) + '">' + U.esc(op) + '</span>'] : null,
+      op ? ['Operator', '<span class="ell" title="' + U.esc(op) + '">' + U.esc(op) + '</span>' + I.opTag(r)] : null,
       ['Offtaker', U.esc(off) + ' <span class="tag" tabindex="0" title="' + U.esc(cc.offtakerTip || '') + '">inferred</span>'],
       ['Export', exp]
     ]));

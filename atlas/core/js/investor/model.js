@@ -88,7 +88,15 @@
   var baseSv = H.sizeValue, baseSl = H.sizeLabel;
   H.sizeValue = function (view, v) { return view === 'sam' ? Math.sqrt(v / I.tcvMax) : baseSv(view, v); };
   H.sizeLabel = function (view, v) { return view === 'sam' ? '£' + U.num(v / 1e6, 0) + 'M' : baseSl(view, v); };
-  H.searchFields = function (r) { return r.kind === 'sam' && r.dev && r.dev !== r.op ? [[r.dev, 0.7]] : []; };
+  H.searchFields = function (r) {
+    if (r.kind !== 'sam') return [];
+    var f = r.dev && r.dev !== r.op ? [[r.dev, 0.7]] : [];
+    if (r.opSt) f.push([r.opSt, 0.3]);
+    return f;
+  };
+  /** DI1: a short factual company status ("in liquidation") as a muted tag, never inside the operator name. */
+  I.opTag = function (r) { return r && r.opSt ? ' <span class="op-st">' + U.esc(r.opSt) + '</span>' : ''; };
+  H.searchTag = function (r) { return r.kind === 'sam' && r.opSt ? I.opTag(r) : ''; };
   H.stepOrder = function (kind, rows) {
     if (kind === 'sam' || kind === 'hydro') {
       return rows.slice().sort(function (a, b) { return ((b.tcv != null) - (a.tcv != null)) || (b.tcv || 0) - (a.tcv || 0) || (b.kw || 0) - (a.kw || 0); });
@@ -97,7 +105,9 @@
   };
   H.registerRow = function (o, r) {
     o.rank = r.rank;
+    o.ref = r.rank; // the register's Ref column and order use the v1 rank in the investor build
     if (r.regoRaw) o.rego_status = r.regoRaw;
+    if (r.opSt) o.op_status = r.opSt;   // DI1: company status kept out of the name, shown as a muted tag
     return o;
   };
 })();

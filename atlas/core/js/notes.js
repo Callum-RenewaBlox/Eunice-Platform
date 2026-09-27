@@ -150,7 +150,8 @@
   }
   var TIER_MINZ = { 0: 4.6, 1: 3.5, 2: 5.3, 3: 6.2, 4: 7.4, 5: 8.4 };
   function cityHits(m, bx) {
-    var list = (window.RBXBasemap && window.RBXBasemap.cities) || [], z = m.getZoom(), n = 0;
+    // only the cities the map actually draws (continental labels are filtered out in RBX.mapctl)
+    var list = RBX.mapctl.cities || (window.RBXBasemap && window.RBXBasemap.cities) || [], z = m.getZoom(), n = 0;
     for (var i = 0; i < list.length; i++) {
       var c = list[i]; if (z < (TIER_MINZ[c[3]] != null ? TIER_MINZ[c[3]] : 6)) continue;
       var p = m.project([c[1], c[2]]), w = String(c[0]).length * 7.4 + 14;
@@ -167,8 +168,8 @@
   }
   /** Candidate leader ends around the anchor (sea side first is not assumed: every direction is tried). */
   function candidates(it, rr) {
-    if (it.placements && it.placements.length) return it.placements;
-    var out = [];
+    // explicit placements (config, e.g. sea-side for the Thames Estuary) are tried first, then every direction
+    var out = (it.placements || []).slice();
     [rr + 34, rr + 96].forEach(function (d) {
       [-35, 35, 145, 215, -70, 70, 110, 250, 0, 180].forEach(function (deg) {
         var a = deg * Math.PI / 180; out.push([Math.round(Math.cos(a) * d), Math.round(Math.sin(a) * d)]);
@@ -234,9 +235,10 @@
     map.on('moveend', rescore);
     map.once('idle', function () { N.build(); });
   });
-  RBX.bus.on('view', function () { if (host) N.build(); });
+  // re-place deterministically once the map has settled after a view change or a theme switch
+  RBX.bus.on('view', function () { if (host) { N.build(); if (RBX.map) RBX.map.once('idle', function () { N.place(true); }); } });
   RBX.bus.on('filter', function (p) { if (host && !(p && p.light)) N.build(); });
   RBX.bus.on('select', function () { if (host) setTimeout(function () { N.place(true); }, 30); });
-  RBX.bus.on('theme', function () { if (host) setTimeout(rescore, 300); });
+  RBX.bus.on('theme', function () { if (host && RBX.map) { RBX.map.once('idle', rescore); setTimeout(rescore, 600); } });
   window.addEventListener('resize', function () { if (host) rescore(); });
 })();

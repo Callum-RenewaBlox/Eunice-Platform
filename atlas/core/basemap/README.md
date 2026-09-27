@@ -71,9 +71,22 @@ Total inline weight in an atlas page is about 255 KB (basemap.js plus pack), wit
   Call it right after `new maplibregl.Map()`; it waits for the style and fonts before drawing labels.
   It also fires `map.fire('rbx:basemapmode', {mode, reason})`.
 * `RBXBasemap.applyTheme(map, theme)` re-paints every basemap layer and redraws the label images.
+* `RBXBasemap.addTerrain(map, theme, opts?)` adds the `rbx-dem` source and `rbx-hillshade` layer (below `rbx-land-context`)
+  to a map whose style was built with `style(theme, {deferTerrain: true})`. **Atlas v2 change:** the atlases build the
+  style with `deferTerrain` and add the terrain after their data layers are on the map, so a slow or failing DEM host
+  never holds up the first render. `attach()` also returns `slow()` and `prewarm(theme)` (rasterise another theme's
+  labels while idle; label images are cached per theme so switching back is a swap, not a re-raster).
 * `RBXBasemap.palettes`, `RBXBasemap.decode(topojson)`, `RBXBasemap.cities`, `RBXBasemap.attribution`, `RBXBasemap.DATA_BEFORE` (`'rbx-slot-labels'`).
-* Mode flag: `map.__rbxBasemapMode` is `'online'` or `'offline'`; `map.__rbxBasemapOfflineReason` holds the reason. For a small
-  "Offline basemap" pill, see `demo.html`.
+* Mode flag: `map.__rbxBasemapMode` is `'online'` or `'offline'`; `map.__rbxBasemapOfflineReason` holds the reason;
+  `map.__rbxBasemapSlow` is true while detail tiles are late (`onMode('slow')`). For a small "Offline basemap" pill, see `demo.html`.
+* **Failure handling (Atlas v2 change).** Offline immediately only on a source-level failure (the TileJSON is
+  unreachable). Tile errors are counted: 3+ errors with no vector tile loaded in 20 s → offline (one transient 5xx is
+  ignored); 3+ glyph errors in 20 s → offline. When zoomed in, a first 9 s timeout with no tile loaded marks the basemap
+  *slow* (source kept, the atlas pill reads "Detail tiles loading slowly"); a second consecutive one goes offline. A slow
+  TileJSON is *slow* after 6 s and offline 10 s later. While the viewport's vector tiles are still loading, the Natural
+  Earth sea / lakes / coast / rivers are held at their offline (opaque) values so the sea never renders land-coloured;
+  they hand over once the source reports loaded. `goOffline` clears every timer; the watchdog returns early once the
+  vector source is gone.
 
 ## Design notes
 * **Light**: warm "paper" land `#F2F0E9`, desaturated grey-teal sea, a soft light coast glow on the sea side, and
@@ -191,8 +204,8 @@ and no hillshade. `qa/shoot_ca.js` is a copy that adds `--ignore-certificate-err
 1. **OpenFreeMap rendering was not seen for real.** Tiles and glyphs are blocked here. Layer names, filters and classes were checked against
    the real positron style (`src/positron.json`) and the OpenMapTiles schema, and the style passes the spec validator. The online path ran against
    *synthetic* tiles only. Exact road widths and colours, label density and the look of landcover at z8–14 still need an eyeball check in a normal browser.
-2. **Glyph-only failure is treated as offline.** MapLibre surfaces a glyph fetch failure as a tile error on the vector source, so the kit drops all
-   vector layers rather than only the text. That is the safe choice, but less detailed.
+2. **Glyph-only failure is treated as offline** (after 3 glyph errors in 20 s). The kit drops all vector layers rather
+   than only the text. That is the safe choice, but less detailed.
 3. **Terrarium CORS**: one run logged a single `s3.amazonaws.com` tile without an `Access-Control-Allow-Origin` header (probably a proxy or cache artefact).
    The tile is skipped and the map still renders. `opts.demUrl` can point at another terrarium host if needed.
 4. **Streamlit `st.iframe(html)`**: pages run from a `srcdoc` / `null` origin. OpenFreeMap, jsDelivr, Google Fonts and S3 all send
@@ -203,8 +216,9 @@ and no hillshade. `qa/shoot_ca.js` is a copy that adds `--ignore-certificate-err
 7. The `vectorZoom` handover (6.6) is tuned for the atlases' default views. Lower it for more OpenStreetMap detail earlier, at the cost of QA fidelity.
 
 ## Attribution (must be visible; these strings are already on the sources and shown by MapLibre's AttributionControl)
-* `© OpenStreetMap contributors`, linked to https://www.openstreetmap.org/copyright (map data, via OpenFreeMap)
-* `OpenFreeMap`, linked to https://openfreemap.org (vector tiles)
+* `© OpenStreetMap contributors` / "Data from OpenStreetMap", linked to https://www.openstreetmap.org/copyright (map data, via OpenFreeMap)
+* `OpenFreeMap`, linked to https://openfreemap.org, and `© OpenMapTiles`, linked to https://www.openmaptiles.org/ (vector tiles and schema;
+  OpenFreeMap requires both)
 * `Natural Earth`, linked to https://www.naturalearthdata.com (public domain; credit appreciated)
 * `Terrain: Mapzen / AWS Terrain Tiles`, linked to https://registry.opendata.aws/terrain-tiles/ (terrarium DEM; the underlying sources include
   SRTM, GMTED2010, ETOPO1, NRCan CDEM, EU-DEM (© EEA / Copernicus), the Great Lakes bathymetry and others. The full list is at
