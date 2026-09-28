@@ -32,7 +32,9 @@ Thumbs.db
 .idea/
 
 # Local dev server config (machine-specific absolute paths — not portable)
-.claude/
+# Everything under .claude/ stays local except the shared project settings file.
+.claude/*
+!.claude/settings.json
 
 # Eunice rebuild: source zips and regenerable data/parquet (see rebuild_bundle/REBUILD_KICKOFF.md)
 rebuild/data/
