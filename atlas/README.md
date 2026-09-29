@@ -8,7 +8,8 @@ One design system and one codebase for the two public-facing map pages:
 | Investor Atlas (gated) | `investor_atlas_v2.html` | `app_investor_atlas_v2.py` | Night |
 
 Both outputs are single self-contained HTML files (data, CSS, JS and the Natural Earth basemap pack inlined;
-MapLibre GL 4.7.1 from jsDelivr, Inter + Newsreader from Google Fonts). The build contract is
+MapLibre GL 4.7.1 from jsDelivr; Google Fonts: Inter + Newsreader for the investor build, Open Sans for the
+client's RenewaBlox brand). The build contract is
 `DESIGN_SPEC.md` (design director's spec; section numbers below refer to it).
 
 The internal `atlas.html` / `app_atlas.py` are not part of this tree.
@@ -138,25 +139,39 @@ Evidence (dataviz `validate_palette.js`, run by `tools/validate_palettes.sh`, 27
 The client build wears Direction B ("premium product UI", chosen by the owner, 29 Sep 2026): a full-bleed map with
 floating glass chrome — a brand pill with the *Peaker · Hydro · PPA Benchmark* switch, a search pill (⌘K / Ctrl K) and
 theme button, a left panel (label, SAM/TAM switch, one-line description, KPI card with "In view", capacity histogram
-and presets, legend-as-filter) and a right slide-in mini-report card. Inter only (the basemap keeps its italic sea
-labels); light by default with a dark theme (theme ids stay `paper` / `night`). Map notes are kept but default to off.
+and presets, legend-as-filter) and a right slide-in mini-report card. Light by default with a dark theme (theme ids
+stay `paper` / `night`). Map notes are kept but default to off.
 
 * **Files (client only):** `apps/client/skin-product.css` (every selector starts with `:root[data-skin="product"]`,
   tokens included) and `apps/client/skin-product.js` (`RBX.skin`; wraps `RBX.header.render`, `RBX.kpi.html`,
   `RBX.hist.html`, `RBX.legend.html`, `RBX.rail.render` and `RBX.mapctl.obstruction / fitPadding / offset`; registers
   `hooks.railBefore`, the TAM `hooks.legendGroups` order and the sheet sections `sam.capacity`, `sam.revenue` (tier
-  badge + meter) and `tam.facts`; adds soft SAM/Hydro shadow layers; uses the basemap kit's own light/dark palettes).
-  Panel copy: `views[v].label` and `views[v].summary` in `apps/client/config.json`. No `core/` file is changed.
+  badge + meter) and `tam.facts`; adds soft SAM/Hydro shadow layers; registers RenewaBlox basemap palettes on the kit's
+  light/dark; sets `RBX.brand.exportBand`, the PNG export's header band). Panel copy: `views[v].label` and
+  `views[v].summary` in `apps/client/config.json`. The only `core/` hook it relies on is `RBX.brand.exportBand` in
+  `core/js/export.js` (without it the export draws the core band).
 * **Isolation:** only `apps/client/template.html` sets `data-skin="product"`, only the client manifest lists the two
   files, and the JS returns at once without the attribute. Tests: `test_client_uses_product_skin`,
   `test_investor_never_gets_the_client_skin`, `test_product_skin_rules_are_scoped`,
-  `test_product_skin_tier_ramp_is_ordered_and_visible`.
+  `test_product_skin_tier_ramp_is_ordered_and_visible`, `test_client_carries_the_renewablox_brand`.
 * **Palettes** (dataviz `validate_palette.js`, 29 Sep 2026): BM tiers, claret → gold, luminance rising Tier 1 → 5 —
-  light `#6B1034 #A02429 #C24D1E #DA7222 #D0A631` (Tier 5 2.01:1 on land `#F2F0E9`, the prototype's `#EBD58E` was
-  1.28:1; adjacent CVD ΔE ≥ 8.0), dark `#A92E55 #E1363A #F36E2A #F8A142 #F2D07D` (Tier 1 2.48:1 on `#16231F`; CVD ≥ 8.7).
+  light `#6B1034 #A02429 #C24D1E #DA7222 #D0A631` (Tier 5 2.07:1 on the brand land `#F1F4F6`, the prototype's `#EBD58E`
+  was 1.28:1; adjacent CVD ΔE ≥ 8.0), dark `#A92E55 #E1363A #F36E2A #F8A142 #F2D07D` (Tier 1 2.65:1 on `#0F1C24`; CVD ≥ 8.7).
   Monotone with ΔL ≥ .06; multi-hue by design, so it fails the validator's one-hue ordinal check. Hydro confidence
-  blues: light `#0E5F95 #2588C2 #4CB5EC` (Low 2.02:1), dark `#157ABD #3AA2DE #8DC7E5`. The TAM fuel palettes are the
-  core ones (≥ 3.16:1 / 3.04:1 on the skin's lands).
+  blues: light `#0E5F95 #2588C2 #4CB5EC` (Low 2.08:1), dark `#157ABD #3AA2DE #8DC7E5`. The TAM fuel palettes are the
+  core ones (≥ 3.26:1 / 3.24:1 on the skin's lands).
+* **RenewaBlox brand** (owner request, 29 Sep 2026; assets and tokens in `brand/README.md`):
+  * **Logos:** the official wordmark is RENEWA in teal and BLOX. in black, and it sits over "no Watt wasted".
+    The dark theme puts it on a Blox-teal plate, using the white/black version made for teal. The favicon and the
+    Streamlit page icon are the BLOX. roundel.
+  * **Wiring:** `apps/client/manifest.json` has a `brand` block. `build.py brand_assets` inlines the favicon and
+    the `--rbx-wordmark-light|dark|mono` data URIs, and swaps the client's Google Fonts request for Open Sans.
+  * **Colours:** Blox teal `#156082`, deep navy `#0B3549` (ink), sea teal `#218099` and sky `#83CBEB`. The
+    basemap has cool paper land `#F1F4F6` and a sky-tinted sea.
+  * **Type:** Leelawadee UI, the brand face, on Windows, with Open Sans elsewhere. Weights snap to 400/600/700,
+    and labels are tracked capitals as in the pitch deck.
+  * **Brand touches:** the headline KPI sits on a teal panel with the deck's sky quarter-circle. The site sheet
+    has a teal-to-sky hairline. PNG exports carry a teal band with the wordmark.
 * **Switch back:** delete `data-skin="product"` from `apps/client/template.html` (the skin files then do nothing; drop
   their two manifest entries as well to ship without them) and rebuild. The core look returns: docked header, serif
   headline and standfirst, notes on by default.

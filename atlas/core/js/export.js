@@ -136,7 +136,7 @@
     var view = RBX.state.view === 'ppa' ? RBX.state.lastPeaker : RBX.state.view, cfg = RBX.config, vc = (cfg.views || {})[view] || {};
     var cv = document.createElement('canvas'); cv.width = W * 2; cv.height = H * 2;
     var g = cv.getContext('2d'); g.scale(2, 2);
-    var UI = '"Inter", system-ui, sans-serif', SERIF = '"Newsreader", Georgia, serif';
+    var UI = css('--font-ui') || '"Inter", system-ui, sans-serif', SERIF = css('--font-display') || '"Newsreader", Georgia, serif';
     var land = css('--map-land'), ink1 = css('--ink-1'), ink2 = css('--ink-2'), ink3 = css('--ink-3'), rule = css('--rule'), lime = css('--lime-ink');
     var surf = css('--surface-1') || '#fff', night = RBX.state.theme === 'night';
     g.fillStyle = land; g.fillRect(0, 0, W, H);
@@ -182,16 +182,19 @@
       });
       g.restore();
     }
-    // header band (audience brand chrome)
-    g.fillStyle = css('--header-bg') || '#0B2E2A'; g.fillRect(0, 0, W, TOP);
-    [['#8FD14F', 0, 0], ['#3E8A6A', 11, 0], ['#2F6B55', 0, 11], ['#245744', 11, 11]].forEach(function (q) { g.fillStyle = q[0]; rr(g, 28 + q[1] * 1.3, 18 + q[2] * 1.3, 11.7, 11.7, 2.6); g.fill(); });
-    g.fillStyle = '#FFFFFF'; g.font = '500 25px ' + SERIF; g.textBaseline = 'alphabetic'; g.fillText('RenewaBlox', 64, 41);
-    var bw = g.measureText('RenewaBlox').width;
-    g.fillStyle = css('--header-rule') || '#1D5A51'; g.fillRect(64 + bw + 14, 20, 1, 24);
-    g.fillStyle = css('--header-ink-2') || '#CFE8E2'; g.font = '600 11px ' + UI; g.fillText(String(cfg.productLabel || '').toUpperCase(), 64 + bw + 29, 30);
-    g.fillStyle = '#8FD14F'; g.font = 'italic 400 13px ' + SERIF; g.fillText('no Watt wasted', 64 + bw + 29, 46);
-    g.textAlign = 'right'; g.fillStyle = css('--header-ink-2') || '#CFE8E2'; g.font = '600 11px ' + UI; g.fillText(String(vc.kicker || '').toUpperCase(), W - 28, 38); g.textAlign = 'left';
-    if (cfg.imageBadge) { g.textAlign = 'right'; g.fillStyle = '#F2C66B'; g.font = '600 11px ' + UI; g.fillText(cfg.imageBadge, W - 28, 54); g.textAlign = 'left'; }
+    // header band (audience brand chrome); a skin can draw its own brand band instead
+    if (RBX.brand && RBX.brand.exportBand) RBX.brand.exportBand(g, { W: W, TOP: TOP, UI: UI, cfg: cfg, vc: vc, night: night });
+    else {
+      g.fillStyle = css('--header-bg') || '#0B2E2A'; g.fillRect(0, 0, W, TOP);
+      [['#8FD14F', 0, 0], ['#3E8A6A', 11, 0], ['#2F6B55', 0, 11], ['#245744', 11, 11]].forEach(function (q) { g.fillStyle = q[0]; rr(g, 28 + q[1] * 1.3, 18 + q[2] * 1.3, 11.7, 11.7, 2.6); g.fill(); });
+      g.fillStyle = '#FFFFFF'; g.font = '500 25px ' + SERIF; g.textBaseline = 'alphabetic'; g.fillText('RenewaBlox', 64, 41);
+      var bw = g.measureText('RenewaBlox').width;
+      g.fillStyle = css('--header-rule') || '#1D5A51'; g.fillRect(64 + bw + 14, 20, 1, 24);
+      g.fillStyle = css('--header-ink-2') || '#CFE8E2'; g.font = '600 11px ' + UI; g.fillText(String(cfg.productLabel || '').toUpperCase(), 64 + bw + 29, 30);
+      g.fillStyle = '#8FD14F'; g.font = 'italic 400 13px ' + SERIF; g.fillText('no Watt wasted', 64 + bw + 29, 46);
+      g.textAlign = 'right'; g.fillStyle = css('--header-ink-2') || '#CFE8E2'; g.font = '600 11px ' + UI; g.fillText(String(vc.kicker || '').toUpperCase(), W - 28, 38); g.textAlign = 'left';
+      if (cfg.imageBadge) { g.textAlign = 'right'; g.fillStyle = '#F2C66B'; g.font = '600 11px ' + UI; g.fillText(cfg.imageBadge, W - 28, 54); g.textAlign = 'left'; }
+    }
     // editorial card (title, KPIs, legend)
     var cx = 28, cy = TOP + 22, cwid = 392, pad = 22, y = cy + pad;
     g.font = '500 30px ' + SERIF;

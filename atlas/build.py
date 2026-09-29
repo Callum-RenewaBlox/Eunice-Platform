@@ -39,7 +39,7 @@ MAPLIBRE_SRI = {'js': 'sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAH
                 'css': 'sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V'}
 
 
-def cdn_head():
+def cdn_head(fonts_url=FONTS_URL):
     """Third-party tags, all non-blocking (a hanging CDN must never freeze the shell): the fonts CSS and the
     MapLibre CSS load as preload→stylesheet (with a <noscript> fallback), MapLibre JS loads async;
     RBX.mapctl.init waits for window.maplibregl (8 s, then the fallback panel)."""
@@ -49,7 +49,7 @@ def cdn_head():
     return ('<link rel="preload" as="style" href="%s"%s><noscript><link rel="stylesheet" href="%s"></noscript>\n'
             '<link rel="preload" as="style" href="%scss"%s%s><noscript><link rel="stylesheet" href="%scss"%s></noscript>\n'
             '<script async src="%sjs"%s onerror="window.__rbxMaplibreFailed=1"></script>'
-            % (FONTS_URL, swap, FONTS_URL, ml, sri % MAPLIBRE_SRI['css'], swap, ml, sri % MAPLIBRE_SRI['css'],
+            % (fonts_url, swap, fonts_url, ml, sri % MAPLIBRE_SRI['css'], swap, ml, sri % MAPLIBRE_SRI['css'],
                ml, sri % MAPLIBRE_SRI['js']))
 DATA_BUDGET = 170 * 1024
 HTML_BUDGET = int(1.2 * 1024 * 1024)
@@ -59,6 +59,40 @@ FAVICON_SVG = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">'
                '<rect x="11" y="0" width="9" height="9" rx="2" fill="#3E8A6A"/>'
                '<rect x="0" y="11" width="9" height="9" rx="2" fill="#2F6B55"/>'
                '<rect x="11" y="11" width="9" height="9" rx="2" fill="#245744"/></svg>')
+
+
+BRAND_MIME = {'.png': 'image/png', '.webp': 'image/webp', '.svg': 'image/svg+xml'}
+
+
+def data_uri(rel):
+    """A file under atlas/brand/ as a base64 data URI (the built page stays self-contained)."""
+    import base64
+    path = os.path.normpath(os.path.join(HERE, rel))
+    ext = os.path.splitext(path)[1].lower()
+    if not path.startswith(os.path.join(HERE, 'brand') + os.sep) or ext not in BRAND_MIME or not os.path.isfile(path):
+        fail('brand asset %r must be an existing .png/.webp/.svg file under atlas/brand/' % rel)
+    with open(path, 'rb') as fh:
+        return 'data:%s;base64,%s' % (BRAND_MIME[ext], base64.b64encode(fh.read()).decode())
+
+
+def brand_assets(manifest):
+    """The optional "brand" block of an app's manifest.json: its favicon, its web-fonts URL and its brand images.
+    The images are exposed to the skin as CSS custom properties (url("data:…")). An app without the block keeps
+    the default favicon and fonts and gets no brand properties."""
+    import base64
+    b = manifest.get('brand') or {}
+    fonts = b.get('fontsUrl', FONTS_URL)
+    if not fonts.startswith('https://fonts.googleapis.com/css2?'):
+        fail('brand.fontsUrl must be a Google Fonts css2 URL')
+    fav = data_uri(b['favicon']) if b.get('favicon') else \
+        'data:image/svg+xml;base64,' + base64.b64encode(FAVICON_SVG.encode()).decode()
+    props = []
+    for name, rel in sorted((b.get('images') or {}).items()):
+        if not re.fullmatch(r'--rbx-[a-z0-9-]+', name):
+            fail('brand image property %r must look like --rbx-name' % name)
+        props.append('%s:url("%s")' % (name, data_uri(rel)))
+    css = '<style>:root{%s}</style>' % ';'.join(props) if props else ''
+    return fonts, fav, css
 
 
 class BuildError(Exception):
@@ -710,11 +744,11 @@ def build_app(app, warnings):
     has_ppa = 'core/js/ppa.js' in used
     shell = read(HERE, 'core', 'shell.html')
     tpl = read(tpl_path)
-    import base64
-    fav = 'data:image/svg+xml;base64,' + base64.b64encode(FAVICON_SVG.encode()).decode()
+    fonts_url, fav, brand_css = brand_assets(manifest)
     repl = {
         '{{DEFAULT_THEME}}': cfg.get('defaultTheme', 'paper'), '{{TITLE}}': htmllib.escape(cfg['title']),
-        '{{FAVICON_DATA_URI}}': fav, '{{FONTS_URL}}': FONTS_URL, '{{CDN_HEAD}}': cdn_head(), '{{CSS}}': css, '{{SHELL}}': shell,
+        '{{FAVICON_DATA_URI}}': fav, '{{FONTS_URL}}': fonts_url, '{{CDN_HEAD}}': cdn_head(fonts_url),
+        '{{BRAND_CSS}}': brand_css, '{{CSS}}': css, '{{SHELL}}': shell,
         '{{CONFIG}}': cfg_js, '{{DATA}}': data_js,
         '{{NE_PACK}}': read(HERE, 'core', 'basemap', 'ne_pack.js').strip(),
         '{{BASEMAP}}': read(HERE, 'core', 'basemap', 'basemap.js').strip(), '{{JS}}': js,

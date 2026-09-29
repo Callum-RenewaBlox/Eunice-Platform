@@ -395,6 +395,36 @@ def test_investor_never_gets_the_client_skin():
     assert not [f for f in man['css'] + man['js'] if 'skin' in f or f.startswith('apps/client/')]
 
 
+def test_client_carries_the_renewablox_brand():
+    """Client: the official wordmarks inlined as --rbx-wordmark-* data URIs, the BLOX. roundel as a PNG favicon and
+    Open Sans (the web fallback for Leelawadee UI) as the only web font. Investor keeps its own favicon and fonts."""
+    res = client_build()
+    head = res['html'].split('</head>', 1)[0]
+    for name in ('light', 'dark', 'mono'):
+        assert re.search(r'--rbx-wordmark-%s:url\("data:image/png;base64,[A-Za-z0-9+/=]{200,}"\)' % name, head), name
+    assert re.search(r'<link rel="icon" href="data:image/png;base64,', head)
+    fonts = re.search(r'href="(https://fonts\.googleapis\.com/css2\?[^"]+)"', head).group(1)
+    assert 'family=Open+Sans' in fonts and 'Inter' not in fonts and 'Newsreader' not in fonts, fonts
+    css = open(SKIN_CSS, encoding='utf-8').read()
+    assert '--font-ui:"Leelawadee UI","Open Sans"' in css
+    for hexcol in ('#156082', '#0B3549', '#218099', '#83CBEB'):
+        assert hexcol in css, hexcol
+    assert 'no Watt wasted' in res['html'] and 'aria-label="RenewaBlox"' in res['html']
+    inv = investor_build()['html'].split('</head>', 1)[0]
+    assert '--rbx-wordmark' not in inv and 'data:image/svg+xml;base64,' in inv and 'family=Inter' in inv
+
+
+def test_brand_assets_stay_inside_atlas_brand():
+    """build.data_uri only inlines existing images under atlas/brand/."""
+    for bad in ('../client_atlas_v2.html', 'brand/missing.png', 'data/ai_sites.json'):
+        try:
+            build.data_uri(bad)
+        except build.BuildError:
+            continue
+        raise AssertionError('%s was inlined' % bad)
+    assert build.data_uri('brand/roundel-64.png').startswith('data:image/png;base64,')
+
+
 def test_product_skin_rules_are_scoped():
     """Every selector in the skin stylesheet starts with :root[data-skin="product"], so it cannot style a page
     that does not opt in (at-rule wrappers and keyframe steps excepted)."""
@@ -427,15 +457,18 @@ def _contrast(a, b):
 def test_product_skin_tier_ramp_is_ordered_and_visible():
     """Owner feedback on Direction B: Tier 5 was too faint on the light basemap. The skin's BM-tier ramp must stay
     an ordered ramp (luminance rising Tier 1 → Tier 5) whose faintest step clears 2:1 on each theme's land colour
-    (light: Tier 5 on #F2F0E9; dark: Tier 1 on #16231F)."""
+    (light: Tier 5; dark: Tier 1). The land colours are the skin's own (--map-land), and the basemap palettes the
+    skin registers must paint the same land."""
     css = open(SKIN_CSS, encoding='utf-8').read()
+    js = open(os.path.join(ATLAS, 'apps', 'client', 'skin-product.js'), encoding='utf-8').read()
     light, dark = css.split(':root[data-skin="product"][data-theme="night"]{', 1)
-    for block, land, faint in ((light, '#F2F0E9', 4), (dark, '#16231F', 0)):
+    for block, theme, faint in ((light, 'paper', 4), (dark, 'night', 0)):
+        land = re.search(r'--map-land:\s*(#[0-9A-Fa-f]{6})', block).group(1)
+        assert re.search(r"name: '%s', land: '%s'" % (theme, land), js), (theme, land)
         ramp = [re.search(r'--tier-%d:\s*(#[0-9A-Fa-f]{6})' % i, block).group(1) for i in range(1, 6)]
         lums = [_lum(c) for c in ramp]
         assert lums == sorted(lums) and len(set(ramp)) == 5, ramp
         assert _contrast(ramp[faint], land) >= 2.0, (ramp[faint], land, _contrast(ramp[faint], land))
-    assert re.search(r"land:\s*'#F2F0E9'", open(os.path.join(ATLAS, 'core', 'basemap', 'basemap.js'), encoding='utf-8').read())
 
 
 if __name__ == '__main__':
