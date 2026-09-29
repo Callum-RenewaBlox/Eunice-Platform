@@ -1,0 +1,16 @@
+{
+  "_doc": "Bundle order for the client build. Paths are relative to atlas/. Files in 'optional' may be missing (build.py warns); the PPA module (core/js/ppa.js, core/css/ppa.css) is required. Never list anything under investor/ here: build.py fails the client build if you do. The client skin (\"product\": apps/client/skin-product.css and .js) comes last among the CSS and right before core/js/app.js among the JS; it only acts when template.html sets data-skin=\"product\"; remove both lines and that attribute to get the core look back.",
+  "css": [
+    "core/css/tokens.css", "core/css/base.css", "core/css/header.css", "core/css/rail.css", "core/css/legend.css",
+    "core/css/kpi.css", "core/css/controls.css", "core/css/sheet.css", "core/css/palette.css", "core/css/drawer.css", "core/css/notes.css", "core/css/dialogs.css",
+    "core/css/ppa.css", "core/css/mobile.css", "apps/client/skin-product.css"
+  ],
+  "js": [
+    "core/js/util.js", "core/js/state.js", "core/js/theme.js", "core/js/data.js", "core/js/filters.js",
+    "core/js/icons.js", "core/js/layers.js", "core/js/map.js", "core/js/header.js", "core/js/kpi.js",
+    "core/js/legend.js", "core/js/histogram.js", "core/js/sizekey.js", "core/js/rail.js", "core/js/search.js",
+    "core/js/sheet.js", "core/js/cards.js", "core/js/drawer.js", "core/js/toasts.js", "core/js/shortcuts.js", "core/js/notes.js", "core/js/dialogs.js", "core/js/export.js", "core/js/nearme.js", "core/js/drag.js",
+    "core/js/ppa.js", "core/js/ppa_host.js", "apps/client/client.js", "apps/client/skin-product.js", "core/js/app.js"
+  ],
+  "optional": []
+}

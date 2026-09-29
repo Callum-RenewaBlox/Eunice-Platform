@@ -1,0 +1,23 @@
+/* Sources & method drawer (spec 6.7) */
+.drawer{position:fixed;inset:0;z-index:90}
+.drawer[hidden]{display:none}
+.drawer-scrim{position:absolute;inset:0;background:var(--scrim);animation:fadeIn var(--dur-2) var(--ease)}
+.drawer-panel{position:absolute;top:0;right:0;bottom:0;width:min(480px,100vw);display:flex;flex-direction:column;background:var(--surface-1);color:var(--ink-1);box-shadow:var(--sh-3);
+  animation:drawerIn var(--dur-3) var(--ease)}
+@keyframes drawerIn{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
+.dr-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 18px 12px 24px;border-bottom:1px solid var(--rule)}
+.dr-title{margin:0;font:500 22px/1.15 var(--font-display);letter-spacing:-.01em}
+.dr-body{flex:1;overflow-y:auto;padding:6px 24px 28px}
+.dr-sec{border-top:1px solid var(--rule-strong);margin-top:18px;padding-top:10px}
+.dr-sec:first-child{border-top:0;margin-top:8px}
+.dr-sec h3{margin:0 0 8px;font:600 10.5px/1.3 var(--font-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-1)}
+.dr-sec p,.dr-sec li{font:400 13px/1.55 var(--font-ui);color:var(--ink-2)}
+.dr-sec p{margin:0 0 8px}
+.dr-sec ul{margin:0;padding-left:18px}
+.dr-sec dl{margin:0;display:grid;grid-template-columns:minmax(90px,auto) 1fr;gap:6px 14px;font:400 12.5px/1.45 var(--font-ui)}
+.dr-sec dt{font-weight:600;color:var(--ink-1)}
+.dr-sec dd{margin:0;color:var(--ink-2)}
+.dr-sec table{width:100%;border-collapse:collapse;font:400 12.5px/1.4 var(--font-ui);font-variant-numeric:tabular-nums}
+.dr-sec th,.dr-sec td{padding:5px 6px;border-top:1px solid var(--rule);text-align:left}
+.dr-sec td.n,.dr-sec th.n{text-align:right}
+.dr-asof{margin-top:22px;font:400 12px/1.4 var(--font-ui);color:var(--ink-3)}

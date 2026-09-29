@@ -27,6 +27,7 @@ from playwright.sync_api import sync_playwright
 APPS = [
     "https://eunice.streamlit.app/",
     "https://renewablox-savings.streamlit.app/",
+    "https://renewablox-client-atlas-v2.streamlit.app/",
 ]
 
 WAKE_BUTTON = re.compile("get this app back up", re.IGNORECASE)

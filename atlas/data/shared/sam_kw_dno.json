@@ -1,0 +1,7 @@
+{
+ "_doc": "Build-only (never shipped): installed kW per the DNO split where it differs from the FiT register. Used when switches.sam_kw_source = \"dno_split\".",
+ "kw": {
+  "WR102JH": 499,
+  "LN96JB": 499
+ }
+}

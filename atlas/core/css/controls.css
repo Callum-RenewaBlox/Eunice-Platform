@@ -1,0 +1,29 @@
+/* Map chrome (spec 6.6) */
+.map-ctl{position:absolute;z-index:25;right:var(--gutter);bottom:34px;display:flex;flex-direction:column;gap:6px;transition:right var(--dur-3) var(--ease)}
+.app.sheet-open .map-ctl{right:calc(var(--sheet-w) + var(--gutter) * 2)}
+.ctl{width:36px;height:36px;display:grid;place-items:center;border-radius:var(--r-2);background:var(--surface-float);border:1px solid var(--rule);box-shadow:var(--sh-1);color:var(--ink-2)}
+.ctl:hover{color:var(--ink-1);background:var(--surface-1)}
+:root[data-theme="night"] .ctl{-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass)}
+
+.sizekey{position:absolute;z-index:6;left:calc(var(--rail-w) + var(--gutter) * 2);bottom:40px;padding:9px 11px 8px;border-radius:var(--r-2);background:var(--surface-float);
+  border:1px solid var(--rule);box-shadow:var(--sh-1);pointer-events:none;transition:left var(--dur-3) var(--ease)}
+.app.rail-collapsed .sizekey{left:calc(44px + var(--gutter) * 2)}
+:root[data-theme="night"] .sizekey{-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass)}
+.sizekey:empty{display:none}
+.sizekey-t{font:600 10.5px/1 var(--font-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+.sizekey svg{display:block;overflow:visible}
+.sizekey text{font:400 11px var(--font-ui);fill:var(--ink-2);font-variant-numeric:tabular-nums}
+
+/* MapLibre chrome */
+.maplibregl-ctrl-bottom-left{left:calc(var(--rail-w) + var(--gutter) * 2);bottom:8px;transition:left var(--dur-3) var(--ease)}
+.app.rail-collapsed .maplibregl-ctrl-bottom-left{left:calc(44px + var(--gutter) * 2)}
+.maplibregl-ctrl-bottom-left .maplibregl-ctrl{margin:0}
+.maplibregl-ctrl-scale{background:none!important;border-color:var(--ink-2)!important;color:var(--ink-2)!important;font:500 10.5px var(--font-ui)!important;border-width:0 1.5px 1.5px!important;padding:0 4px!important;
+  text-shadow:0 0 2px var(--map-land),0 0 3px var(--map-land)}
+.maplibregl-ctrl-bottom-right{transition:right var(--dur-3) var(--ease)}
+.app.sheet-open .maplibregl-ctrl-bottom-right{right:calc(var(--sheet-w) + var(--gutter))}
+.maplibregl-ctrl-attrib{font:400 10.5px/1.4 var(--font-ui)!important;background:var(--surface-float)!important;color:var(--ink-3)!important}
+.maplibregl-ctrl-attrib a{color:var(--ink-3)!important}
+:root[data-theme="night"] .maplibregl-ctrl-attrib-button{filter:invert(1)}
+.maplibregl-canvas-container.maplibregl-interactive{cursor:grab}
+.map-ctl[hidden]{display:none}

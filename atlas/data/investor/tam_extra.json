@@ -1,0 +1,5238 @@
+{
+ "ttrumps-farm-ad-p-gcp": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "triverside-south-gcp": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tpetbows-u10": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tst-nicholas-cour-u10": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tad-site-ox10-gcp": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbasingstoke-ad-f-gcp": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "trainbarrow-farm-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tfarleigh-wallop-gcp": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tad-site-dt28-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbiogas-faulkners-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tsharcott-penning-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tstourwell-barn-a-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tcastle-eaton-far-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tmarston-power-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tgaunts-estate-ad-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbanbury-ad-plant-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tlandfill-gas-gen-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tad-site-sp78-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tad-site-rg73-gcp": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tgaunts-house-ad-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tstation-farm-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tagri-gen-ad-plan-u13": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "teast-london-biog-u10": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "twestcott-venture-gcp": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tmay-farm-ad-plan-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbygrave-lodge-fm-gcp": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tcrows-hall-farm-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "th-g-blakes-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tad-plant-main-ro-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tmanor-farm-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tspring-farm-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "teast-kirkby-east-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbernard-matthews-u13": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbarley-brigg-bio-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tstation-works-u10": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "ttrinity-hall-far-gcp": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbuttermilk-hall-gcp": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "twhite-hall-farm-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbiocow-ltd-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "timport-ad-plant-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tcoston-hall-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tcopland-way-ad-p-u13": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tad-site-co77-u10": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tpremier-foods-ch-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tad-site-nr23-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tswancote-energy-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tlongner-energy-l-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "therefordshire-bi-gcm": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tcoleshill-stw-fo-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbitterley-warthi-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "teign-wwtw-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tabbotsmoor-farm-gcm": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "trotherdale-farm-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbagley-biogas-ad-gcm": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tad-plant-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tmanor-farm-ad-pl-gcm": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbretford-road-br-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tpenilan-gcm": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tpengethley-ad-pl-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tpembridge-the-le-gcm": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "thome-farm-ad-pla-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "twytheford-poultr-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tstockton-grange-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "teardisley-eardis-gcm": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tunit-1-wharton-c-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tpriors-halton-fa-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbatchacre-hall-a-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbio-dynamic-ad-p-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tgreens-lodge-far-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tstoke-lane-stoke-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tnocton-fen-adj-u-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tfernbrook-bio-ad-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "teaston-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tscrivelsby-home-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tmedbourne-grange-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tscampton-ad-gran-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbiogas-generator-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tweldon-turbine-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tblisworth-hill-f-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "talfreton-sewage-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "thome-farm-duck-e-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "thoneypot-energy-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tmanor-farm-pury-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tgreat-porthamel-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tvale-bio-energy-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "ttesco-magor-dist-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tcannington-bio-e-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tmark-yardwall-ma-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "twaste-transfer-s-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tgreat-dunkilns-f-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tsnowdon-hill-far-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "texeter-greendale-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "thartnollfarm-ad-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tcrewkerne-rushyw-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbroadoak-farm-ad-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tplymouth-higher-gbv": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "taston-manor-cide-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tlandmark-farm-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "thogsbrook-farm-a-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbruton-white-hou-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "thill-farm-lydney-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tgreener-for-life-gbu": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tevercreech-renew-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "twaen-ad-plant-fo-gcm": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tllwyn-isaf-ad-pl-gck": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tlodge-farm-ad-pl-gcm": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tprosper-de-mulde-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tsandhill-add-bio-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tlow-farm-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tprospect-farm-bi-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tclayton-hall-far-gcw": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tsmeathalls-farm-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tevergreen-garden-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "twestholme-farm-i-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "thibalstow-airfie-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tlindholme-gas-ge-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tj-e-hartley-limi-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tad-site-la2-0ag-gct": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tcarr-farm-gct": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tad-site-ca6-4pz-gcv": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tstanley-villa-fa-gct": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tad-site-ca6-6ez-gcy": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tjustice-town-far-gcv": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tegger-anick-road-gcy": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "trotary-way-gcy": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "teast-hedley-hope-gcw": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "thowla-hay-farm-g-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tlark-hall-gcw": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "twashfold-farm-gcw": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00344RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00320RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00107RAEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00590RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00062RAWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00007RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00005SASC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00381RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00202RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00357RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00254RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00011RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00326RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00033SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00002SJSC": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00147RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00579RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00581RAEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00003RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00324RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00500RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00207RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00095RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00571RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00006RAWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00513RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00318RAEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00318RAEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00344RAEN-2": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00569RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00580RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00286RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00002RAWA": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00002RAWA-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00173RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00006RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00005RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00060SASC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00177RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00246RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00451RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00026RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00072RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00373RAEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00006RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00097RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00029RAWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00001SASC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00028RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00033SASC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00108RJEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00565RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00260RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00457RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00305RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00027SASC": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00029SASC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00325RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00442RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00456RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00269RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00599RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00097RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00427RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00558RJWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00017SASC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00155RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00007SASC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00395RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00172RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00047RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00150RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00026SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00552RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00484RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00123RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00366RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00196RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00426RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00211RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00275RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00033SJSC-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00501RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00075RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00055RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00475RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00179RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00005SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00481RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00344RAEN-3": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00121RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tstaples-vegetabl-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00317RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tgt-friars-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00025SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00135RJEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00122RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00022SASC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00031SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00141RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00519RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00086RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00609RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00040SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00040SJSC-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00009RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00443RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00068RAEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00550RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00010RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00302RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00593RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00065RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tstourbridge-road-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00493RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00014RAWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00536RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00233RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00128RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00330RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00210RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00570RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00493RAEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00004SRSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00175RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00040RAWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00526RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00006SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00129RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00071RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tadvanced-thermat-u10": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00528RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00589RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00381RAEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tcrowland-spaldin-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "ta-d-plant-beeche-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00006RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00503RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00187RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tscottow-rd-ad-pl-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00151RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00122RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tbiogen-merevale-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00532RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00041SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00348RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00020SASC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00442RJWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00435RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00088RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00018RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00222RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00031RAEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00010SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00548RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tlandfill-at-sout-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tgreengill-farm-a-gcw": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00051SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tdryholme-farm-gcv": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00572RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00432RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00432RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00185RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00126RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00054SASC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00223RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00008SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00038SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00262RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00516RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00497RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00070RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00506RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00061RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00449RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00220RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00021SASC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00028RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00621RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00638RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00198RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00574RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00180RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "t11-gcr": {
+  "src": "FiT",
+  "s": "Accepted to connect"
+ },
+ "R00211RJWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00478RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00473RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00154RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00034RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00535RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00235RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00578RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00531RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00094RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00202RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00063RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00072RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00170RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00643RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00067RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00111RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00001SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00562RJWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00004SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00629RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00030RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00134RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00490RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00023RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00051RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00298RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00030SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00016RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00176RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00024SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00129RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00188RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00560RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00118RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "twykey-farm-gcm": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00487RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00557RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00124RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00585RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00023SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00057RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00617RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00144RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00048RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00036RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00460RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00559RJWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tcattlegate-farm-gcp": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00165RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00495RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00636RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00214RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00176RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00042RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00062RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00214RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00525RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00438RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00220RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00544RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00077RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00068RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00037RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00051SJSC-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00151RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00087RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00108RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "twothersome-anaer-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00464RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tsnodland-paper-m-u10": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00028SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00445RJWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00087RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00001RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00508RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00085RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00140RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00597RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00560RJWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00007RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "thillam-lane-farm-gct": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00586RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tbiogen-waen-gcm": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00021RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00013RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00561RJWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00106RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00056RAWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00091RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00160RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00063RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00092RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00170RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00054RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00560RJWA-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00541RJWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tred-house-bio-gcm": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tstragglethorpe-a-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00200RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tland-off-park-la-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tatherstone-austr-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00594RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00508RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00508RJEN-3": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00592RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00181RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00010RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00001RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00039SJSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "ttambowie-biogas-gcu": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tlincoln-roe-hous-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tpengelly-anaerob-gbu": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tcrugmore-farm-bi-gck": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tcondate-biogas-l-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tlake-district-cr-gct": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "twester-alves-far-gfj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00031RJEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00058RAWA": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "tplusterwine-hous-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tshepton-mallet-s-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00220RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00106RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00093RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00203RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00507RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00440RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00234RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00113RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00166RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00168RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00011RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00509RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00016RREN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00012RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00160RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00203RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00452RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00505RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00033RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tquarrington-farm-gcw": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00542RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "ttelford-hortonwo-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tarkleby-mill-ell-gct": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00203RJEN-3": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tworks-lane-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00077SASC": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "tlong-belt-farm-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00454RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00577RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00203RJEN-4": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tboundary-farm-gr-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "twray-house-farm-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00610RJEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "tclitheroe-gcw": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tgreat-hele-farm-gcj": {
+  "src": "FiT",
+  "s": "Accepted to connect"
+ },
+ "R00573RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "thighwood-farm-co-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00610RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tcrewkerne-biogas-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tkirkbride-house-gcv": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tshobdon-the-airf-gcm": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "thaunton-cleat-hi-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "ttrevase-farm-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tludlow-wigley-fa-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tlaynes-piggery-b-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "twappingham-farm-gcp": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tnew-hook-farm-co-u10": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00487RAEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "tland-adj-to-stac-u10": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tconghurst-farm-u10": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tnon-postal-u10": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tsandy-lane-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tsudbury-u10": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00435RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tgenerating-stati-gcu": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00006SRSC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00614RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00419RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tmanor-farm-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tburton-agnes-ren-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00154RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00137RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00109RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00547RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00102RJEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00073RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00449RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00079SASC": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tmagor-effluent-t-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tridge-road-farm-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00156RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00463RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00214RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00554RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00177RJWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00448RJEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00498RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00563RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00146RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00020RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00457RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00529RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00011RREN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00553RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tponsonby-old-hal-gct": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tcolchester-u10": {
+  "src": "FiT",
+  "s": "Accepted to connect"
+ },
+ "tpoultry-units-th-gcq": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00014RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00097RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00349RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00132RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tedgeworthy-farm-gcj": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00165RREN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tnew-supply-upgra-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "teuston-estate-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "teuston-biogas-li-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00562RAEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00014RJEN-2": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "tunnamed-site-fit-u13": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00205RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00021RAWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00005RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tmoy-park-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tnew-supply-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbiogas-generatio-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "twood-farm-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00646RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00385RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00370RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00333RAEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00367RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tgrayingham-grang-gcx": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tgelligarneddau-gcm": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "theath-farm-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tkelsick-house-ab-gct": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tskirwith-abbey-f-gcw": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tbroadmeadows-far-gcw": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tcrooklands-blenc-gct": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00604RJEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00059RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00460RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00198RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00644RJEN": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00491RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00478RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00050RAWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00015RJWA": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00462RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00085RJEN-2": {
+  "src": "ECR",
+  "s": "Accepted to connect"
+ },
+ "R00570RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00054RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00495RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00527RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00305RAEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00528RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00039RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00122RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00090RJEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00053RAEN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00592RJEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00324RAEN-2": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "R00133RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00127RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00035RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00118RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00045RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00470RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00058RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00110RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00005RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00111RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00101RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00112RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00034RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00060RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00115RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00078RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00116RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00093RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00120RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00121RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00030RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00131RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00019RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00012RJWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00018RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00016RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00148RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00084RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00076RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00125RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00032RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00180RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00166RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00103RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00195RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00052RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00150RJWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00130RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00098RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00182RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00053RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00041RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00029RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00193RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00167RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00096RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00201RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00043RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00028RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00187RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00184RJWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00107RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00024RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00002RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00022RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00143RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00089RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00029RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00013RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00066RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00104RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00162RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00109RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00079RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00069RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00134RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00083RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00186RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00139RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00003SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00025RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00033RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00035RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00038RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00190RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00191RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00039RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00192RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00010RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00197RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00044RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00032RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00046RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00047RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00204RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00009SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00205RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00208RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00212RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00213RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00216RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00217RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00048RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00011SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00221RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00431RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00434RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00098RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00099RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00022SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00101RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00102RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00103RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00104RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00107RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00454RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00110RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00112RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00458RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00461RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00115RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00116RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00120RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00123RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00124RRWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00126RRWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00474RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00129RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00477RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00479RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00480RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00132RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00088RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00133RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00135RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00138RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00139RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00485RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00486RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00488RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00143RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00145RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00147RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00149RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00024RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00502RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00504RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00152RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00510RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00511RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00032SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00514RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00517RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00520RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00521RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00002SRSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00523RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00533RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00155RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00034SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00537RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00540RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00092RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00012SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00157RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00545RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00158RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00159RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00029RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00546RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00161RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00549RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00551RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00037RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00163RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00042SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00038RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00555RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00005SRSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00169RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00171RRWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00561RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00172RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00039RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00041RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00566RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00568RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00175RRWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00569RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00141RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00114RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00080RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00075RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00019RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00015RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00008RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00183RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00433RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00465RJWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00119RRWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00468RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00125RRWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00472RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00134RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00493RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00499RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00515RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00518RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00539RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00556RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00173RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00564RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00036RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00031RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00064RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00022RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00001RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00142RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00171RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00178RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00003SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00106RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00033RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00114RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00476RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00131RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00483RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00142RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00494RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00512RJWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00524RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00530RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00534RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00156RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00114RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00149RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00635RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00058RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00177RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00044RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00178RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00045RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00043SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00177RRWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00115RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00178RRWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00580RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00006SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00117RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00181RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00118RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00182RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00584RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00585RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00048RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00045SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00587RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00008SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00051RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00046SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00047SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00184RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00179RRWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00591RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00056RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00180RRWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00057RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00596RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00186RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00187RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00606RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00181RRWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00188RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00048SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00607RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00123RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00189RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00190RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00192RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00007SRSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00199RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00204RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00209RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00632RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00010SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00130RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00007RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00138RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00143RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00145RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00150RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00016SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00160RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00161RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00163RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00165RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00169RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00173RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00216RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00178RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00180RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00186RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00023SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00191RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00193RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00196RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00203RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00204RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00210RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00211RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00214RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00219RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00220RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00182RRWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00224RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00228RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00229RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00230RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00232RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00009RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00237RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00212RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00242RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00213RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00243RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00028SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00011RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00249RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00215RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00216RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00259RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00053SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00261RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00265RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00267RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00272RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00284RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00034SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00290RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00642RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00292RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00294RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00295RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00300RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00301RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00304RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00311RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00312RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "P00322RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00645RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00219RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00009SRSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00328RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00329RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00331RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00221RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00222RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00224RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00225RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00336RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00337RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00338RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00342RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00017RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00343RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00345RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00346RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00036SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00350RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00226RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00037SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00039SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00040SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00360RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00041SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00022RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00361RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00362RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00363RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00023RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00042SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00024RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00365RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00025RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00368RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00374RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00375RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00376RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00026SXSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00378RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00044SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00379RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00228RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00230RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00026RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00027RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00030RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00031SXSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00393RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00046SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00396RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00397RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00031RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00402RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00403RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00404RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00405RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00410RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00032RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00411RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00234RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00417RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00418RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00421RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00423RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00425RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00050SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00051SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00429RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00430RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00431RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00036RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00432RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00037RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00039RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00052SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00053SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00434RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00435RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00439RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00441RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00042RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00055SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00443RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00444RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00445RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00446RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00447RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00448RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00450RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00452RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00455RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00058SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00043RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00456RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00059SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00458RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00459RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00460RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00461RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00462RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00463RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00061SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00466RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00062SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00467RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00468RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00469RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00063SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00470RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00064SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00065SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00066SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00045RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00476RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00046RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00047RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00048RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00067SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00069SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00483RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00070SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00488RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00489RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00071SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00072SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00073SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00075SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00076SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00495RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00496RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00052RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00078SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00498RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00499RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00500RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00501RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00080SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00503RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00053RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00505RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00511RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00081SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00054RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00521RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00522RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00532RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00533RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00535RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00536RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00538RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00082SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00539RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00083SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00541RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00544RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00545RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00550RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00055RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00552RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00554RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00556RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00085SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00564RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00057RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00086SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00087SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00088SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00061RAWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00583RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00090SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00588RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00590RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00649RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "tname-withheld-fi-gcn": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tname-withheld-fi-u12": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tname-withheld-fi-gcp": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tname-withheld-fi-u10": {
+  "src": "FiT",
+  "s": "Accepted to connect"
+ },
+ "R00096RREN": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tname-withheld-fi-gcr": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "tname-withheld-fi-u13": {
+  "src": "FiT",
+  "s": "Connected"
+ },
+ "R00495RJEN-3": {
+  "src": "ECR",
+  "s": "Connected"
+ },
+ "tpowys-ad-ld3-gcj": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsouth-hams-ad-pl-gbv": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tmid-devon-ad-ex1-gcj": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsomerset-west-an-gcj": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "twychavon-ad-wr10-gcq": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsedgemoor-ad-ta9-gcj": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsouth-somerset-a-gcn": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tbasingstoke-and-gcp": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tkettering-ad-nn1-gcr": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "twrexham-ad-ll13-gcm": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tcorby-ad-nn17-gcr": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tbirmingham-ad-b7-gcq": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tshropshire-ad-sy-gcm": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tshropshire-ad-sy-gcm-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "therefordshire-co-gcm": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsouth-somerset-a-gcj": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsedgemoor-ad-ta5-gcj": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tfylde-ad-fy8-gct": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdoncaster-ad-dn5-gcx": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "therefordshire-co-gcq": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tmid-devon-ad-ex1-gcj-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdorset-ad-sp7-gcn": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdorset-ad-dt2-gcn": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "ttest-valley-ad-s-gcn": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tnewcastle-upon-t-gcy": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tbarking-and-dage-u10": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tcaerphilly-ad-np-gcj": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tdorset-ad-dt2-gcn-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tbarking-and-dage-u10-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tbasingstoke-and-gcp-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsouth-holland-ad-u12": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "trotherham-ad-s63-gcx": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tdorset-ad-dt11-gcn": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "twiltshire-ad-sn8-gcn": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdorset-ad-dt2-gcn-3": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tmerton-ad-cr4-gcp": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tmerton-ad-cr4-gcp-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tcity-of-edinburg-gcv": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tpowys-ad-ld3-gcj-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "twrexham-ad-ll13-gcm-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "teast-riding-of-y-gcx": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsouth-northampto-gcr": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "ttewkesbury-ad-gl-gcn": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdorset-ad-dt2-gcn-4": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "therefordshire-co-gcm-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsouth-somerset-a-gcj-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "trutland-ad-le15-gcr": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tkettering-ad-nn1-gcr-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdoncaster-ad-dn5-gcx-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "twest-berkshire-a-gcp": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tswindon-ad-sn6-gcn": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "twychavon-ad-b96-gcq": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsouth-northampto-gcr-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsouth-lakeland-a-gcw": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdumfries-and-gal-gcu": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tmoray-ad-iv36-gfj": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdumfries-and-gal-gct": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tscottish-borders-gcv": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tkettering-ad-nn1-gcr-3": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tnorthumberland-a-gcy": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tmid-suffolk-ad-i-u12": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tbath-and-north-e-gcn": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsouth-staffordsh-gcq": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsedgemoor-ad-ta5-gcj-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tscottish-borders-gcy": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tcaerphilly-ad-cf-gcj": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdumfries-and-gal-gcu-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdumfries-and-gal-gcv": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdumfries-and-gal-gcv-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tscottish-borders-gcy-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "taberdeenshire-ad-gfn": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdumfries-and-gal-gcv-3": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tmelton-ad-le14-gcr": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tnewark-and-sherw-gcr": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tnorth-west-leice-gcq": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tmaidstone-ad-me1-u10": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "twakefield-ad-wf7-gcx": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tcarmarthenshire-gch": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "twrexham-ad-ll12-gcm": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tfife-ad-dd6-gfj": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tangus-ad-dd5-gfj": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "taberdeen-city-ad-gfn": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "thambleton-ad-dl7-gcw": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdaventry-ad-nn6-gcr": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "twychavon-ad-wr10-gcq-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tmansfield-ad-ng2-gcr": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tdumfries-and-gal-gcu-3": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tisle-of-anglesey-gck": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdumfries-and-gal-gcv-4": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdumfries-and-gal-gcv-5": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tnorth-lincolnshi-gcx": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tnorth-norfolk-ad-u12": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "teast-riding-of-y-gcx-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsouth-northampto-gcr-3": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "teast-devon-ad-ex-gcj": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tshropshire-ad-sy-gcm-3": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tselby-ad-yo8-gcx": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tsouth-oxfordshir-gcp": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "thertsmere-ad-al4-gcp": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tspelthorne-ad-tw-gcp": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdumfries-and-gal-gcu-4": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tpowys-ad-sy16-gcm": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdumfries-and-gal-gcu-5": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "thighland-ad-iv2-gfj": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdumfries-and-gal-gcv-6": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tmidlothian-ad-eh-gcv": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tmoray-ad-ab55-gfj": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tnorth-lincolnshi-gcx-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tnorthumberland-a-gcy-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tliverpool-ad-l20-gct": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tribble-valley-ad-gcw": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tstaffordshire-mo-gcq": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tleeds-ad-ls14-gcw": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tselby-ad-ls24-gcx": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tkettering-ad-nn1-gcr-4": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tshropshire-ad-sy-gcm-4": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tshropshire-ad-sy-gcq": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tnorth-warwickshi-gcq": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tmilton-keynes-ad-gcr": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsouth-somerset-a-gcn-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsouth-kesteven-a-gcr": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tmelton-ad-le14-gcr-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tgateshead-ad-ne1-gcy": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "thighland-ad-iv2-gfj-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "trunnymede-ad-kt1-gcp": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdorset-ad-dt2-gcn-5": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tcarlisle-ad-ca5-gcv": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "twychavon-ad-wr10-gcq-3": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "thambleton-ad-dl7-gcw-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tmid-devon-ad-ex1-gcj-3": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tshropshire-ad-dy-gcq": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tbraintree-ad-co9-u10": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "twiltshire-ad-ba1-gcn": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tmanchester-ad-m1-gcw": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tangus-ad-dd5-gfj-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tpowys-ad-ld7-gcm": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tpowys-ad-sy21-gcm": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tperth-and-kinros-gfj": {
+  "src": "FiT",
+  "s": "No export"
+ },
+ "tcaerphilly-ad-cf-gcj-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdumfries-and-gal-gcu-6": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tdenbighshire-ad-gcm": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tpowys-ad-sy21-gcm-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tnorth-lincolnshi-gcx-3": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "trichmondshire-ad-gcw": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tshropshire-ad-sy-gcm-5": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tfolkestone-and-h-u10": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tsouth-somerset-a-gcn-3": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tbuckinghamshire-gcp": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tderbyshire-dales-gcq": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "tmaidstone-ad-me1-u10-2": {
+  "src": "FiT",
+  "s": "Export"
+ },
+ "R00032RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00179RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00011RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00025RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00037RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00056RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00040RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00152RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00174RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00003RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00164RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00017RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00070RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00037SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00025RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00196RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00437RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00441RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00450RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00455RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00108RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00117RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00027SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00471RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00475RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00128RRWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00130RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00489RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00492RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00148RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00496RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00543RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00164RRWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00562RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00174RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00159RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00017RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00100RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00156RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00163RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00041RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00105RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00157RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00144RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00158RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00189RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00175RJWA": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00167RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00014SASC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00044SJSC": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00116RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00598RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00185RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00191RREN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00611RJEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00146RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00184RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00207RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00218RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00364RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00414RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ },
+ "R00438RAEN": {
+  "src": "RO",
+  "s": "Connected"
+ }
+}

@@ -15,6 +15,8 @@ Tech stack: Python · Streamlit · SQLite · scikit-learn (HistGradientBoosting 
 | **Eunice Atlas** | `app_atlas.py` | Public — UK renewable-site prospecting map: Hydro + Peaker / AD-BM layers, each site scored and sized by capacity, with live filters and click-through detail | Another Streamlit Cloud app, same repo |
 | **RenewaBlox Client Atlas** | `app_client_atlas.py` | Public — client-facing opportunity map: GB hydro stranded-capacity + peaker BM-revenue layers (client-safe — internal scores/notes/targeting stripped) | Another Streamlit Cloud app, same repo |
 | **RenewaBlox Investor Atlas** | `app_investor_atlas.py` | Investors (gated) — presentation map of the UK flexibility opportunity (peaker + hydro) with headline KPIs and site-level commercial detail | Another Streamlit Cloud app, same repo |
+| **RenewaBlox Client Atlas v2** | `app_client_atlas_v2.py` | Public — the MapLibre redesign of the Client Atlas (built from `atlas/`), deployed on its own URL alongside the original | Another Streamlit Cloud app, same repo |
+| **RenewaBlox Investor Atlas v2** | `app_investor_atlas_v2.py` | Investors (gated) — the MapLibre redesign of the Investor Atlas with Present mode; not deployed yet | Another Streamlit Cloud app, same repo |
 
 The price apps read the same `data.sqlite` (updated by one daily ingest) and share the backend modules
 (`model.py`, `features.py`, `scenarios.py`, `db.py`, …). To run lite locally:
@@ -41,6 +43,13 @@ Run locally: `streamlit run app_client_atlas.py`.
 `investor_atlas.html` (a standalone Leaflet map — peaker + hydro — with headline KPIs). It carries
 site-level commercial detail (developer, capacity, contract-value metrics), so deploy it **gated**
 to invited investor viewers rather than public. Run locally: `streamlit run app_investor_atlas.py`.
+
+**Atlas v2** is the MapLibre redesign of both atlases. Its source lives in `atlas/` and
+`python3 atlas/build.py` writes two standalone pages, `client_atlas_v2.html` and
+`investor_atlas_v2.html`, embedded by `app_client_atlas_v2.py` and `app_investor_atlas_v2.py`.
+They run as separate Streamlit Cloud apps, so the original atlases above keep their URLs and
+stay unchanged. See `atlas/README.md` for the build, checks and data refresh.
+Run locally: `streamlit run app_client_atlas_v2.py`.
 
 ---
 
@@ -187,6 +196,9 @@ If the LFS bandwidth budget gets tight (unlikely until you have many concurrent 
 - `client_atlas.html` — client-safe Leaflet map (internal scores / notes / target list stripped)
 - `app_investor_atlas.py` — RenewaBlox Investor Atlas (investor presentation; embeds `investor_atlas.html`)
 - `investor_atlas.html` — standalone Leaflet investor map (peaker + hydro, KPIs; deploy gated)
+- `atlas/` — Atlas v2 source (shared MapLibre core, per-app templates and data, `build.py`)
+- `app_client_atlas_v2.py` / `client_atlas_v2.html` — Client Atlas v2 (built by `atlas/build.py`)
+- `app_investor_atlas_v2.py` / `investor_atlas_v2.html` — Investor Atlas v2 (built by `atlas/build.py`; deploy gated)
 - `ingest.py` — daily data + retrain pipeline (entrypoint for GitHub Actions)
 - `config.py` — region map, tariff product codes, API endpoints
 - `db.py` — SQLite schema + upserts

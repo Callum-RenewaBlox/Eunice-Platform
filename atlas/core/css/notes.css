@@ -1,0 +1,24 @@
+/* Map annotations (spec 16.3, client P1): DOM text over the map, SVG hairline leaders, dashed region rings */
+.notes{position:absolute;inset:0;pointer-events:none;z-index:4;transition:opacity var(--dur-3) var(--ease)}
+.notes.hide{opacity:0;visibility:hidden}
+.notes-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.notes-svg .n-ld{stroke:var(--ink-2);stroke-width:1;fill:none}
+.notes-svg .n-dot{fill:var(--ink-2)}
+.notes-svg .n-ring{stroke:var(--ink-2);stroke-width:1;fill:none;stroke-dasharray:3 3;opacity:.75}
+.note{position:absolute;left:0;top:0;width:200px;font:400 14px/1.3 var(--font-display);font-variation-settings:"opsz" 14;color:var(--ink-1);
+  --nh:var(--map-land);text-shadow:0 0 2px var(--nh),0 0 2px var(--nh),0 0 4px var(--nh),0 0 7px var(--nh);transition:opacity var(--dur-2)}
+.note.r{text-align:right}
+.note-lead{display:block;margin-bottom:3px;font:600 11px/1.2 var(--font-ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-1)}
+.note .nf{font-weight:600;font-variant-numeric:lining-nums tabular-nums}
+.notes-btn{position:absolute;z-index:21;top:calc(var(--gutter) + 2px);left:calc(var(--gutter) + var(--rail-w) + 12px);display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px 0 10px;
+  border-radius:var(--r-pill);background:var(--surface-float);border:1px solid var(--rule);box-shadow:var(--sh-1);font:500 12px/1 var(--font-ui);color:var(--ink-2);
+  transition:left var(--dur-3) var(--ease),color var(--dur-1)}
+.notes-btn .i{width:14px;height:14px}
+.notes-btn:hover{color:var(--ink-1)}
+.notes-btn[aria-pressed="false"] span{text-decoration:line-through;text-decoration-color:var(--ink-4)}
+.notes-btn[aria-pressed="false"]{color:var(--ink-3)}
+.notes-btn[hidden]{display:none}
+.app.rail-collapsed .notes-btn{left:calc(var(--gutter) + 44px + 12px)}
+.app[data-view="ppa"] .notes-btn{display:none}
+:root[data-theme="night"] .notes-btn{-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass)}
+@media (max-width:760px){ .notes,.notes-btn{display:none} }

@@ -1,0 +1,125 @@
+/* RenewaBlox Atlas design tokens (spec section 3). Tokens live on :root and [data-theme] only. */
+:root, :root[data-theme="paper"] {
+  color-scheme: light;
+  --map-land:      #F1ECE1;
+  --surface-0:     #F8F5EE;
+  --surface-0-solid: #F8F5EE;
+  --surface-1:     #FFFDF9;
+  --surface-2:     #F1EDE3;
+  --surface-float: rgba(255,253,249,.94);
+  --wash:          rgba(27,35,32,.045);
+  --scrim:         rgba(20,26,24,.30);
+  --ink-1: #1B2320;
+  --ink-2: #48524D;
+  --ink-3: #646D68;
+  --ink-4: #A3A9A4;
+  --ink-inverse: #FFFDF9;
+  --rule:        rgba(27,35,32,.12);
+  --rule-2:      rgba(27,35,32,.22);
+  --rule-strong: #1B2320;
+  --brand:        #0E3A2F;
+  --brand-2:      #1C4A3C;
+  --lime:         #8FD14F;
+  --lime-ink:     #3E7A12;
+  --lime-wash:    rgba(143,209,79,.16);
+  --teal:         #1F6F78;
+  --focus:        #3E7A12;
+  --tooltip-bg:   #1B2320;
+  --tooltip-ink:  #F8F5EE;
+  --marker-stroke:#FFFDF8;
+  --glass: none;
+  --vignette: none;
+
+  /* data palettes (3.3) */
+  --tier-1: #004A2D; --tier-2: #1D6835; --tier-3: #478638; --tier-4: #6F9E45; --tier-5: #93B163;
+  --tier-hot-1: #F7FFD6; --tier-hot-2: #E6F7C9; --tier-hot-3: #D5F0D2; --tier-hot-4: #CCE7D4; --tier-hot-5: #C3DACB;
+  --fam-0: #B07A1C; --fam-1: #0B7C55; --fam-2: #5A62CA; --fam-3: #8A877C;
+  /* TAM per-fuel rings (switches.tam_colour_mode "fuels"), in labels.fuels order: landfill gas, fuelled (mixed),
+     biomass, waste/EfW, biogas (AD), sewage gas, advanced fuel, biofuel-other, biodiesel. Each ≥ 3:1 on --map-land;
+     validated with tools/validate_palettes.sh (see README "TAM fuel palette"). */
+  --fuel-0: #8F5202; --fuel-1: #6D84AD; --fuel-2: #E25E01; --fuel-3: #960B28; --fuel-4: #0A7756;
+  --fuel-5: #844386; --fuel-6: #0947BE; --fuel-7: #778F49; --fuel-8: #524F50;
+  --tam-fill: rgba(250,247,240,.66); --tam-halo: rgba(250,247,240,.85);
+  --samdot: #8FD14F; --samdot-stroke: #0B2E2A;
+  --hyd-0: #15557E; --hyd-1: #3F84AE; --hyd-2: #7EADC7; --hyd-unv: #8A877C;
+  --hyd-hot-0: #D6EAF5; --hyd-hot-1: #D9EAF3; --hyd-hot-2: #E1EEF4;
+  --series-1: #2A78D6; --series-2: #EB6834;
+  --chip-neg-bg: rgba(42,120,214,.12); --chip-neg-ink: #1D5BA8;
+  --chip-fit-bg: rgba(237,161,0,.18);  --chip-fit-ink: #7A5200;
+  --status-good: #0CA30C; --status-warning: #FAB219; --status-critical: #D03B3B; --status-neutral: #9AA19C;
+  --sel-ring: #1B2320;
+
+  /* typography (3.5) */
+  --font-ui:      "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-mono:    ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --rbx-map-font:  var(--font-ui);
+  --rbx-map-serif: var(--font-display);
+
+  /* space, radii, layout (3.6) */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px; --sp-10:40px;
+  --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:999px;
+  --header-h:56px; --kpiband-h:0px; --footer-h:0px;
+  --rail-w:348px; --sheet-w:384px; --gutter:12px; --peek-h:136px;
+
+  --sh-1: 0 1px 2px rgba(27,35,32,.06), 0 4px 14px rgba(27,35,32,.07);
+  --sh-2: 0 2px 6px rgba(27,35,32,.08), 0 18px 42px rgba(27,35,32,.16);
+  --sh-3: 0 0 0 .5px rgba(27,35,32,.08), 0 16px 40px -8px rgba(27,35,32,.22), 0 40px 80px -24px rgba(27,35,32,.28);
+
+  --dur-1:120ms; --dur-2:200ms; --dur-3:320ms; --dur-4:500ms; --dur-count:600ms;
+  --ease: cubic-bezier(.2,.8,.2,1); --ease-spring: cubic-bezier(.32,1.28,.54,1);
+
+  /* header (3.2): client build */
+  --header-bg: #0B2E2A; --header-ink: #FFFFFF; --header-ink-2: #CFE8E2; --header-rule: #1D5A51;
+}
+:root[data-theme="night"] {
+  color-scheme: dark;
+  --map-land:      #0E1917;
+  --surface-0:     rgba(10,19,20,.80);
+  --surface-0-solid:#0C1618;
+  --surface-1:     #111C1A;
+  --surface-2:     rgba(255,255,255,.045);
+  --surface-float: rgba(12,22,21,.86);
+  --wash:          rgba(174,226,208,.06);
+  --scrim:         rgba(0,0,0,.45);
+  --ink-1: #E8F1ED;
+  --ink-2: #A9BAB3;
+  --ink-3: #83978F;
+  --ink-4: #4E605A;
+  --ink-inverse: #0E1917;
+  --rule:        rgba(174,226,208,.10);
+  --rule-2:      rgba(174,226,208,.18);
+  --rule-strong: rgba(232,241,237,.72);
+  --brand:        #0E3A2F;
+  --brand-2:      #1C4A3C;
+  --lime:         #8FD14F;
+  --lime-ink:     #B9EC7A;
+  --lime-wash:    rgba(143,209,79,.14);
+  --teal:         #3FD0C0;
+  --focus:        #B9EC7A;
+  --tooltip-bg:   rgba(8,15,16,.94);
+  --tooltip-ink:  #E8F1ED;
+  --marker-stroke:rgba(232,242,237,.80);
+  --glass:        saturate(140%) blur(16px);
+  --vignette:     radial-gradient(ellipse at 55% 45%, transparent 55%, rgba(0,0,0,.42) 100%);
+
+  --tier-1: #D7F96C; --tier-2: #A2DD50; --tier-3: #6FBF5D; --tier-4: #4E9F63; --tier-5: #407E5B;
+  --fam-0: #BF8834; --fam-1: #2A9E7A; --fam-2: #7F88E4; --fam-3: #8C8A80;
+  --fuel-0: #A56500; --fuel-1: #7E95BD; --fuel-2: #EB6803; --fuel-3: #C13750; --fuel-4: #02AF7F;
+  --fuel-5: #A458A3; --fuel-6: #4C82F0; --fuel-7: #8E9448; --fuel-8: #717171;
+  --tam-fill: rgba(10,18,17,.62); --tam-halo: rgba(6,11,12,.80);
+  --hyd-0: #A5D2EA; --hyd-1: #5E9EC3; --hyd-2: #3A7596; --hyd-unv: #8C8A80;
+  --hyd-hot-0: #EAF6FC; --hyd-hot-1: #CFE6F3; --hyd-hot-2: #B4D3E4;
+  --series-1: #3987E5; --series-2: #D95926;
+  --chip-neg-bg: rgba(57,135,229,.16); --chip-neg-ink: #8DB8F0;
+  --chip-fit-bg: rgba(242,198,107,.14); --chip-fit-ink: #F2C66B;
+  --sel-ring: #FFFFFF;
+
+  --sh-1: 0 0 0 .5px rgba(255,255,255,.06), 0 2px 8px rgba(0,0,0,.35);
+  --sh-2: 0 0 0 .5px rgba(255,255,255,.07), 0 24px 60px rgba(0,0,0,.55), 0 2px 10px rgba(0,0,0,.35);
+  --sh-3: 0 0 0 .5px rgba(255,255,255,.08), 0 30px 80px rgba(0,0,0,.6);
+}
+@media (max-width:1180px){ :root{ --rail-w:320px; --sheet-w:352px; } }
+@media (prefers-reduced-motion: reduce){
+  :root{ --dur-1:.01ms; --dur-2:.01ms; --dur-3:.01ms; --dur-4:.01ms; --dur-count:.01ms; }
+}

@@ -71,7 +71,7 @@ jobs:
               `not be confirmed running, so partners may be seeing the Streamlit sleep screen.`,
               ``,
               `- Failed run: ${runUrl}`,
-              `- Apps: https://eunice.streamlit.app/ · https://renewablox-savings.streamlit.app/`,
+              `- Apps: https://eunice.streamlit.app/ · https://renewablox-savings.streamlit.app/ · https://renewablox-client-atlas-v2.streamlit.app/`,
               ``,
               `Open each link to check. If a "get this app back up" button shows, the keep-alive`,
               `step needs a look (Streamlit may have changed the sleep page, or an app errored on boot).`,
