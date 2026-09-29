@@ -4,8 +4,8 @@ One design system and one codebase for the two public-facing map pages:
 
 | Build | Output (repo root) | Wrapper | Default theme |
 |---|---|---|---|
-| Client Atlas (public) | `client_atlas.html` | `app_client_atlas.py` | Paper |
-| Investor Atlas (gated) | `investor_atlas.html` | `app_investor_atlas.py` | Night |
+| Client Atlas (public) | `client_atlas_v2.html` | `app_client_atlas_v2.py` | Paper (light), "product" skin — see below |
+| Investor Atlas (gated) | `investor_atlas_v2.html` | `app_investor_atlas_v2.py` | Night |
 
 Both outputs are single self-contained HTML files (data, CSS, JS and the Natural Earth basemap pack inlined;
 MapLibre GL 4.7.1 from jsDelivr, Inter + Newsreader from Google Fonts). The build contract is
@@ -33,10 +33,10 @@ Every build fails on any of:
 * the **MUST-preserve copy check** (spec 12) over the final HTML (PPA strings are checked whenever
   `core/js/ppa.js` is bundled);
 * the **client-safety scan** (spec 13): client data keys ⊆ the allowlist, a case-insensitive deny-list over the
-  *entire* `client_atlas.html` (comments included: TCV, BTC, Bitcoin, treasury, rank-as-key, archetype, score,
+  *entire* `client_atlas_v2.html` (comments included: TCV, BTC, Bitcoin, treasury, rank-as-key, archetype, score,
   internal, "RenewaBlox CRM", model file names, methodology anchors, raw REGO labels…), and the code partition
   (no `investor/` path may appear in the client manifest);
-* the **size budget**: data ≤ 170 KB per app, HTML ≤ 1.2 MB (client today: ~677 KB, data ~135 KB).
+* the **size budget**: data ≤ 170 KB per app, HTML ≤ 1.2 MB (client today: ~846 KB, data ~135 KB).
 
 ## Refreshing data
 
@@ -132,6 +132,34 @@ Evidence (dataviz `validate_palette.js`, run by `tools/validate_palettes.sh`, 27
   (subsidy), the per-fuel legend rows with counts, the family quick-filter chips, and the fuel named in the tooltip,
   card, search and CSV. The weakest pairs involve the three smallest fuels (18 sites between them).
   `"families"` remains the fully CVD-validated alternative.
+
+## Client look: the "product" skin (Direction B)
+
+The client build wears Direction B ("premium product UI", chosen by the owner, 29 Sep 2026): a full-bleed map with
+floating glass chrome — a brand pill with the *Peaker · Hydro · PPA Benchmark* switch, a search pill (⌘K / Ctrl K) and
+theme button, a left panel (label, SAM/TAM switch, one-line description, KPI card with "In view", capacity histogram
+and presets, legend-as-filter) and a right slide-in mini-report card. Inter only (the basemap keeps its italic sea
+labels); light by default with a dark theme (theme ids stay `paper` / `night`). Map notes are kept but default to off.
+
+* **Files (client only):** `apps/client/skin-product.css` (every selector starts with `:root[data-skin="product"]`,
+  tokens included) and `apps/client/skin-product.js` (`RBX.skin`; wraps `RBX.header.render`, `RBX.kpi.html`,
+  `RBX.hist.html`, `RBX.legend.html`, `RBX.rail.render` and `RBX.mapctl.obstruction / fitPadding / offset`; registers
+  `hooks.railBefore`, the TAM `hooks.legendGroups` order and the sheet sections `sam.capacity`, `sam.revenue` (tier
+  badge + meter) and `tam.facts`; adds soft SAM/Hydro shadow layers; uses the basemap kit's own light/dark palettes).
+  Panel copy: `views[v].label` and `views[v].summary` in `apps/client/config.json`. No `core/` file is changed.
+* **Isolation:** only `apps/client/template.html` sets `data-skin="product"`, only the client manifest lists the two
+  files, and the JS returns at once without the attribute. Tests: `test_client_uses_product_skin`,
+  `test_investor_never_gets_the_client_skin`, `test_product_skin_rules_are_scoped`,
+  `test_product_skin_tier_ramp_is_ordered_and_visible`.
+* **Palettes** (dataviz `validate_palette.js`, 29 Sep 2026): BM tiers, claret → gold, luminance rising Tier 1 → 5 —
+  light `#6B1034 #A02429 #C24D1E #DA7222 #D0A631` (Tier 5 2.01:1 on land `#F2F0E9`, the prototype's `#EBD58E` was
+  1.28:1; adjacent CVD ΔE ≥ 8.0), dark `#A92E55 #E1363A #F36E2A #F8A142 #F2D07D` (Tier 1 2.48:1 on `#16231F`; CVD ≥ 8.7).
+  Monotone with ΔL ≥ .06; multi-hue by design, so it fails the validator's one-hue ordinal check. Hydro confidence
+  blues: light `#0E5F95 #2588C2 #4CB5EC` (Low 2.02:1), dark `#157ABD #3AA2DE #8DC7E5`. The TAM fuel palettes are the
+  core ones (≥ 3.16:1 / 3.04:1 on the skin's lands).
+* **Switch back:** delete `data-skin="product"` from `apps/client/template.html` (the skin files then do nothing; drop
+  their two manifest entries as well to ship without them) and rebuild. The core look returns: docked header, serif
+  headline and standfirst, notes on by default.
 
 ## QA
 

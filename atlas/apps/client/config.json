@@ -28,6 +28,8 @@
   "views": {
     "sam": {
       "kicker": "PEAKER MODEL · SERVICEABLE MARKET (SAM)",
+      "label": "Peaker Model",
+      "summary": "{{sam_n}} verified anaerobic-digestion sites, coloured by Balancing Mechanism location tier. Circle area shows installed capacity.",
       "headline": "{{sam_n}} AD plants that can earn when the grid runs tight",
       "standfirst": "Verified anaerobic-digestion sites, graded into five Balancing-Mechanism tiers by where they connect. <em>Circle area shows installed capacity.</em>",
       "universe": "{{sam_n}} sites · {{sam_mw0}} MW",
@@ -43,6 +45,8 @@
     },
     "tam": {
       "kicker": "PEAKER MODEL · ADDRESSABLE MARKET (TAM)",
+      "label": "Peaker Model",
+      "summary": "All {{tam_n}} subsidised biogas, biomass, EfW, landfill and sewage-gas sites in GB. Ring colour is the fuel; shape is the subsidy.",
       "headline": "{{tam_n}} subsidised generators, {{tam_gw}} GW that could flex",
       "standfirst": "Biogas, biomass, energy-from-waste, landfill and sewage-gas generators holding RO or FiT accreditation. <em>Colour is technology; shape is subsidy.</em>",
       "universe": "{{tam_n}} sites · {{tam_mw}} MW",
@@ -58,6 +62,8 @@
     },
     "hydro": {
       "kicker": "STRANDED HYDRO",
+      "label": "Stranded Hydro",
+      "summary": "{{hydro_n}} hydro schemes generating more than the grid will take. Circle area shows stranded capacity.",
       "headline": "{{hydro_n}} hydro schemes generating more than the grid will take",
       "standfirst": "Installed capacity exceeds the export capacity the network allows, so power is stranded behind the meter. <em>Circle area shows stranded kW.</em>",
       "universe": "{{hydro_n}} sites · {{hydro_str_mw}} MW stranded",

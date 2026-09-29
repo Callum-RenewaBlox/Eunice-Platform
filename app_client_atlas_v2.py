@@ -3,11 +3,14 @@
 A sales-facing MapLibre map for prospective clients and partners, in three modes:
 - **Peaker Model** — the serviceable market (SAM: 129 verified AD sites, coloured by Balancing
   Mechanism tier, sized by installed capacity) and the total addressable market (TAM: 1,309
-  subsidised generators; colour = technology, shape = subsidy).
+  subsidised generators; ring colour = fuel, shape = subsidy).
 - **Hydro** — 57 hydro schemes whose installed capacity exceeds the export capacity the network
   allows (circle area = stranded kW, colour = match confidence).
 - **PPA Benchmark** — realised and forward GB power prices against the FiT export tariff, and
   the certificate counterparty and register for every SAM site.
+
+Look: the "product" skin (atlas/apps/client/skin-product.*) — full-bleed map with floating glass panels,
+light by default with a dark theme.
 
 Self-contained and client-safe: it reads ``client_atlas_v2.html`` — one self-contained page built by
 ``atlas/build.py`` from ``atlas/`` (client-safe data only; the build fails if any investor or
@@ -32,7 +35,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed",
 )
-# Full-bleed: the map page carries its own header, so trim Streamlit's padding (the top inset keeps the
+# Full-bleed: the map page carries its own floating header, so trim Streamlit's padding (the top inset keeps the
 # iframe clear of Streamlit's floating toolbar).
 st.markdown(
     "<style>.block-container{padding:3.25rem 1rem 0;max-width:100%}"
@@ -71,14 +74,17 @@ st.sidebar.title("RenewaBlox Client Atlas")
 st.sidebar.caption("Where stranded renewable capacity meets new revenue — no Watt wasted.")
 st.sidebar.divider()
 st.sidebar.markdown(
-    "**Views** — switch with the tabs in the map header:\n\n"
+    "**Views** — switch with *Peaker · Hydro · PPA Benchmark* at the top left of the map "
+    "(keys **1 2 3**):\n\n"
     "- **Peaker Model** — *SAM*: 129 verified anaerobic-digestion sites, coloured by projected "
     "Balancing Mechanism tier and sized by installed capacity. *TAM*: 1,309 subsidised biogas, "
-    "biomass, energy-from-waste, landfill and sewage-gas generators.\n"
+    "biomass, energy-from-waste, landfill and sewage-gas generators. Switch SAM / TAM in the "
+    "panel on the left (key **S**).\n"
     "- **Hydro** — 57 hydro schemes generating more than the grid will take (stranded kW).\n"
     "- **PPA Benchmark** — realised and forward GB power prices against the guaranteed FiT "
     "export tariff, with each site's export arrangement and certificate counterparty.\n\n"
-    "Search with **/** or **⌘K**; click any site for its detail card.")
+    "Search with **⌘K** / **Ctrl K** or **/**; click any site for its detail card; **T** switches "
+    "between the light and dark theme.")
 st.sidebar.divider()
 st.sidebar.caption(
     "Base map © OpenStreetMap contributors · OpenFreeMap © OpenMapTiles · Natural Earth · geocoding postcodes.io.")

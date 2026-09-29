@@ -359,6 +359,85 @@ def test_investor_display_names_clean_with_status_tag():
         raise AssertionError('research-note fragment in the HTML was not rejected')
 
 
+SKIN_CSS = os.path.join(ATLAS, 'apps', 'client', 'skin-product.css')
+SKIN_SCOPE = ':root[data-skin="product"]'
+
+
+def _html_tag(html):
+    return re.match(r'<!doctype html><html[^>]*>', html, re.I).group(0)
+
+
+def test_client_uses_product_skin():
+    """Client: <html data-skin="product">, skin CSS last and skin JS just before app.js; client-only files."""
+    res = client_build()
+    assert 'data-skin="product"' in _html_tag(res['html'])
+    files = res['files']
+    css = [f for f in files if f.endswith('.css')]
+    js = [f for f in files if f.endswith('.js')]
+    assert css[-1] == 'apps/client/skin-product.css', css[-3:]
+    assert js[-2:] == ['apps/client/skin-product.js', 'core/js/app.js'], js[-3:]
+    assert js.index('apps/client/skin-product.js') > js.index('apps/client/client.js')
+    assert res['html'].count(SKIN_SCOPE) > 100            # the skin's rules are inlined
+    assert 'RBX.skin' in res['html']
+    # the panel label / one-line description the skin renders are configured for every map view
+    cfg = build.load(ATLAS, 'apps', 'client', 'config.json')
+    for v in ('sam', 'tam', 'hydro'):
+        assert cfg['views'][v].get('label') and cfg['views'][v].get('summary'), v
+
+
+def test_investor_never_gets_the_client_skin():
+    """Investor keeps its own look: no data-skin attribute, no skin rules or module, no apps/client/ files."""
+    res = investor_build()
+    assert 'data-skin' not in _html_tag(res['html'])
+    assert SKIN_SCOPE not in res['html'] and 'RBX.skin' not in res['html']
+    assert not [f for f in res['files'] if f.startswith('apps/client/')], res['files']
+    man = build.load(ATLAS, 'apps', 'investor', 'manifest.json')
+    assert not [f for f in man['css'] + man['js'] if 'skin' in f or f.startswith('apps/client/')]
+
+
+def test_product_skin_rules_are_scoped():
+    """Every selector in the skin stylesheet starts with :root[data-skin="product"], so it cannot style a page
+    that does not opt in (at-rule wrappers and keyframe steps excepted)."""
+    css = build.strip_css_comments(open(SKIN_CSS, encoding='utf-8').read())
+    css = re.sub(r'@keyframes[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}', '', css)   # drop keyframe blocks
+    bad = []
+    for m in re.finditer(r'([^{}]+)\{', css):
+        prelude = m.group(1).strip()
+        if not prelude or prelude.startswith('@'):
+            continue
+        for sel in prelude.split(','):
+            if not sel.strip().startswith(SKIN_SCOPE):
+                bad.append(sel.strip()[:80])
+    assert not bad, bad[:10]
+    js = open(os.path.join(ATLAS, 'apps', 'client', 'skin-product.js'), encoding='utf-8').read()
+    assert "getAttribute('data-skin') !== 'product'" in js       # the module is inert without the attribute
+
+
+def _lum(hexcol):
+    c = [int(hexcol[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    c = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in c]
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+
+
+def _contrast(a, b):
+    la, lb = sorted((_lum(a), _lum(b)), reverse=True)
+    return (la + 0.05) / (lb + 0.05)
+
+
+def test_product_skin_tier_ramp_is_ordered_and_visible():
+    """Owner feedback on Direction B: Tier 5 was too faint on the light basemap. The skin's BM-tier ramp must stay
+    an ordered ramp (luminance rising Tier 1 → Tier 5) whose faintest step clears 2:1 on each theme's land colour
+    (light: Tier 5 on #F2F0E9; dark: Tier 1 on #16231F)."""
+    css = open(SKIN_CSS, encoding='utf-8').read()
+    light, dark = css.split(':root[data-skin="product"][data-theme="night"]{', 1)
+    for block, land, faint in ((light, '#F2F0E9', 4), (dark, '#16231F', 0)):
+        ramp = [re.search(r'--tier-%d:\s*(#[0-9A-Fa-f]{6})' % i, block).group(1) for i in range(1, 6)]
+        lums = [_lum(c) for c in ramp]
+        assert lums == sorted(lums) and len(set(ramp)) == 5, ramp
+        assert _contrast(ramp[faint], land) >= 2.0, (ramp[faint], land, _contrast(ramp[faint], land))
+    assert re.search(r"land:\s*'#F2F0E9'", open(os.path.join(ATLAS, 'core', 'basemap', 'basemap.js'), encoding='utf-8').read())
+
+
 if __name__ == '__main__':
     fails = 0
     for name, fn in sorted(globals().items()):
