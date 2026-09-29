@@ -5,8 +5,6 @@
 # Cloud platform usually sets the port for us — keeping headless behaviour explicit.
 headless = true
 runOnSave = false
-# The atlas pages are ~0.8 MB of HTML sent over the websocket: compress it (permessage-deflate).
-enableWebsocketCompression = true
 
 [browser]
 gatherUsageStats = false
