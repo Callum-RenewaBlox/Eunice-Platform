@@ -10,7 +10,8 @@ A sales-facing MapLibre map for prospective clients and partners, in three modes
   the certificate counterparty and register for every SAM site.
 
 Look: the "product" skin (atlas/apps/client/skin-product.*) — full-bleed map with floating glass panels,
-light by default with a dark theme.
+light by default with a dark theme — in the RenewaBlox brand (official wordmark, Blox teal / navy / sky,
+Leelawadee UI with Open Sans as the web fallback; see atlas/brand/README.md).
 
 Self-contained and client-safe: it reads ``client_atlas_v2.html`` — one self-contained page built by
 ``atlas/build.py`` from ``atlas/`` (client-safe data only; the build fails if any investor or
@@ -29,9 +30,10 @@ from pathlib import Path
 
 import streamlit as st
 
+ROOT = Path(__file__).resolve().parent
 st.set_page_config(
     page_title="RenewaBlox Client Atlas",
-    page_icon=":material/map:",
+    page_icon=str(ROOT / "atlas" / "brand" / "roundel-192.png"),  # the BLOX. roundel (atlas/brand/README.md)
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -46,7 +48,7 @@ st.markdown(
 # Read the map fresh from the main script on each run (NOT via an imported module): Streamlit
 # re-runs this script but can keep imported modules cached, so reading here keeps the embedded
 # map current after every redeploy.
-HTML = (Path(__file__).resolve().parent / "client_atlas_v2.html").read_text(encoding="utf-8")
+HTML = (ROOT / "client_atlas_v2.html").read_text(encoding="utf-8")
 
 # Whitelisted deep-link parameters only; values must match exactly or they are dropped.
 ALLOWED = {

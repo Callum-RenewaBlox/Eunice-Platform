@@ -8,13 +8,61 @@
   if (doc.getAttribute('data-skin') !== 'product') return;
   var SK = RBX.skin = { name: 'product' };
 
-  // ------------------------------------------------------------------ basemap: the kit's own light / dark palettes
-  // The skin keeps the theme ids ("paper" / "night") so hash, storage and the wrapper stay compatible.
+  // ------------------------------------------------------------------ basemap: RenewaBlox palettes on the kit's light / dark
+  // Cool paper land, sky-tinted sea and navy labels (the brand notes in atlas/brand/). The skin keeps the theme ids
+  // ("paper" / "night") so hash, storage and the wrapper stay compatible. Land colours match --map-land.
   var BM = window.RBXBasemap;
   if (BM && BM.palettes && BM.palettes.light && BM.palettes.dark) {
-    BM.palettes.paper = Object.assign({}, BM.palettes.light, { name: 'paper' });
-    BM.palettes.night = Object.assign({}, BM.palettes.dark, { name: 'night' });
+    BM.palettes.paper = Object.assign({}, BM.palettes.light, {
+      name: 'paper', land: '#F1F4F6', landContext: '#E5EAED', sea: '#D2E5EE', sea200: '#CCE0EA', sea1000: '#C6DBE6', sea2000: '#C0D6E2',
+      coastGlow: '#E3EEF3', coastline: '#9CB8C8', lake: '#CDE1EA', river: '#93BCD0', border: '#8C9CA7', borderIntl: '#7D8E99',
+      wood: '#E2E9E7', grass: '#E8EDEC', park: '#E0E8E6', residential: '#E7EAED', ice: '#F7F9FA', road: '#FFFFFF', roadMajor: '#DAE2E8', rail: '#C8D0D6',
+      hsShadow: '#1E3B4B', hsAccent: '#4B6272', label: '#48596A', labelMajor: '#0B3549', labelHalo: 'rgba(241,244,246,0.92)',
+      dot: '#0B3549', dotHalo: '#F1F4F6', region: 'rgba(11,53,73,0.36)', sea_label: '#5A879C', waterLabel: '#4B7E96'
+    });
+    BM.palettes.night = Object.assign({}, BM.palettes.dark, {
+      name: 'night', land: '#0F1C24', landContext: '#0C171E', sea: '#07121A', sea200: '#061018', sea1000: '#050E15', sea2000: '#040B11',
+      coastGlow: '#0F2C3B', coastline: '#27495B', lake: '#09161E', river: '#1D4B62', border: '#4A5F6C', borderIntl: '#566C79',
+      wood: '#10202A', grass: '#111F28', park: '#11222B', residential: '#15232C', ice: '#1A2830', road: '#243541', roadMajor: '#2C3F4C', rail: '#23333E',
+      hsShadow: '#01050A', hsHighlight: '#5C7F94', hsAccent: '#0A1620', label: '#9DB3C1', labelMajor: '#DDE9F0', labelHalo: 'rgba(10,20,27,0.88)',
+      dot: '#DDE9F0', dotHalo: '#0A141B', region: 'rgba(170,200,220,0.28)', sea_label: '#4A6E80', waterLabel: '#5A8AA0'
+    });
   }
+
+  // ------------------------------------------------------------------ brand: the official wordmarks (manifest brand block)
+  /** A brand image from its CSS custom property (url("data:…")), decoded once for the canvas export. */
+  var brandImg = {};
+  function wordmark(name) {
+    if (brandImg[name]) return brandImg[name];
+    var m = /url\(["']?(data:image\/[^"')]+)["']?\)/.exec(getComputedStyle(doc).getPropertyValue('--rbx-wordmark-' + name));
+    var img = brandImg[name] = new Image();
+    if (m) img.src = m[1];
+    return img;
+  }
+  ['mono'].forEach(wordmark);
+  RBX.brand = {
+    /** PNG export header band: the deck's teal band with the white/black wordmark, tagline and product name. */
+    exportBand: function (g, o) {
+      var W = o.W, TOP = o.TOP, UI = o.UI, x = 28, img = wordmark('mono'), wmH = 21, wmW = 0;
+      g.save(); g.beginPath(); g.rect(0, 0, W, TOP); g.clip();
+      g.fillStyle = '#156082'; g.fillRect(0, 0, W, TOP);
+      g.fillStyle = '#83CBEB'; g.fillRect(0, TOP - 3, W, 3);
+      g.fillStyle = 'rgba(131,203,235,.22)'; g.beginPath(); g.arc(W - 70, TOP + 30, 78, Math.PI, Math.PI * 1.5); g.lineTo(W - 70, TOP + 30); g.fill();
+      g.textBaseline = 'alphabetic';
+      if (img.complete && img.naturalWidth) { wmW = wmH * img.naturalWidth / img.naturalHeight; g.drawImage(img, x, 12, wmW, wmH); }
+      else {
+        g.font = '400 24px ' + UI; g.fillStyle = '#FFFFFF'; g.fillText('RENEWA', x, 33); wmW = g.measureText('RENEWA').width;
+        g.fillStyle = '#0B0B0B'; g.fillText('BLOX.', x + wmW, 33); wmW += g.measureText('BLOX.').width;
+      }
+      g.fillStyle = 'rgba(255,255,255,.82)'; g.font = '400 12px ' + UI; g.fillText('no Watt wasted', x + 1, 50);
+      var dx = x + wmW + 20;
+      g.fillStyle = 'rgba(255,255,255,.3)'; g.fillRect(dx, 16, 1, 32);
+      if ('letterSpacing' in g) g.letterSpacing = '2px';
+      g.fillStyle = '#FFFFFF'; g.font = '600 12px ' + UI; g.fillText(String(o.cfg.productLabel || '').toUpperCase(), dx + 20, 37);
+      g.textAlign = 'right'; g.fillStyle = '#E3F3FB'; g.font = '600 11px ' + UI; g.fillText(String(o.vc.kicker || '').toUpperCase(), W - 28, 37);
+      g.restore();
+    }
+  };
 
   var ICON = {
     peaker: '<svg class="i mi" viewBox="0 0 16 16" aria-hidden="true"><path class="f" d="M9.2 1.5 3.5 9h4l-1 5.5L12.5 7h-4z"/></svg>',
@@ -25,10 +73,6 @@
     search: '<svg class="i" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6"/><path d="m10.6 10.6 3.2 3.2"/></svg>',
     trend: '<svg class="i" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.8 11.5 6 7.3l2.6 2.6 5.6-5.6"/><path d="M10.4 4.3h3.8v3.8"/></svg>'
   };
-  // brand mark: a lime spark line on the deep-green tile
-  var MARK = '<svg class="mark mark-b" viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="9" fill="#0E3A2F"/>' +
-    '<path d="M9 21.5 L13.4 16.2 L16.6 19 L23 10.5" fill="none" stroke="#8FD14F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>' +
-    '<circle cx="23" cy="10.5" r="2.3" fill="#8FD14F"/></svg>';
   var lastScope = null;
   var MODE_LABEL = { peaker: 'Peaker', hydro: 'Hydro', ppa: 'PPA<em> Benchmark</em>' };
   var isMac = /Mac|iPhone|iPad/i.test((navigator.platform || '') + ' ' + (navigator.userAgent || ''));
@@ -59,8 +103,10 @@
     var cfg = RBX.config, el = document.getElementById('hdr'); if (!el) return;
     var brand = el.querySelector('.hdr-brand'), nav = el.querySelector('.hdr-nav');
     if (brand) {
-      brand.innerHTML = MARK + '<div class="brand-txt"><h1 class="brand">RenewaBlox <span>' + U.esc(cfg.productLabel || 'Client Atlas') + '</span></h1>' +
-        '<p class="brand-tag"><span class="brand-dot" aria-hidden="true"></span>no Watt wasted</p></div>';
+      var prod = U.esc(cfg.productLabel || 'Client Atlas');
+      brand.innerHTML = '<div class="brand-lock"><h1 class="brand"><span class="wordmark" role="img" aria-label="RenewaBlox"></span>' +
+        '<span class="sr-only"> ' + prod + '</span></h1><p class="brand-tag">no Watt wasted</p></div>' +
+        '<span class="brand-div" aria-hidden="true"></span><p class="brand-prod" aria-hidden="true">' + prod + '</p>';
     }
     if (brand && nav && !el.querySelector('.hdr-pill')) {
       var pill = document.createElement('div');
