@@ -8,7 +8,7 @@
   "defaultView": "sam",
   "storageKey": "rbx-client-atlas",
   "contactEmail": "callum@renewablox.com",
-  "publicUrl": "https://renewablox-client-atlas.streamlit.app/",
+  "publicUrl": "https://renewablox-client-atlas-v2.streamlit.app/",
   "switches": {
     "_doc": "Owner decisions (final, 27 Sep 2026; see atlas/README.md). Each is one switch; rebuild with python3 atlas/build.py after changing. Keys starting with _ are maintainer notes: build.py strips them before inlining the config.",
     "sam_kw_source": "fit_register",

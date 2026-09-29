@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """RenewaBlox Atlas v2 build.
 
-    python3 atlas/build.py                     build both apps → ../client_atlas.html, ../investor_atlas.html
+    python3 atlas/build.py                     build both apps → ../client_atlas_v2.html, ../investor_atlas_v2.html
     python3 atlas/build.py --only client       build one app
     python3 atlas/build.py --check             rebuild in memory and fail if the committed HTML differs (CI)
     python3 atlas/build.py --qa                also print the size table and the token map
@@ -28,7 +28,7 @@ from collections import Counter
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 DATA = os.path.join(HERE, 'data')
-OUT = {'client': os.path.join(REPO, 'client_atlas.html'), 'investor': os.path.join(REPO, 'investor_atlas.html')}
+OUT = {'client': os.path.join(REPO, 'client_atlas_v2.html'), 'investor': os.path.join(REPO, 'investor_atlas_v2.html')}
 FONTS_URL = ('https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Newsreader:ital,opsz,wght@'
              '0,6..72,400..600;1,6..72,400..500&display=swap')
 INIT_MARKER = '/*__ATLAS_INIT__*/'

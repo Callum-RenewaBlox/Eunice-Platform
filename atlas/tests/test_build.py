@@ -35,9 +35,9 @@ def test_client_builds_within_budget():
 
 
 def test_client_committed_output_is_fresh():
-    """CI guard (same as `build.py --check`): the committed client_atlas.html is a fresh build."""
+    """CI guard (same as `build.py --check`): the committed client_atlas_v2.html is a fresh build."""
     with open(build.OUT['client'], encoding='utf-8') as fh:
-        assert fh.read() == client_build()['html'], 'client_atlas.html is stale: run python3 atlas/build.py'
+        assert fh.read() == client_build()['html'], 'client_atlas_v2.html is stale: run python3 atlas/build.py'
 
 
 def test_canonical_numbers_client_and_investor():
@@ -166,7 +166,7 @@ def test_config_switch_defaults():
     assert sw['sam_kw_source'] == 'fit_register'
     assert sw['rego_labels'] == 'softened'
     assert sw['tam_colour_mode'] == 'fuels'
-    assert cfg['publicUrl'] == 'https://renewablox-client-atlas.streamlit.app/'
+    assert cfg['publicUrl'] == 'https://renewablox-client-atlas-v2.streamlit.app/'
     assert cfg['contactEmail'] == 'callum@renewablox.com'
 
 
@@ -190,7 +190,7 @@ def test_investor_builds_within_budget():
 
 def test_investor_committed_output_is_fresh():
     with open(build.OUT['investor'], encoding='utf-8') as fh:
-        assert fh.read() == investor_build()['html'], 'investor_atlas.html is stale: run python3 atlas/build.py'
+        assert fh.read() == investor_build()['html'], 'investor_atlas_v2.html is stale: run python3 atlas/build.py'
 
 
 def test_investor_headlines_are_computed():
@@ -222,12 +222,12 @@ def test_investor_config_switch_defaults():
     assert sw['rego_labels'] == 'raw'
     assert sw['tam_colour_mode'] == 'fuels'
     assert cfg['defaultTheme'] == 'night'
-    assert cfg['publicUrl'] == 'https://renewablox-investor-atlas.streamlit.app/'
+    assert cfg['publicUrl'] == 'https://renewablox-investor-atlas-v2.streamlit.app/'
     assert 'Confidential' in cfg['csvHeader']
 
 
 def test_investor_wrapper_deep_links_whitelisted():
-    with open(os.path.join(build.REPO, 'app_investor_atlas.py'), encoding='utf-8') as fh:
+    with open(os.path.join(build.REPO, 'app_investor_atlas_v2.py'), encoding='utf-8') as fh:
         src = fh.read()
     assert 'INVESTOR_PASSWORD' not in src          # owner decision 3: Streamlit Cloud viewer allowlist only
     assert '"present": r"^1$"' in src

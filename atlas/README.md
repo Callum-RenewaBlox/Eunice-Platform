@@ -99,7 +99,7 @@ Each is **one switch** in `atlas/apps/<app>/config.json` (`switches`), defaulted
 | 3 | Investor gate | — (decided) | **Streamlit Cloud viewer allowlist only** (owner decision, 27 Sep 2026): no password gate in code. Deploy the investor app with viewer access restricted to invited investors | — |
 | 4 | TAM colour | `switches.tam_colour_mode` | `"fuels"` (owner decision, 27 Sep 2026): 9 per-fuel ring colours, one validated set per theme (`--fuel-0..8`, see "TAM fuel palette"); the legend (rows by site count), PNG legend, cards and search also name the fuel | `"families"`: 3 technology families + Other (CVD-safe) |
 | 5 | `H2-2027*` asterisk | — | kept exactly as v1; no footnote invented | supply the footnote text to the PPA module |
-| 6 | Copy-link base URLs | `publicUrl` (config) / secret `ATLAS_PUBLIC_URL` (overrides) | client `https://renewablox-client-atlas.streamlit.app/`, investor `https://renewablox-investor-atlas.streamlit.app/` | |
+| 6 | Copy-link base URLs | `publicUrl` (config) / secret `ATLAS_PUBLIC_URL` (overrides) | client `https://renewablox-client-atlas-v2.streamlit.app/`, investor `https://renewablox-investor-atlas-v2.streamlit.app/` | |
 | 7 | Felt | — | no Felt links or embeds in v2 (spec 17) | |
 
 ### TAM fuel palette (owner decision 4)
