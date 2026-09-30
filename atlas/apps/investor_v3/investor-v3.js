@@ -87,7 +87,7 @@
     var a = V3.asOf(view);
     var cav = document.createElement('div'); cav.className = 'caveat';
     cav.innerHTML = INFO + '<div class="cv"><span class="conf-fb">' + LOCK + U.esc(confText()) + '</span><b>' + U.esc(a.caveat) + '</b>' +
-      '<div class="row"><span>' + U.esc(a.stamp) + '</span><button type="button" class="src-link" data-foot="sources">Sources &amp; method' + CHEV + '</button></div></div>';
+      '<div class="row"><span>' + U.esc(a.stamp) + '</span><button type="button" class="src-link" data-foot="sources" aria-label="Sources &amp; method">Sources' + CHEV + '</button></div></div>';
     if (uni) uni.replaceWith(cav); else grid.appendChild(cav);
     var card = f.querySelector('.kcard');
     var peek = '<p class="v3-peekline">' + LOCK + '<span>' + U.esc(confText().split(' · ')[0]) + '</span><i>·</i><span>' + U.esc(a.stamp.replace(' · ', ' ')) + '</span><i>·</i><span>' + U.esc(a.caveat) + '</span></p>';

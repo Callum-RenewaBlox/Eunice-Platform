@@ -1758,7 +1758,7 @@ a{color:inherit}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-group{margin-top:6px}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-group:first-of-type{margin-top:0}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-chips{padding:0}
-:root[data-skin="product"][data-app="investor"] .v3-lg .lg-chip{padding:4px 8px}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-chip{padding:4px 6px}
 :root[data-skin="product"][data-app="investor"] .v3-lg-tam .r-sec-h{align-items:center;min-height:26px}
 :root[data-skin="product"][data-app="investor"] .seg-mini{display:inline-grid;grid-auto-flow:column;margin-left:auto;padding:2px;border-radius:9px;background:var(--surface-2)}
 :root[data-skin="product"][data-app="investor"] .seg-mini button{height:22px;padding:0 9px;border-radius:7px;font:600 11px/1 var(--font-ui);color:var(--ink-3);white-space:nowrap}
@@ -8730,7 +8730,7 @@ a{color:inherit}
     var a = V3.asOf(view);
     var cav = document.createElement('div'); cav.className = 'caveat';
     cav.innerHTML = INFO + '<div class="cv"><span class="conf-fb">' + LOCK + U.esc(confText()) + '</span><b>' + U.esc(a.caveat) + '</b>' +
-      '<div class="row"><span>' + U.esc(a.stamp) + '</span><button type="button" class="src-link" data-foot="sources">Sources &amp; method' + CHEV + '</button></div></div>';
+      '<div class="row"><span>' + U.esc(a.stamp) + '</span><button type="button" class="src-link" data-foot="sources" aria-label="Sources &amp; method">Sources' + CHEV + '</button></div></div>';
     if (uni) uni.replaceWith(cav); else grid.appendChild(cav);
     var card = f.querySelector('.kcard');
     var peek = '<p class="v3-peekline">' + LOCK + '<span>' + U.esc(confText().split(' · ')[0]) + '</span><i>·</i><span>' + U.esc(a.stamp.replace(' · ', ' ')) + '</span><i>·</i><span>' + U.esc(a.caveat) + '</span></p>';

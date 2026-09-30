@@ -241,7 +241,7 @@
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-group{margin-top:6px}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-group:first-of-type{margin-top:0}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-chips{padding:0}
-:root[data-skin="product"][data-app="investor"] .v3-lg .lg-chip{padding:4px 8px}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-chip{padding:4px 6px}
 /* TAM: Scale in the header, the rest behind "More filters" */
 :root[data-skin="product"][data-app="investor"] .v3-lg-tam .r-sec-h{align-items:center;min-height:26px}
 :root[data-skin="product"][data-app="investor"] .seg-mini{display:inline-grid;grid-auto-flow:column;margin-left:auto;padding:2px;border-radius:9px;background:var(--surface-2)}
