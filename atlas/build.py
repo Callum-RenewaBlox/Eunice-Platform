@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """RenewaBlox Atlas v2 build.
 
-    python3 atlas/build.py                     build both apps → ../client_atlas_v2.html, ../investor_atlas_v2.html
+    python3 atlas/build.py                     build every app → ../client_atlas_v2.html, ../investor_atlas_v2.html,
+                                               ../investor_atlas_v3.html
     python3 atlas/build.py --only client       build one app
     python3 atlas/build.py --check             rebuild in memory and fail if the committed HTML differs (CI)
     python3 atlas/build.py --qa                also print the size table and the token map
@@ -28,7 +29,8 @@ from collections import Counter
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 DATA = os.path.join(HERE, 'data')
-OUT = {'client': os.path.join(REPO, 'client_atlas_v2.html'), 'investor': os.path.join(REPO, 'investor_atlas_v2.html')}
+OUT = {'client': os.path.join(REPO, 'client_atlas_v2.html'), 'investor': os.path.join(REPO, 'investor_atlas_v2.html'),
+       'investor_v3': os.path.join(REPO, 'investor_atlas_v3.html')}
 FONTS_URL = ('https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Newsreader:ital,opsz,wght@'
              '0,6..72,400..600;1,6..72,400..500&display=swap')
 INIT_MARKER = '/*__ATLAS_INIT__*/'
@@ -435,7 +437,7 @@ def strip_css_comments(css):
     return css.strip() + '\n'
 
 
-def bundle(app, manifest, warnings):
+def bundle(app, manifest, warnings, aud=None):
     css_parts, js_parts, used = [], [], []
     optional = set(manifest.get('optional', []))
     for kind, parts in (('css', css_parts), ('js', js_parts)):
@@ -452,7 +454,7 @@ def bundle(app, manifest, warnings):
                 parts.append(strip_css_comments(src))
             else:
                 parts.append(';' + src.strip() + '\n')
-    if app == 'client':
+    if (aud or app) == 'client':
         leaked = [u for u in used if '/investor/' in u or u.startswith('apps/investor')]
         if leaked:
             fail('code partition: investor paths in the client bundle: %s' % leaked)
@@ -527,6 +529,14 @@ COPY = {
         'Verified site', 'Installed capacity', 'Available for BM', 'Sole holder · unbundled', 'Not identified',
     ],
 }
+# Investor v3 keeps every investor disclaimer, note, footer and card string (they ship in its drawer and cards), drops
+# the rail subtitles (the headline block is gone) and the v2 header colours, and adds its own identity.
+COPY['investor_v3'] = [s for s in COPY['investor'] if s not in (
+    '#16323A', '#1F6F78',
+    'Total Contract Value · Year 5 · 129 AD-peaker sites in the GB Balancing Mechanism',
+    'Total addressable market · 1,309 subsidised biogas, biomass & EfW sites · 3,612 MW',
+    'Total Contract Value · Year 5 · 57 stranded hydro units · 100% Bitcoin mining',
+)] + ['Investor Atlas', 'Confidential — investor use only · Indicative; not investment advice']
 # PPA page copy lives in core/js/ppa.js (separate module); checked whenever that module is bundled.
 COPY_PPA = [
     'PPA & Price Benchmark',
@@ -549,7 +559,9 @@ def norm_text(s):
 
 def copy_check(app, html_out, has_ppa, warnings, sw=None):
     txt = norm_text(html_out)
-    need = list(COPY.get(app, COPY_COMMON))
+    if app not in COPY:
+        fail('no MUST-preserve copy list for app %r (add COPY[%r])' % (app, app))
+    need = list(COPY[app])
     if (sw or {}).get('sam_kw_source') == 'dno_split':
         need = [s for s in need if s != '129 sites · 144 MW']
     if has_ppa:
@@ -702,23 +714,33 @@ def build_app(app, warnings):
         return None
     cfg = load(adir, 'config.json')
     manifest = load(adir, 'manifest.json')
+    # the audience ("client" / "investor") picks the data, number asserts, copy tokens and safety checks; the app
+    # name picks the folder, output file and copy list (so Investor v3 reuses every investor check)
+    aud = cfg.get('audience', app)
+    if aud not in ASSEMBLE:
+        fail('%s config: audience must be one of %s' % (app, sorted(ASSEMBLE)))
     sw = cfg.get('switches', {})
-    data = ASSEMBLE[app](cfg)
-    n_checks = assert_numbers(app, data, sw)
+    data = ASSEMBLE[aud](cfg)
+    n_checks = assert_numbers(aud, data, sw)
 
     # client-only transforms: REGO labels are a config switch (owner decision 2)
-    rego_mode = sw.get('rego_labels', 'softened' if app == 'client' else 'raw')
+    rego_mode = sw.get('rego_labels', 'softened' if aud == 'client' else 'raw')
     if rego_mode not in REGO_LABELS:
         fail('switches.rego_labels must be "softened" or "raw"')
     cfg.setdefault('labels', {})['rego'] = REGO_LABELS[rego_mode]
     cfg['labels']['ppaClass'] = PPA_CLASS
 
     tok = tokens_for(data)
-    if app == 'investor':
+    if aud == 'investor':
         tok.update(investor_tokens(data))
-        # Present-mode chapters (spec 10.3) ship as ATLAS_CONFIG.story
-        if os.path.exists(os.path.join(adir, 'story.json')):
-            cfg['story'] = load(adir, 'story.json')
+        # Present-mode chapters (spec 10.3) ship as ATLAS_CONFIG.story; an app without its own story.json shares
+        # the investor one, so the chapters stay in one place
+        story = os.path.join(adir, 'story.json')
+        if not os.path.exists(story):
+            story = os.path.join(HERE, 'apps', 'investor', 'story.json')
+        if os.path.exists(story):
+            with open(story, encoding='utf-8') as fh:
+                cfg['story'] = json.load(fh)
     cfg = strip_private(fill_tokens(cfg, tok))
     left_tok = re.findall(r'\{\{[A-Za-z0-9_]+\}\}', json.dumps(cfg, ensure_ascii=False))
     if left_tok:
@@ -728,7 +750,7 @@ def build_app(app, warnings):
     want = {'sam': '129 sites · 144 MW', 'tam': '1,309 sites · 3,612 MW', 'hydro': '57 sites · 15.2 MW stranded'}
     if sw.get('sam_kw_source') == 'dno_split':
         want['sam'] = '129 sites · %s MW' % tok['sam_mw0']
-    if app == 'client':
+    if aud == 'client':
         for v, s in uni.items():
             if s != want[v]:
                 fail('Universe string for %s is %r, expected %r' % (v, s, want[v]))
@@ -740,7 +762,7 @@ def build_app(app, warnings):
     if len(data_js.encode('utf-8')) > DATA_BUDGET:
         fail('%s data payload %d B exceeds %d B' % (app, len(data_js.encode('utf-8')), DATA_BUDGET))
 
-    css, js, used = bundle(app, manifest, warnings)
+    css, js, used = bundle(app, manifest, warnings, aud)
     has_ppa = 'core/js/ppa.js' in used
     shell = read(HERE, 'core', 'shell.html')
     tpl = read(tpl_path)
@@ -768,7 +790,7 @@ def build_app(app, warnings):
     n_copy = copy_check(app, out, has_ppa, warnings, sw)
     if has_ppa:
         ppa_copy_check(warnings)
-    if app == 'client':
+    if aud == 'client':
         client_safety(data, out, rego_mode)
     else:
         investor_name_checks(data, out)
@@ -776,16 +798,17 @@ def build_app(app, warnings):
     if size > HTML_BUDGET:
         fail('%s HTML %d B exceeds the %d B budget' % (app, size, HTML_BUDGET))
     return {'html': out, 'size': size, 'data': len(data_js.encode('utf-8')), 'css': len(css.encode()),
-            'js': len(js.encode()), 'asserts': n_checks, 'copy': n_copy, 'files': used, 'has_ppa': has_ppa}
+            'js': len(js.encode()), 'asserts': n_checks, 'copy': n_copy, 'files': used, 'has_ppa': has_ppa,
+            'audience': aud}
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('--only', choices=['client', 'investor'])
+    ap.add_argument('--only', choices=list(OUT))
     ap.add_argument('--check', action='store_true', help='fail if the committed HTML differs from a fresh build')
     ap.add_argument('--qa', action='store_true', help='print bundle details')
     a = ap.parse_args(argv)
-    apps = [a.only] if a.only else ['client', 'investor']
+    apps = [a.only] if a.only else list(OUT)
     warnings, rc = [], 0
     for app in apps:
         try:
@@ -794,7 +817,7 @@ def main(argv=None):
             print('BUILD FAILED (%s): %s' % (app, e), file=sys.stderr)
             return 1
         if res is None:
-            print('%-8s skipped: atlas/apps/%s/template.html not found' % (app, app))
+            print('%-11s skipped: atlas/apps/%s/template.html not found' % (app, app))
             continue
         if a.check:
             cur = open(OUT[app], encoding='utf-8').read() if os.path.exists(OUT[app]) else ''
@@ -802,13 +825,13 @@ def main(argv=None):
                 print('CHECK FAILED: %s differs from a fresh build; run python3 atlas/build.py' % os.path.relpath(OUT[app], REPO))
                 rc = 1
             else:
-                print('%-8s up to date (%s)' % (app, os.path.relpath(OUT[app], REPO)))
+                print('%-11s up to date (%s)' % (app, os.path.relpath(OUT[app], REPO)))
             continue
         with open(OUT[app], 'w', encoding='utf-8', newline='\n') as fh:
             fh.write(res['html'])
-        print('%-8s %s  %7.1f KB  (data %.1f KB · css %.1f KB · js %.1f KB) · %d number asserts · %d copy strings · safety %s'
+        print('%-11s %s  %7.1f KB  (data %.1f KB · css %.1f KB · js %.1f KB) · %d number asserts · %d copy strings · safety %s'
               % (app, os.path.relpath(OUT[app], REPO), res['size'] / 1024, res['data'] / 1024, res['css'] / 1024,
-                 res['js'] / 1024, res['asserts'], res['copy'], 'PASS' if app == 'client' else 'n/a'))
+                 res['js'] / 1024, res['asserts'], res['copy'], 'PASS' if res['audience'] == 'client' else 'n/a'))
         if a.qa:
             print('   files: ' + ', '.join(res['files']))
     for w in warnings:

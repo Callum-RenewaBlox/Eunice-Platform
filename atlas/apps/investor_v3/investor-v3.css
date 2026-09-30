@@ -1,0 +1,91 @@
+/* Investor Atlas v3 overlay: the investor components restyled for the shared product skin in the RenewaBlox brand.
+   Bundled last (after core/css/present.css and skins/product/skin-product.css). apps/investor/investor.css is NOT
+   bundled: its band, market strip, footer and header rules are not wanted here, and the components v3 keeps are
+   restyled below. Every selector starts with :root[data-skin="product"] (the v3 template sets data-skin and
+   data-app="investor"), so nothing here can reach another build. */
+
+/* ============================================================== chrome v3 does not render */
+:root[data-skin="product"] .band-slot,:root[data-skin="product"] .foot-slot{display:none}
+
+/* ============================================================== TCV Potential method popover */
+:root[data-skin="product"] .tcv-pop{position:fixed;z-index:90;padding:16px 18px 18px;border-radius:14px;background:var(--sk-strong);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
+  color:var(--ink-1);border:1px solid var(--rule);box-shadow:var(--sh-3);font:400 12.5px/1.5 var(--font-ui);max-height:calc(100vh - 100px);overflow-y:auto;animation:toastIn var(--dur-2) var(--ease)}
+:root[data-skin="product"] .tcv-pop[hidden]{display:none}
+:root[data-skin="product"] .pop-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+:root[data-skin="product"] .pop-t{margin:2px 0 8px;font:700 16px/1.25 var(--font-ui);letter-spacing:-.01em;color:var(--ink-1)}
+:root[data-skin="product"] .tcv-pop p{margin:0 0 10px;color:var(--ink-2)}
+:root[data-skin="product"] .pop-tbl{width:100%;border-collapse:collapse;margin:0 0 12px;font-variant-numeric:tabular-nums}
+:root[data-skin="product"] .pop-tbl caption{text-align:left;font:600 10px/1.3 var(--font-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--sk-label);padding-bottom:6px}
+:root[data-skin="product"] .pop-tbl th{font-weight:400;text-align:left;color:var(--ink-2);padding:5px 0;border-top:1px solid var(--rule)}
+:root[data-skin="product"] .pop-tbl td{text-align:right;font-weight:600;padding:5px 0;border-top:1px solid var(--rule)}
+:root[data-skin="product"] .pop-kv{display:grid;grid-template-columns:1fr;gap:2px;margin:0 0 12px}
+:root[data-skin="product"] .pop-kv dt{font-weight:600;color:var(--ink-1);margin-top:6px}
+:root[data-skin="product"] .pop-kv dd{margin:0;color:var(--ink-2)}
+:root[data-skin="product"] .pop-kv dd span{color:var(--ink-3)}
+:root[data-skin="product"] .pop-warn{padding:9px 12px;border-left:3px solid var(--rbx-sky);background:var(--lime-wash);border-radius:0 10px 10px 0}
+:root[data-skin="product"] .pop-warn b{color:var(--ink-1)}
+:root[data-skin="product"] .pop-act{display:flex;justify-content:flex-end}
+
+/* ============================================================== Sites list (investor columns) */
+:root[data-skin="product"] .modal-box.modal-sites{width:min(1080px,calc(100vw - 48px))}
+:root[data-skin="product"] .sites-t th.c-name{min-width:200px}
+:root[data-skin="product"] .sites-t .c-tcv,:root[data-skin="product"] .sites-t .c-pot{white-space:nowrap;text-align:right}
+:root[data-skin="product"] .sites-t td.c-tcv{color:var(--ink-1)}
+@media (max-width:760px){
+  :root[data-skin="product"] .modal-box.modal-sites{width:100%}
+  :root[data-skin="product"] .sites-t[data-view="sam"] :is(.c-t,.c-kw,.c-bm),
+  :root[data-skin="product"] .sites-t[data-view="hydro"] :is(.c-c,.c-inst,.c-mec),
+  :root[data-skin="product"] .sites-t[data-view="tam"] :is(.c-fuel,.c-sub,.c-bt){display:none}
+  :root[data-skin="product"] .sites-t th.c-name{min-width:0}
+  :root[data-skin="product"] .sites-t thead th button{white-space:normal}
+  :root[data-skin="product"] .sites-t tbody th{max-width:46vw}
+  :root[data-skin="product"] .sites-t td,:root[data-skin="product"] .sites-t tbody th{padding:6px 6px}
+  :root[data-skin="product"] .sites-t .st-open span{overflow-wrap:anywhere}
+}
+
+/* company status ("in liquidation") as a muted tag beside, never inside, the operator name */
+:root[data-skin="product"] .op-st{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:99px;border:1px solid var(--rule-2);font:500 10.5px/1.35 var(--font-ui);color:var(--ink-3);white-space:nowrap;vertical-align:1px}
+:root[data-skin="product"] .rbx-ppa .reg-t .op-st{display:table;margin:2px 0 0;padding:0 5px}
+:root[data-skin="product"] .pal-s .op-st{margin-left:6px;padding:0 5px;vertical-align:0}
+
+/* ============================================================== legend additions */
+:root[data-skin="product"] .lg-mw .up{color:var(--lime-ink);font-weight:700}
+:root[data-skin="product"] .lg-sec.inv{color:var(--ink-3)}
+:root[data-skin="product"] .inv-note{margin:12px 0 0;padding-top:9px;border-top:1px solid var(--rule)}
+:root[data-skin="product"] .inv-note-t{margin:0;font:400 12px/1.45 var(--font-ui);color:var(--ink-3);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+:root[data-skin="product"] .inv-note.open .inv-note-t{display:block;-webkit-line-clamp:unset}
+:root[data-skin="product"] .inv-note .more-link{margin:4px 0 0}
+:root[data-skin="product"] .inv-note .more-link[hidden]{display:none}
+:root[data-skin="product"] .inv-seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:0;padding:3px;border-radius:11px;background:var(--surface-2);border:0}
+:root[data-skin="product"] .inv-seg button{padding:7px 8px;border-radius:8px;font:600 12px/1.15 var(--font-ui);color:var(--ink-3);white-space:nowrap;transition:background .2s var(--ease),color .2s var(--ease)}
+:root[data-skin="product"] .inv-seg button:hover{color:var(--ink-2)}
+:root[data-skin="product"] .inv-seg button[aria-checked="true"],:root[data-skin="product"][data-theme="night"] .inv-seg button[aria-checked="true"]{background:var(--sk-thumb);color:var(--ink-1);box-shadow:var(--sk-thumb-sh)}
+:root[data-skin="product"] .inv-seg .n{color:var(--ink-3);font-weight:400;font-variant-numeric:tabular-nums}
+
+/* ============================================================== site sheet additions */
+:root[data-skin="product"] .fig-s{margin-top:4px;font:400 12px/1.2 var(--font-ui);color:var(--ink-3);font-variant-numeric:tabular-nums}
+:root[data-skin="product"] .fig-v.hl,:root[data-skin="product"] .fig-v.l.hl{color:var(--lime-ink)}
+:root[data-skin="product"] .kv dd.hl{font-weight:700;color:var(--lime-ink)}
+:root[data-skin="product"] .kv dd .ell{display:inline-block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:bottom}
+:root[data-skin="product"] .capbar .btcv,:root[data-skin="product"] .capbar-l .k.btcv{background:repeating-linear-gradient(135deg,var(--rbx-sky) 0 2px,rgba(131,203,235,.38) 2px 5px)}
+:root[data-skin="product"] .capbar-l .k{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+:root[data-skin="product"] .capbar + .capbar-l + .kv{margin-top:12px}
+:root[data-skin="product"] .stat-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:0}
+:root[data-skin="product"] .stat-dot.good{background:var(--status-good)}
+:root[data-skin="product"] .stat-dot.warning{background:var(--status-warning)}
+:root[data-skin="product"] .stat-dot.critical{background:var(--status-critical)}
+:root[data-skin="product"] .stat-dot.neutral{background:var(--status-neutral)}
+:root[data-skin="product"] .runway{display:inline-block;width:40px;height:4px;margin-right:7px;border-radius:2px;background:var(--rule);vertical-align:middle;overflow:hidden}
+:root[data-skin="product"] .runway b{display:block;height:100%;background:var(--ink-2);border-radius:2px}
+:root[data-skin="product"] .pot-line{display:flex;align-items:center;gap:8px;margin-top:12px;padding:9px 12px;border-radius:10px;background:var(--lime-wash);font:400 12.5px/1.2 var(--font-ui);color:var(--ink-2)}
+:root[data-skin="product"] .pot-line b{margin-left:auto;font:700 17px/1 var(--font-ui);letter-spacing:-.01em;color:var(--ink-1)}
+:root[data-skin="product"] .figs + .kv,:root[data-skin="product"] .fig-s + .kv{margin-top:12px}
+:root[data-skin="product"] .sh-sec .figs.two + .kv{margin-top:14px}
+:root[data-skin="product"] .band-i{display:inline-grid;place-items:center;width:22px;height:22px;margin:-3px 0 -3px 1px;border-radius:99px;color:inherit;opacity:.85}
+:root[data-skin="product"] .band-i:hover,:root[data-skin="product"] .band-i[aria-expanded="true"]{background:rgba(255,255,255,.16);opacity:1}
+:root[data-skin="product"] .band-i .i{width:14px;height:14px}
+
+/* ============================================================== drawer (Sources & method) */
+:root[data-skin="product"] .dr-sec h4{margin:10px 0 4px;font:600 12px/1.3 var(--font-ui);color:var(--ink-1)}
+:root[data-skin="product"] .dr-tbl{margin:0 0 10px}
+:root[data-skin="product"] .dr-sec td.num,:root[data-skin="product"] .dr-sec th.num{text-align:right}

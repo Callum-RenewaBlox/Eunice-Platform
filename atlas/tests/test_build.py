@@ -247,7 +247,7 @@ def _inlined_config(html):
 
 def test_private_config_keys_never_inlined():
     """T03: maintainer notes (`_doc`, `_sam_kw_source` …) are stripped from the inlined config of both builds."""
-    for res in (client_build(), investor_build()):
+    for res in (client_build(), investor_build(), investor_v3_build()):
         cfg = _inlined_config(res['html'])
 
         def walk(o, path=''):
@@ -304,7 +304,7 @@ def test_withheld_names_and_people():
 
 def test_cdn_tags_non_blocking_with_sri():
     """T12: MapLibre JS/CSS carry SRI + crossorigin; no render-blocking third-party tag in either build."""
-    for res in (client_build(), investor_build()):
+    for res in (client_build(), investor_build(), investor_v3_build()):
         html = res['html']
         head = html.split('<style>')[0]
         assert re.search(r'<script async src="https://cdn\.jsdelivr\.net/npm/maplibre-gl@[\d.]+/dist/maplibre-gl\.js" '
@@ -359,7 +359,7 @@ def test_investor_display_names_clean_with_status_tag():
         raise AssertionError('research-note fragment in the HTML was not rejected')
 
 
-SKIN_CSS = os.path.join(ATLAS, 'apps', 'client', 'skin-product.css')
+SKIN_CSS = os.path.join(ATLAS, 'skins', 'product', 'skin-product.css')
 SKIN_SCOPE = ':root[data-skin="product"]'
 
 
@@ -374,9 +374,9 @@ def test_client_uses_product_skin():
     files = res['files']
     css = [f for f in files if f.endswith('.css')]
     js = [f for f in files if f.endswith('.js')]
-    assert css[-1] == 'apps/client/skin-product.css', css[-3:]
-    assert js[-2:] == ['apps/client/skin-product.js', 'core/js/app.js'], js[-3:]
-    assert js.index('apps/client/skin-product.js') > js.index('apps/client/client.js')
+    assert css[-1] == 'skins/product/skin-product.css', css[-3:]
+    assert js[-2:] == ['skins/product/skin-product.js', 'core/js/app.js'], js[-3:]
+    assert js.index('skins/product/skin-product.js') > js.index('apps/client/client.js')
     assert res['html'].count(SKIN_SCOPE) > 100            # the skin's rules are inlined
     assert 'RBX.skin' in res['html']
     # the panel label / one-line description the skin renders are configured for every map view
@@ -439,7 +439,7 @@ def test_product_skin_rules_are_scoped():
             if not sel.strip().startswith(SKIN_SCOPE):
                 bad.append(sel.strip()[:80])
     assert not bad, bad[:10]
-    js = open(os.path.join(ATLAS, 'apps', 'client', 'skin-product.js'), encoding='utf-8').read()
+    js = open(os.path.join(ATLAS, 'skins', 'product', 'skin-product.js'), encoding='utf-8').read()
     assert "getAttribute('data-skin') !== 'product'" in js       # the module is inert without the attribute
 
 
@@ -460,7 +460,7 @@ def test_product_skin_tier_ramp_is_ordered_and_visible():
     (light: Tier 5; dark: Tier 1). The land colours are the skin's own (--map-land), and the basemap palettes the
     skin registers must paint the same land."""
     css = open(SKIN_CSS, encoding='utf-8').read()
-    js = open(os.path.join(ATLAS, 'apps', 'client', 'skin-product.js'), encoding='utf-8').read()
+    js = open(os.path.join(ATLAS, 'skins', 'product', 'skin-product.js'), encoding='utf-8').read()
     light, dark = css.split(':root[data-skin="product"][data-theme="night"]{', 1)
     for block, theme, faint in ((light, 'paper', 4), (dark, 'night', 0)):
         land = re.search(r'--map-land:\s*(#[0-9A-Fa-f]{6})', block).group(1)
@@ -470,6 +470,140 @@ def test_product_skin_tier_ramp_is_ordered_and_visible():
         assert lums == sorted(lums) and len(set(ramp)) == 5, ramp
         assert _contrast(ramp[faint], land) >= 2.0, (ramp[faint], land, _contrast(ramp[faint], land))
 
+
+# ---------------------------------------------------------------------------------------------- investor v3 build
+V3_DIR = os.path.join(ATLAS, 'apps', 'investor_v3')
+
+
+def investor_v3_build():
+    if 'investor_v3' not in _CACHE:
+        _CACHE['investor_v3'] = build.build_app('investor_v3', [])
+    return _CACHE['investor_v3']
+
+
+def _split_selectors(prelude):
+    """Split a selector list on top-level commas (commas inside :is()/:not() stay with their selector)."""
+    out, depth, cur = [], 0, ''
+    for ch in prelude:
+        depth += ch == '('
+        depth -= ch == ')'
+        if ch == ',' and depth == 0:
+            out.append(cur)
+            cur = ''
+        else:
+            cur += ch
+    return out + [cur]
+
+
+def test_investor_v3_builds_within_budget_with_skin_and_investor_modules():
+    """v3 reuses the investor modules and numbers under the shared product skin; the skin JS precedes the investor
+    modules (their sheet sections and legends win), the v3 overlay comes right before app.js, investor.css is not
+    bundled, and the overlay CSS comes last."""
+    res = investor_v3_build()
+    assert res is not None and res['audience'] == 'investor'
+    assert res['size'] <= build.HTML_BUDGET, res['size']
+    assert res['data'] <= build.DATA_BUDGET, res['data']
+    assert res['asserts'] == investor_build()['asserts']          # every investor canonical-number assert runs
+    files = res['files']
+    for f in ('core/js/investor/model.js', 'core/js/investor/band.js', 'core/js/investor/cards.js',
+              'core/js/investor/present.js', 'core/js/ppa.js', 'skins/product/skin-product.js'):
+        assert f in files, f
+    assert files.index('skins/product/skin-product.js') < files.index('core/js/investor/model.js')
+    assert [f for f in files if f.endswith('.js')][-2:] == ['apps/investor_v3/investor-v3.js', 'core/js/app.js']
+    css = [f for f in files if f.endswith('.css')]
+    assert css[-1] == 'apps/investor_v3/investor-v3.css'
+    assert css.index('core/css/present.css') < css.index('skins/product/skin-product.css')
+    assert 'apps/investor/investor.css' not in files and 'core/css/notes.css' not in files
+    assert not [f for f in files if f.startswith('apps/client/')], files
+
+
+def test_investor_v3_committed_output_is_fresh():
+    with open(build.OUT['investor_v3'], encoding='utf-8') as fh:
+        assert fh.read() == investor_v3_build()['html'], 'investor_atlas_v3.html is stale: run python3 atlas/build.py'
+
+
+def test_investor_v3_drops_the_surplus_sections():
+    """Owner feedback on v2: no GB power ticker and no rail headline block (kicker + headline + standfirst)."""
+    cfg = build.load(V3_DIR, 'config.json')
+    assert 'market' not in cfg
+    for v in ('sam', 'tam', 'hydro'):
+        assert 'standfirst' not in cfg['views'][v], v
+    res = investor_v3_build()
+    assert 'data-skin="product"' in _html_tag(res['html']) and 'data-app="investor"' in _html_tag(res['html'])
+    js = open(os.path.join(V3_DIR, 'investor-v3.js'), encoding='utf-8').read()
+    assert 'B.render = function () {};' in js and 'B.renderFoot = function () {};' in js
+    css = open(os.path.join(V3_DIR, 'investor-v3.css'), encoding='utf-8').read()
+    assert ':root[data-skin="product"] .band-slot,:root[data-skin="product"] .foot-slot{display:none}' in css
+    # the skin hides the kicker/standfirst and keeps the headline for screen readers only
+    skin = open(SKIN_CSS, encoding='utf-8').read()
+    assert '.rail-body > .kicker' in skin and '.rail-body > .headline{position:absolute' in skin
+
+
+def test_investor_v3_story_ships_from_the_investor_story():
+    cfg = _inlined_config(investor_v3_build()['html'])
+    assert cfg['story'] == build.strip_private(build.load(ATLAS, 'apps', 'investor', 'story.json'))
+    assert not os.path.exists(os.path.join(V3_DIR, 'story.json'))     # one story, kept in apps/investor/
+
+
+def test_investor_v3_brand_and_identity():
+    res = investor_v3_build()
+    head = res['html'].split('</head>', 1)[0]
+    for name in ('light', 'dark', 'mono'):
+        assert '--rbx-wordmark-%s:url("data:image/png;base64,' % name in head, name
+    assert re.search(r'<link rel="icon" href="data:image/png;base64,', head)
+    assert '<meta name="robots" content="noindex,nofollow">' in head
+    cfg = build.load(V3_DIR, 'config.json')
+    inv = build.load(ATLAS, 'apps', 'investor', 'config.json')
+    assert cfg['audience'] == 'investor' and cfg['app'] == 'investor_v3'
+    assert cfg['publicUrl'] == 'https://renewablox-investor-atlas-v3.streamlit.app/'
+    assert cfg['storageKey'] != inv['storageKey']                    # never inherits v2's saved theme or view
+    assert cfg['switches'] == inv['switches']
+    assert 'Confidential' in cfg['csvHeader'] and 'Confidential' in cfg['imageBadge']
+    js = open(os.path.join(V3_DIR, 'investor-v3.js'), encoding='utf-8').read()
+    assert 'o.cfg.imageBadge' in js                                   # PNG exports keep the confidentiality marking
+
+
+def test_investor_v3_kpis_use_known_metrics():
+    """The brand KPI card reads views[v].kpis; every metric is an investor band metric or a core KPI metric."""
+    cfg = build.load(V3_DIR, 'config.json')
+    band = open(os.path.join(ATLAS, 'core', 'js', 'investor', 'band.js'), encoding='utf-8').read()
+    kpi = open(os.path.join(ATLAS, 'core', 'js', 'kpi.js'), encoding='utf-8').read()
+    known = set(re.findall(r'^\s{4}(\w+): function', band, re.M)) | set(re.findall(r'^\s{4}(\w+): function', kpi, re.M))
+    for v in ('sam', 'tam', 'hydro'):
+        vc = cfg['views'][v]
+        assert vc.get('label') and vc.get('kpis'), v
+        for k in vc['kpis']:
+            assert k['metric'] in known, (v, k['metric'])
+
+
+def test_investor_v3_overlay_rules_are_scoped():
+    """Every selector in investor-v3.css starts with :root[data-skin="product"]; the overlay JS is inert elsewhere."""
+    css = build.strip_css_comments(open(os.path.join(V3_DIR, 'investor-v3.css'), encoding='utf-8').read())
+    css = re.sub(r'@keyframes[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}', '', css)
+    bad = []
+    for m in re.finditer(r'([^{}]+)\{', css):
+        prelude = m.group(1).strip()
+        if not prelude or prelude.startswith('@'):
+            continue
+        bad += [sel.strip()[:80] for sel in _split_selectors(prelude) if not sel.strip().startswith(SKIN_SCOPE)]
+    assert not bad, bad[:10]
+    js = open(os.path.join(V3_DIR, 'investor-v3.js'), encoding='utf-8').read()
+    assert "getAttribute('data-skin') !== 'product' || doc.getAttribute('data-app') !== 'investor'" in js
+
+
+def test_investor_v3_wrapper_gated_and_deep_links_whitelisted():
+    with open(os.path.join(build.REPO, 'app_investor_atlas_v3.py'), encoding='utf-8') as fh:
+        src = fh.read()
+    assert 'INVESTOR_PASSWORD' not in src          # owner decision 3: Streamlit Cloud viewer allowlist only
+    assert '"present": r"^1$"' in src and '"investor_atlas_v3.html"' in src
+    assert 'roundel-192.png' in src
+
+
+def test_v2_pages_untouched_by_v3():
+    """Investor v2 stays unskinned (its own manifest, no brand block, no skin files)."""
+    man = build.load(ATLAS, 'apps', 'investor', 'manifest.json')
+    assert 'brand' not in man and 'apps/investor/investor.css' in man['css']
+    assert not [f for f in man['css'] + man['js'] if f.startswith('skins/') or 'investor_v3' in f]
 
 if __name__ == '__main__':
     fails = 0

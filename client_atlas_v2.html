@@ -5677,8 +5677,11 @@ a{color:inherit}
         var mm = (RBX.kpi.metrics[k.metric] || RBX.kpi.metrics.count)(rows), x = cx + pad + i * cwk + (i ? 12 : 0);
         if (i) { g.fillStyle = rule; g.fillRect(cx + pad + i * cwk, y + 8, 1, 56); }
         g.fillStyle = ink3; g.font = '600 9.5px ' + UI; g.fillText(String(k.label).toUpperCase(), x, y + 20);
-        g.fillStyle = ink1; g.font = '500 26px ' + SERIF; var v = U.num(mm.v, mm.d); g.fillText(v, x, y + 50);
-        if (k.unit) { var vw = g.measureText(v).width; g.fillStyle = ink2; g.font = '500 12px ' + UI; g.fillText(k.unit, x + vw + 4, y + 50); }
+        // a metric may bring its own formatter ('£221.9M', '90.5<small>MW</small>'): value, then its small unit
+        var fp = mm.f ? String(mm.f(mm.v)).split(/<small>|<\/small>/) : null, strip = function (t) { return String(t || '').replace(/<[^>]+>/g, '').trim(); };
+        var v = fp ? strip(fp[0]) : U.num(mm.v, mm.d), unit = k.unit || (fp ? strip(fp[1]) : '');
+        g.fillStyle = ink1; g.font = '500 26px ' + SERIF; g.fillText(v, x, y + 50);
+        if (unit) { var vw = g.measureText(v).width; g.fillStyle = ink2; g.font = '500 12px ' + UI; g.fillText(unit, x + vw + 4, y + 50); }
         g.fillStyle = ink3; g.font = '400 11px ' + UI; g.fillText(U.template(k.caption || '', { known: U.int(mm.known) }).slice(0, 26), x, y + 66);
       });
       y += 72;
@@ -7108,10 +7111,11 @@ a{color:inherit}
   var RBX = window.RBX;
   RBX.audience = 'client';
 })();
-;/* Client skin "product" (Direction B, premium product UI): full-bleed map with floating glass chrome.
-   Client-only: listed in apps/client/manifest.json after the core modules and before core/js/app.js.
+;/* Skin "product" (Direction B, premium product UI): full-bleed map with floating glass chrome.
+   Shared by the apps whose manifest lists it: the client lists it after the core modules, right before
+   core/js/app.js; an app with its own sheet sections and legends lists it before them, so theirs win.
    Every change here is a wrapper or a registered hook around the core modules; nothing in core/ is edited,
-   and the whole file is inert unless <html data-skin="product"> (set by apps/client/template.html). */
+   and the whole file is inert unless <html data-skin="product"> (set by the app's template.html). */
 (function () {
   'use strict';
   var RBX = window.RBX, U = RBX.util, doc = document.documentElement;
