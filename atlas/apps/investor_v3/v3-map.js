@@ -11,7 +11,7 @@
    - the selected site gets a 2.5 px ring, a 2 px halo and a soft teal wash; hollow Hydro "Unverified" rings keep no
      shadow; the attribution folds to its (i) on desktop too; no annotation pencil; the hover tooltip stays clear of
      an open sheet and prints money as the panel does (£2.9M);
-   - the PNG export band carries the view kicker and "Confidential · investor use only · <as of> · Indicative; not
+   - the PNG export band carries "Confidential · investor use only · <as of> · Indicative; not
      investment advice." right-aligned, with the brand quarter-circle moved clear of the text; the export card is
      v3's own (a quiet title, the panel's three figures, the legend over the sites shown) and the footer names the
      view's sources and date; downloads drop the internal "v3" from their names; CSVs add the as-of and disclaimer.
@@ -320,8 +320,9 @@
   // ------------------------------------------------------------------ PNG export band (§11)
   // The skin draws the teal band, the sky rule, the wordmark, "no Watt wasted", the divider and the product name (it
   // is called with an empty kicker). Its quarter-circle would sit behind the right-hand text, so it is painted over
-  // and redrawn at the far right; then two right-aligned lines: the kicker (the only place the PNG carries it), and
-  // the confidentiality mark with the as-of stamp and the disclaimer (which appears exactly once).
+  // and redrawn at the far right; then one right-aligned line on the product name's baseline: the confidentiality mark
+  // with the as-of stamp and the disclaimer (which appears exactly once). No kicker: it belonged to the headline block
+  // the owner removed; the card title and its measure name the view.
   var BAND = '#156082', SKY = '#83CBEB';
   var CARD_X = 28, CARD_W = 392, PAD = 22, FOOT = 46;        // core composite's card frame (x, width, padding) and footer
   var strip = null;                                         // the map under the card, copied while the band is drawn
@@ -350,18 +351,13 @@
       g.fillStyle = 'rgba(131,203,235,.22)'; g.beginPath(); g.arc(W, TOP + 8, 64, 0, Math.PI * 2); g.fill();
       g.fillStyle = SKY; g.fillRect(W - 152, TOP - 3, 152, 3);
       g.textBaseline = 'alphabetic'; g.textAlign = 'left';
-      var ls = 'letterSpacing' in g;
-      // line 1: the kicker
-      if (ls) g.letterSpacing = '2px';
-      g.font = '600 11px ' + UI; g.fillStyle = '#E3F3FB';
-      if (ln.kicker) { var kw = g.measureText(ln.kicker).width - (ls ? 2 : 0); g.fillText(ln.kicker, xr - kw, 29); }
-      // line 2: Confidential · investor use only · Model · 16 Jun 2026 · Indicative; not investment advice.
-      if (ls) g.letterSpacing = '0px';
-      g.font = '600 11px ' + UI; var w1 = g.measureText(ln.conf).width;
-      g.font = '400 11px ' + UI; var w2 = g.measureText(ln.rest).width;
-      var x0 = xr - w1 - w2;
-      g.font = '600 11px ' + UI; g.fillStyle = '#FFFFFF'; g.fillText(ln.conf, x0, 47);
-      g.font = '400 11px ' + UI; g.fillStyle = 'rgba(255,255,255,.86)'; g.fillText(ln.rest, x0 + w1, 47);
+      if ('letterSpacing' in g) g.letterSpacing = '0px';
+      // Confidential · investor use only · Model · 16 Jun 2026 · Indicative; not investment advice.
+      g.font = '600 11.5px ' + UI; var w1 = g.measureText(ln.conf).width;
+      g.font = '400 11.5px ' + UI; var w2 = g.measureText(ln.rest).width;
+      var x0 = xr - w1 - w2, yb = Math.round(TOP / 2) + 5;
+      g.font = '600 11.5px ' + UI; g.fillStyle = '#FFFFFF'; g.fillText(ln.conf, x0, yb);
+      g.font = '400 11.5px ' + UI; g.fillStyle = 'rgba(255,255,255,.86)'; g.fillText(ln.rest, x0 + w1, yb);
       g.restore();
     };
   }
