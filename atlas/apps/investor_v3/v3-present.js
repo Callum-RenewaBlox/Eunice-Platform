@@ -6,9 +6,12 @@
      one lay their three stats out as columns (.three) with an optional caption (stats[].cap, .pc-cap);
    - a trailing p unit reads p/kWh; SVG arrows and an SVG Play/Pause (aria-pressed kept) instead of text glyphs;
    - the key hints (.pc-kb) become the disclaimer foot: ⓘ, the chapter view's model / registers / prices stamp over
-     "Indicative; not investment advice." (on phones: "Confidential · …" with a lock, the header lockup being hidden).
+     "Indicative; not investment advice." (at ≤1100 px, where the header lockup is hidden: "Confidential · …" with a
+     lock).
    A MutationObserver watches #stage for the card and the card for each re-render; it only restyles the new nodes and
    never moves focus (present.js keeps it on the same control across renders). Registers STAT['rev.t1up'].
+   While presenting: Space on a focused control presses it, Tab cycles through the card's controls (the passive tabs
+   and the skip link leave the tab order), and phones frame a filtered chapter's sites above the card.
    Inert unless <html data-skin="product" data-app="investor">. */
 (function () {
   'use strict';
@@ -178,12 +181,50 @@
     if (pc) { watchCard(pc); enhance(pc); }
   }
 
+  // ------------------------------------------------------------------ keyboard: the tab order stays in the card
+  // The passive header tabs and the skip link (which targets the hidden search) leave the tab order and the
+  // accessibility tree while presenting; Tab and Shift+Tab then cycle through the card's own controls.
+  function passive(on) {
+    U.$$('#hdr .hdr-nav, .skip-link').forEach(function (el) { if (on) el.setAttribute('inert', ''); else el.removeAttribute('inert'); });
+  }
+  if (Pr.enter) {
+    var enter0 = Pr.enter;
+    Pr.enter = function () {
+      var r = enter0.apply(this, arguments);
+      if (Pr.active()) passive(true);
+      return r;
+    };
+  }
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey || !Pr.active || !Pr.active()) return;
+    if ((RBX.modal && RBX.modal.isOpen()) || RBX.search.isOpen() || RBX.drawer.isOpen() || RBX.sheet.isOpen()) return;
+    var el = document.getElementById('presentCard');
+    if (!el || el.hidden) return;
+    var f = U.$$('button:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])', el).filter(function (b) { return b.offsetParent !== null; });
+    var i = f.indexOf(document.activeElement);
+    if (!f.length || (i > 0 && e.shiftKey) || (i >= 0 && i < f.length - 1 && !e.shiftKey)) return;
+    e.preventDefault();
+    f[e.shiftKey ? f.length - 1 : 0].focus();
+  });
+  // present.js reads Space as "next" and prevents its default, so Space on a focused Exit, Prev, Play or progress
+  // segment moved on a chapter instead of pressing it: leave Space to a focused control (its click runs on keyup;
+  // Space on the focused Next still steps on through that click). Arrow keys and PageDown are unchanged.
+  if (Pr.key) {
+    var key0 = Pr.key;
+    Pr.key = function (e) {
+      var t = e && e.target;
+      if (e && e.key === ' ' && t && t.closest && t.closest('button,a[href],[role="button"],summary,input,select,textarea')) return false;
+      return key0.apply(this, arguments);
+    };
+  }
+
   // ------------------------------------------------------------------ phones: focus lands on "…" after Present
   // present.js returns focus to #presentBtn, which phones do not show (Present lives in the "…" menu there); when
   // that leaves focus nowhere, it goes to the menu button instead
   if (Pr.exit) {
     var exit0 = Pr.exit;
     Pr.exit = function () {
+      passive(false);
       var r = exit0.apply(this, arguments), a = document.activeElement, mb = document.getElementById('menuBtn');
       if ((!a || a === document.body) && mb && mb.offsetParent !== null) mb.focus({ preventScroll: true });
       return r;
@@ -207,12 +248,21 @@
   // MapLibre's fitBounds ends in this.flyTo(): that inner flight already honours the fit's padding, so it must not
   // pick up the chapter fly offsets (investor-v3.js shifts every flight made during a chapter by half the header,
   // which pushed fitted chapters ~33 px down, ~56 px on phones); it goes straight to MapLibre's own flyTo.
+  // On a short phone the card can leave less room than the padding asks for (MapLibre then refuses to fit), so the
+  // bottom padding keeps at least 120 px of map below the header inset (investor-v3.js pads the top to inset + 24).
+  // A filtered chapter with a fixed camera (chapter 3, Tier 1–2 around London) covers ~150 km on a phone, which
+  // leaves most of its sites off screen or under the header: phones fit the chapter's visible sites instead,
+  // never closer than its camera zoom (desktop keeps the story camera).
   RBX.bus.on('mapready', function (map) {
     var fit0 = map.fitBounds, fly0 = map.flyTo, proto = Object.getPrototypeOf(map), flyP = proto && proto.flyTo, inFit = 0;
     map.fitBounds = function (b, o) {
       if (inGo && U.isMobile() && o && o.padding && typeof o.padding === 'object') {
         var h = cardH();
-        if (h) o = Object.assign({}, o, { padding: Object.assign({}, o.padding, { bottom: h + 24 }) });
+        if (h) {
+          var ins = RBX.v3 && RBX.v3.presentInset ? RBX.v3.presentInset() : 0, top = Math.max(o.padding.top || 0, ins ? ins + 24 : 0);
+          var room = this.getContainer().clientHeight - top - 120;
+          o = Object.assign({}, o, { padding: Object.assign({}, o.padding, { bottom: Math.max(0, Math.min(h + 24, room)) }) });
+        }
       }
       inFit++;
       try { return fit0.call(this, b, o); } finally { inFit--; }
@@ -220,6 +270,8 @@
     map.flyTo = function (o, e) {
       if (inFit && inGo && typeof flyP === 'function') return flyP.call(this, o, e);
       if (inGo && U.isMobile() && o && o.offset) {
+        var c = chapters()[RBX.state.present], cam = (c && c.camera) || {}, rows = c && c.filters && cam.center && !cam.terrain ? RBX.filters.active(c.view) : [];
+        if (rows.length) return this.fitBounds(U.bbox(rows, 0.05), { padding: { top: 20, bottom: 24, left: 20, right: 20 }, maxZoom: cam.zoom || 7.4, pitch: 0, bearing: 0, duration: o.duration, essential: true });
         var h = cardH();
         if (h) o = Object.assign({}, o, { offset: [o.offset[0], Math.round((20 - (h + 24)) / 2)] });
       }
