@@ -32,7 +32,7 @@
       "camera": { "center": [0.35, 51.75], "zoom": 7.4 },
       "kicker": "Where it pays",
       "title": "Where flexibility *pays most*",
-      "body": "Tier 1 and Tier 2 connections cluster around London, Kent and East Anglia, where the grid runs tightest and offers are called most often.",
+      "body": "Tier 1 and 2 sites cluster around London, Kent and East Anglia, where the grid is tightest and offers are called most often.",
       "stats": [
         { "label": "Tier 1 average", "expr": "rev.t1avg", "cap": "{rev.t1up} vs 8.0p wholesale" },
         { "label": "Tier 1 top 5%", "expr": "rev.t1top" },
@@ -56,7 +56,7 @@
       "ppa": "price",
       "kicker": "Why now",
       "title": "FiT export overtakes *the forward curve*",
-      "body": "The guaranteed FiT export rate rises with CPI while the forward curve falls away. At 3% CPI it passes the Cal-2028 forward.",
+      "body": "Guaranteed FiT export rises with CPI while the forward curve falls. At 3% CPI it passes the Cal-28 forward.",
       "stats": [
         { "label": "FiT export", "expr": "ppa.fit" },
         { "label": "Cal-28 forward", "expr": "ppa.cal28" },
