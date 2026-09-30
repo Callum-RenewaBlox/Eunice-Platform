@@ -3,11 +3,14 @@
    a wrapper or an extra map layer:
    - the size key is a horizontal glass capsule whose discs are zoom-true (RBX.layers.radiusAt / tamScaleAt): SAM
      £1M / £4M / £9M plus the hollow "Awaiting BM figure" ring, Hydro 100 kW / 500 kW / 1.3 MW, TAM the five capacity
-     bands in one row plus the dashed "Postcode district" ring;
-   - while the panel is collapsed a small glass chip keeps the disclaimer and the model date on screen, and the
-     scale bar and the size key restack above it;
+     bands in one row plus the dashed "Postcode district" ring; it stops short of the zoom stack and an open sheet
+     (wrapping onto a second row, or standing down when there is no room for it);
+   - while the panel is collapsed a small glass chip keeps the disclaimer and the model date on screen (with the
+     Confidential mark at ≤ 1100 px, where the header lockup is hidden), and the scale bar and the size key restack
+     above it; on tablets (761–1050 px) opening a sheet folds the panel and the sheet's foot carries that line;
    - the selected site gets a 2.5 px ring, a 2 px halo and a soft teal wash; hollow Hydro "Unverified" rings keep no
-     shadow; the attribution folds to its (i) on desktop too; no annotation pencil;
+     shadow; the attribution folds to its (i) on desktop too; no annotation pencil; the hover tooltip stays clear of
+     an open sheet and prints money as the panel does (£2.9M);
    - the PNG export band carries the view kicker and "Confidential · investor use only · <as of> · Indicative; not
      investment advice." right-aligned, with the brand quarter-circle moved clear of the text; the export card is
      v3's own (a quiet title, the panel's three figures, the legend over the sites shown) and the footer names the
@@ -78,9 +81,45 @@
       el.classList.add('v3-sk');
       el.setAttribute('data-sk', view);
       if (el.innerHTML !== html) el.innerHTML = html;          // re-rendered on every zoom frame: touch the DOM only on change
+      V3.fitSizeKey();
       if (Sk.clearLabels) Sk.clearLabels();
     };
   }
+
+  /** Where a box comes to rest. The chrome slides (the key when the panel folds, the zoom stack beside an opening
+      sheet, the panel's own width), so a running left/right/width transition is read at its end; the sheet slides
+      in by transform, so its layout box is used. */
+  function restX(el) {
+    var r = el.getBoundingClientRect(), dx = 0, dw = 0;
+    if (el.id === 'sheet') {
+      var p = el.offsetParent; if (p) dx = p.getBoundingClientRect().left + p.clientLeft + el.offsetLeft - r.left;
+    } else {
+      (el.getAnimations ? el.getAnimations() : []).forEach(function (a) {
+        var pr = a.transitionProperty; if (pr !== 'left' && pr !== 'right' && pr !== 'width') return;
+        var k = a.effect && a.effect.getKeyframes ? a.effect.getKeyframes() : [];
+        var d = (k.length ? parseFloat(k[k.length - 1][pr]) : NaN) - parseFloat(getComputedStyle(el)[pr]);
+        if (isNaN(d)) return;
+        if (pr === 'width') dw += d; else dx += pr === 'left' ? d : -d;
+      });
+    }
+    return { left: r.left + dx, right: r.right + dx + dw, top: r.top, bottom: r.bottom };
+  }
+  function shown(el) { return !!el && !el.hidden && el.offsetParent !== null; }
+  /** The key ends 12 px short of the zoom stack (when it shares the bottom of the map) and 14 px short of an open
+      sheet: past that it wraps onto a second row under its title, and below ~220 px it stands down (the legend in
+      the panel still explains the discs). Phones hide it altogether (§12). */
+  V3.fitSizeKey = function () {
+    var el = document.getElementById('sizekey'); if (!el) return;
+    el.classList.remove('sk-wrap', 'sk-off'); el.style.maxWidth = '';
+    if (!el.innerHTML || U.isMobile() || !shown(el)) return;
+    var k = restX(el), lim = window.innerWidth - 14, ctl = document.getElementById('mapCtl'), sh = document.getElementById('sheet');
+    if (shown(sh)) lim = Math.min(lim, restX(sh).left - 14);
+    if (shown(ctl)) { var c = restX(ctl); if (c.bottom > k.top - 80 && c.top < k.bottom) lim = Math.min(lim, c.left - 12); }
+    var room = Math.floor(lim - k.left);
+    if (room < 220) { el.classList.add('sk-off'); return; }
+    el.style.maxWidth = room + 'px';
+    if (el.scrollWidth > room + 1) el.classList.add('sk-wrap');
+  };
 
   // ------------------------------------------------------------------ disclaimer chip while the panel is collapsed (§4.6)
   function discEl() {
@@ -95,10 +134,12 @@
   }
   V3.syncDisc = function () {
     var el = discEl(); if (!el) return;
-    var a = asOf(mapView());
-    var html = INFO + '<b>' + U.esc(String(a.caveat).replace(/\.\s*$/, '')) + '</b><span class="d" aria-hidden="true"> · </span><span>' + U.esc(String(a.stamp).replace(' · ', ' ')) + '</span>';
+    var a = asOf(mapView()), conf = confText().split(' · ')[0];
+    // "Confidential" leads the chip at ≤ 1100 px, where the header lockup that carries it is hidden (v3-map.css)
+    var html = INFO + '<b class="cf">' + U.esc(conf) + '</b><span class="d cf" aria-hidden="true"> · </span>' +
+      '<b>' + U.esc(String(a.caveat).replace(/\.\s*$/, '')) + '</b><span class="d" aria-hidden="true"> · </span><span>' + U.esc(String(a.stamp).replace(' · ', ' ')) + '</span>';
     if (el.innerHTML !== html) el.innerHTML = html;
-    el.setAttribute('aria-label', a.caveat + ' ' + a.stamp.replace(' · ', ' '));
+    el.setAttribute('aria-label', conf + '. ' + a.caveat + ' ' + a.stamp.replace(' · ', ' '));
   };
   discEl();
   RBX.bus.on('view', V3.syncDisc);
@@ -108,13 +149,103 @@
     RBX.rail.render = function () { var r = railRender0.apply(this, arguments); V3.syncDisc(); return r; };
   }
   // the key moves with the panel; the sea labels it hides depend on where it sits
+  var autoRail = false, inAuto = false;
   if (RBX.rail && RBX.rail.setCollapsed) {
     var coll0 = RBX.rail.setCollapsed;
     RBX.rail.setCollapsed = function () {
+      if (!inAuto) autoRail = false;                           // the reader folded or opened the panel: theirs from now on
       var r = coll0.apply(this, arguments);
       V3.syncDisc();
       if (Sk && Sk.clearLabels) setTimeout(Sk.clearLabels, 320);
       return r;
+    };
+  }
+
+  // ------------------------------------------------------------------ tablets: a sheet folds the panel (761–1050 px)
+  // Panel (300) + sheet (352) would leave an 88–400 px sliver of map with the chrome piled into it, so opening a sheet
+  // there folds the panel, and closing it unfolds the panel again (unless the reader moved it meanwhile). While
+  // folded beside a sheet, the disclaimer line sits in the sheet's foot instead of the chip (v3-sheet.js / .css).
+  var TABLET_MAX = 1050;
+  function railAuto(c) { inAuto = true; try { RBX.rail.setCollapsed(c); } finally { inAuto = false; } }
+  function autoFold() {
+    var app = document.getElementById('app');
+    if (U.isMobile() || window.innerWidth > TABLET_MAX || RBX.state.railCollapsed || RBX.state.view === 'ppa' || (app && app.classList.contains('presenting'))) return;
+    railAuto(true); autoRail = true;
+  }
+  var Sh = RBX.sheet;
+  if (Sh && Sh.open && RBX.rail && RBX.rail.setCollapsed) {
+    ['open', 'chooser', 'panel'].forEach(function (fn) {
+      var f0 = Sh[fn];
+      Sh[fn] = function () {
+        var was = Sh.isOpen(), r = f0.apply(this, arguments);
+        if (!was && Sh.isOpen()) autoFold();
+        return r;
+      };
+    });
+    var close0 = Sh.close;
+    Sh.close = function () {
+      // unfold first, so focus can return to anything inside the panel
+      if (autoRail && Sh.isOpen()) { autoRail = false; if (RBX.state.railCollapsed) railAuto(false); }
+      return close0.apply(this, arguments);
+    };
+  }
+  // the camera frames the site between the panels where they come to rest: core mapctl measures them mid-slide (the
+  // folding panel at full width, the sheet still off-screen), which jammed the selected site against the sheet
+  var Mc = RBX.mapctl;
+  if (Mc && Mc.obstruction) {
+    var obs0 = Mc.obstruction;
+    Mc.obstruction = function () {
+      var o = obs0.apply(this, arguments), area = document.getElementById('mapArea');
+      if (U.isMobile() || !area) return o;
+      var a = area.getBoundingClientRect(), rl = document.getElementById('rail'), sh = document.getElementById('sheet');
+      if (o.left && shown(rl)) o.left = restX(rl).right - a.left;
+      if (shown(sh)) o.right = Math.max(0, a.right - restX(sh).left);
+      return o;
+    };
+  }
+
+  // ------------------------------------------------------------------ keep the chrome in step with the panels
+  var fitAll = function () { V3.fitSizeKey(); tipClear(); if (Sk && Sk.clearLabels) Sk.clearLabels(); };
+  window.addEventListener('resize', U.rafThrottle(fitAll));
+  RBX.bus.on('ready', fitAll);
+  RBX.bus.on('mapready', function () {
+    var app = document.getElementById('app');
+    // sheet open / panel folded / presenting: refit before the frame paints, then again once the slides settle
+    if (app && window.MutationObserver) new MutationObserver(fitAll).observe(app, { attributes: true, attributeFilter: ['class'] });
+    ['mapCtl', 'sizekey'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('transitionend', function (e) { if (e.target === el && /^(left|right|bottom)$/.test(e.propertyName)) fitAll(); });
+    });
+    var sh = document.getElementById('sheet'); if (sh) sh.addEventListener('animationend', function (e) { if (e.target === sh) fitAll(); });
+  });
+
+  // ------------------------------------------------------------------ hover tooltip: clear of an open sheet, panel money (§1.2)
+  // core layers.showTip only flips against the map's own right edge; with a sheet open (and the pointer still on the
+  // marker just clicked) the tip is flipped to the left of the pointer instead of sitting on the sheet.
+  var tipAt = null;
+  function tipClear() {
+    var tip = document.getElementById('tip'), sh = document.getElementById('sheet'), area = document.getElementById('mapArea');
+    if (!tipAt || !tip || tip.hidden || !area || U.isMobile() || !shown(sh)) return;
+    var m = /translate\(\s*([-\d.]+)px\s*,\s*([-\d.]+)px\s*\)/.exec(tip.style.transform || ''); if (!m) return;
+    var edge = restX(sh).left - area.getBoundingClientRect().left - 8, w = tip.offsetWidth;
+    if (+m[1] + w <= edge) return;
+    tip.style.transform = 'translate(' + Math.max(4, tipAt.x - 12 - w) + 'px,' + m[2] + 'px)';
+  }
+  if (RBX.layers && RBX.layers.showTip) {
+    var tip0 = RBX.layers.showTip;
+    RBX.layers.showTip = function (row, pt) {
+      var r = tip0.apply(this, arguments);
+      tipAt = row && pt ? { x: pt.x, y: pt.y } : null;
+      tipClear();
+      return r;
+    };
+  }
+  // "£2.90M TCV" (two decimals, from the investor model) becomes "£2.9M TCV", as in the panel and the sheet
+  if (RBX.hooks.tooltip && RBX.inv && RBX.inv.money2) {
+    var tipText0 = RBX.hooks.tooltip;
+    RBX.hooks.tooltip = function (r) {
+      var s = tipText0.apply(this, arguments);
+      return r && r.tcv != null && (r.kind === 'hydro' || (r.kind === 'sam' && r.pr)) ? String(s).replace(RBX.inv.money2(r.tcv), U.abbr(r.tcv)) : s;
     };
   }
 

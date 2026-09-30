@@ -17,6 +17,12 @@
 :root[data-skin="product"][data-app="investor"] .sizekey.v3-sk .sk-i circle.band{fill:none;stroke-width:1.4}
 :root[data-skin="product"][data-app="investor"] .sizekey.v3-sk .sk-i circle.dash{stroke-dasharray:2.2 1.6}
 :root[data-skin="product"][data-app="investor"] .sizekey.v3-sk .sk-div{flex:none;width:1px;height:20px;background:var(--rule-2)}
+/* short of room (V3.fitSizeKey measures it against the zoom stack and an open sheet): the title on its own row, the
+   discs wrapping under it; no room at all: the key stands down */
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk.sk-wrap{flex-wrap:wrap;column-gap:12px;row-gap:3px;padding-top:7px;padding-bottom:7px}
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk.sk-wrap .sizekey-t{flex:0 0 100%}
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk.sk-wrap .sk-div{display:none}
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk.sk-off{display:none}
 
 /* ============================================================== scale bar and attribution (§8.2) */
 :root[data-skin="product"][data-app="investor"] .maplibregl-ctrl-bottom-left{transition:left var(--dur-3) var(--ease),bottom var(--dur-3) var(--ease)}
@@ -49,6 +55,23 @@
 :root[data-skin="product"][data-app="investor"] .app.rail-collapsed .sizekey,:root[data-skin="product"][data-app="investor"] .app.rail-collapsed .sizekey.v3-sk{left:72px;bottom:74px}
 :root[data-skin="product"][data-app="investor"] .app.rail-collapsed .maplibregl-ctrl-bottom-left{left:72px;bottom:48px}
 :root[data-skin="product"][data-app="investor"] .app[data-view="ppa"] .v3-disc,:root[data-skin="product"][data-app="investor"] .app.presenting .v3-disc{display:none}
+/* the header lockup (and its Confidential mark) is hidden at ≤ 1100 px: the chip leads with it there */
+:root[data-skin="product"][data-app="investor"] .v3-disc .cf{display:none}
+@media (max-width:1100px){ :root[data-skin="product"][data-app="investor"] .v3-disc .cf{display:inline} }
+
+/* ============================================================== tablets (761–1050 px) with a sheet open */
+@media (min-width:761px) and (max-width:1050px){
+  /* the panel folds (v3-map.js) and the sheet's foot carries the disclaimer: the chip gives way, the key and the
+     scale bar return to the bottom of the map */
+  :root[data-skin="product"][data-app="investor"] .app.sheet-open.rail-collapsed .v3-disc{display:none}
+  :root[data-skin="product"][data-app="investor"] .app.sheet-open.rail-collapsed .sizekey.v3-sk{bottom:40px}
+  :root[data-skin="product"][data-app="investor"] .app.sheet-open.rail-collapsed .maplibregl-ctrl-bottom-left{bottom:14px}
+  /* the reader unfolded the panel beside the sheet: the zoom stack moves up out of the narrow strip */
+  :root[data-skin="product"][data-app="investor"] .app.sheet-open:not(.rail-collapsed) .map-ctl{top:calc(var(--hdr-b, 66px) + 14px);bottom:auto}
+}
+@media (min-width:761px) and (max-width:900px){
+  :root[data-skin="product"][data-app="investor"] .app.sheet-open:not(.rail-collapsed) .maplibregl-ctrl-bottom-left{display:none}
+}
 
 /* ============================================================== phone: the key and the chip give way to the peek (§12) */
 @media (max-width:760px){
