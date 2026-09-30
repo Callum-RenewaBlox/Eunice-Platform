@@ -127,3 +127,8 @@
   :root[data-skin="product"][data-app="investor"] .sheet .sh-body{padding:8px 16px 22px}
   :root[data-skin="product"][data-app="investor"] .sheet .sh-actions{padding:10px 16px 12px}
 }
+
+/* phone: the full bottom sheet stops below the two-row header pill instead of sliding under it */
+@media (max-width:760px){
+  :root[data-skin="product"][data-app="investor"] .sheet.full{height:min(90vh, calc(100% - var(--hdr-b, 118px) - 8px))}
+}

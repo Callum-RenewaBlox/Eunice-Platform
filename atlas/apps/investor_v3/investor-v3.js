@@ -362,14 +362,16 @@
     };
   }
   RBX.bus.on('mapready', function (map) {
-    var fit0 = map.fitBounds, fly0 = map.flyTo;
+    var fit0 = map.fitBounds, fly0 = map.flyTo, inFit = 0;
     map.fitBounds = function (b, o) {
       var ins = inGo ? V3.presentInset() : 0;
       if (ins && o && o.padding && typeof o.padding === 'object') o = Object.assign({}, o, { padding: Object.assign({}, o.padding, { top: Math.max(o.padding.top || 0, ins + 24) }) });
-      return fit0.call(this, b, o);
+      inFit++;
+      try { return fit0.call(this, b, o); } finally { inFit--; }
     };
     map.flyTo = function (o, e) {
-      var ins = inGo ? V3.presentInset() : 0;
+      // fitBounds ends in this.flyTo(), which already honours the fit's padding: only direct flights are shifted
+      var ins = inGo && !inFit ? V3.presentInset() : 0;
       if (ins && o) { var off = o.offset || [0, 0]; o = Object.assign({}, o, { offset: [off[0], off[1] + Math.round(ins / 2)] }); }
       return fly0.call(this, o, e);
     };

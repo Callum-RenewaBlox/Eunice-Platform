@@ -542,10 +542,63 @@ def test_investor_v3_drops_the_surplus_sections():
     assert '.rail-body > .kicker' in skin and '.rail-body > .headline{position:absolute' in skin
 
 
-def test_investor_v3_story_ships_from_the_investor_story():
-    cfg = _inlined_config(investor_v3_build()['html'])
-    assert cfg['story'] == build.strip_private(build.load(ATLAS, 'apps', 'investor', 'story.json'))
-    assert not os.path.exists(os.path.join(V3_DIR, 'story.json'))     # one story, kept in apps/investor/
+def test_investor_v3_sheet_reregisters_the_investor_cards():
+    """Spec §9: v3-sheet.js re-registers the SAM chip/head/commercials/revenue and the Hydro chip/commercials,
+    reuses the core ladder via the registered section's `after`, and its stylesheet keeps sky as a hatch only."""
+    js = open(os.path.join(V3_DIR, 'v3-sheet.js'), encoding='utf-8').read()
+    for sec in ("Sh.section('sam', 'head', { order: 10", "Sh.section('sam', 'commercials', { order: 15",
+                "Sh.section('sam', 'revenue', { order: 20", "Sh.section('hydro', 'commercials', { order: 15"):
+        assert sec in js, sec
+    assert "find('sam', 'revenue')" in js and 'Sh.chip.sam = ' in js and 'Sh.chip.hydro = ' in js
+    assert 'I.uplift' in js and 'WHOLESALE' in js
+    css = open(os.path.join(V3_DIR, 'v3-sheet.css'), encoding='utf-8').read()
+    assert 'var(--v3-split-b)' in css and 'var(--v3-split-e)' in css
+    assert not re.search(r'#8FD14F|#9EDB60|#0B2E2A|143,\s*209,\s*79', css, re.I)
+
+def test_investor_v3_story_chapters():
+    """v3 ships its own Present story (design spec §10.6): the v2 views, cameras, chapter filters and 9 s autoplay;
+    a kicker on every chapter; titles without digits; every stat expr (and every {token}) is a STAT key quoted in
+    present.js (or registered by v3-present.js); the contract-value hero stat sits on chapters 1, 2 and 4 only.
+    (Replaces test_investor_v3_story_ships_from_the_investor_story.)"""
+    story = build.load(V3_DIR, 'story.json')
+    v2 = build.load(ATLAS, 'apps', 'investor', 'story.json')
+    assert _inlined_config(investor_v3_build()['html'])['story'] == build.strip_private(story)
+    ch = story['chapters']
+    assert story['autoplayMs'] == 9000 and len(ch) == 6
+    assert [c['view'] for c in ch] == ['tam', 'sam', 'sam', 'hydro', 'ppa', 'ppa']
+    for a, b in zip(ch, v2['chapters']):
+        assert (a.get('camera'), a.get('filters'), a.get('ppa')) == (b.get('camera'), b.get('filters'), b.get('ppa')), a['title']
+    with open(os.path.join(ATLAS, 'core', 'js', 'investor', 'present.js'), encoding='utf-8') as fh:
+        src = fh.read()
+    with open(os.path.join(V3_DIR, 'v3-present.js'), encoding='utf-8') as fh:
+        v3js = fh.read()
+    assert "STAT['rev.t1up']" in v3js
+    known = lambda k: "'%s'" % k in src or "STAT['%s']" % k in v3js
+    hero = re.compile(r'^(sam|hydro)\.tcv$|^tam\.pot$')
+    for i, c in enumerate(ch):
+        assert c.get('kicker'), i
+        assert not re.search(r'\d', re.sub(r'\{[^}]+\}', '', c['title'])), c['title']
+        assert len(c['stats']) == 3, i
+        texts = [c['title'], c['body']]
+        for s in c['stats']:
+            assert "'%s'" % s['expr'] in src, s['expr']          # computed from data at runtime, never typed
+            texts += [s['label'], s.get('cap', '')]
+        for tok in re.findall(r'\{([a-zA-Z0-9.]+)\}', ' '.join(texts)):
+            assert known(tok), tok
+        assert any(hero.match(s['expr']) for s in c['stats']) == (i in (0, 1, 3)), i
+
+
+def test_investor_v3_present_overlay():
+    """Present keeps the glass header at full opacity (a dimmed .hdr loses its backdrop blur), uses no lime or
+    green-black and no text glyphs for Play / Pause."""
+    with open(os.path.join(V3_DIR, 'v3-present.css'), encoding='utf-8') as fh:
+        css = fh.read()
+    assert ':root[data-skin="product"] .app.presenting .hdr,' in css and ':focus-within{opacity:1}' in css
+    for bad in ('#0B2E2A', '#9EDB60', '#8FD14F', 'rgba(10,19,20', 'rgba(143,209,79', '--lime)', 'italic'):
+        assert bad not in css, bad
+    with open(os.path.join(V3_DIR, 'v3-present.js'), encoding='utf-8') as fh:
+        js = fh.read()
+    assert '▶' not in js and '❚' not in js
 
 
 def test_investor_v3_brand_and_identity():
