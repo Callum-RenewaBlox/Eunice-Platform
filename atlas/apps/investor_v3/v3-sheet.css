@@ -115,6 +115,23 @@
 :root[data-skin="product"][data-app="investor"] .sheet .sh-actions .btn .i{flex:none;width:13px;height:13px;color:var(--ink-3)}
 :root[data-skin="product"][data-app="investor"] .sheet .sh-actions .btn span{overflow:hidden;text-overflow:ellipsis}
 
+/* ============================================================== foot: Confidential · as of · disclaimer (phone, folded-panel tablet) */
+:root[data-skin="product"][data-app="investor"] .sheet .sh-disc{flex:none;display:none;margin:0;padding:8px 16px 0;border-top:1px solid var(--rule);
+  font:400 10.5px/1.4 var(--font-ui);color:var(--v3-fine);text-align:center;text-wrap:balance;font-variant-numeric:tabular-nums lining-nums}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-disc > span{white-space:nowrap}   /* breaks only between the three parts */
+:root[data-skin="product"][data-app="investor"] .sheet .sh-disc b{font-weight:500;color:var(--ink-2)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-disc .d{color:var(--ink-4)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-disc .i{display:inline-block;width:10px;height:10px;margin-right:4px;stroke-width:1.8;vertical-align:-1px}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-disc:last-child{padding-bottom:12px}
+@media (max-width:760px){
+  :root[data-skin="product"][data-app="investor"] .sheet .sh-disc{display:block}
+  :root[data-skin="product"][data-app="investor"] .sheet .sh-disc + .sh-actions{border-top:0;padding-top:8px}
+}
+@media (min-width:761px) and (max-width:1050px){
+  :root[data-skin="product"][data-app="investor"] .app.rail-collapsed .sheet .sh-disc{display:block}
+  :root[data-skin="product"][data-app="investor"] .app.rail-collapsed .sheet .sh-disc + .sh-actions{border-top:0;padding-top:8px}
+}
+
 /* ============================================================== narrow desktop (352 px sheet) and phone */
 :root[data-skin="product"][data-app="investor"] .sheet .v3-split-l{flex-wrap:wrap;row-gap:3px}
 @media (max-width:1180px) and (min-width:761px){

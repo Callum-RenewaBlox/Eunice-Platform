@@ -7,7 +7,9 @@
      right, the energy-vs-BTC split bar (solid teal vs sky hatch) and a hairline ledger;
    - Projected BM revenue (SAM, order 20): the uplift over wholesale, average and top 5% figures and the core ladder
      (the registered section's own `after`), redrawn in the v3 grammar;
-   - Capacity, route, register, stranded and nearby keep the investor modules' content and take the card style.
+   - Capacity, route, register, stranded and nearby keep the investor modules' content and take the card style;
+   - a quiet foot line (Confidential · as of · disclaimer) for phones and folded-panel tablets, where nothing else on
+     screen carries it; a site chosen from search returns focus to the search button when its sheet closes.
    Inert unless <html data-skin="product" data-app="investor">. */
 (function () {
   'use strict';
@@ -58,8 +60,9 @@
     var pe = Math.round(en / tot * 100), pb = 100 - pe;
     var bar = C.splitBar([{ v: en, cls: 'v3-e' }, { v: bv, cls: 'btcv' }], 'Energy and BM revenue ' + pe + '%, BTC value ' + pb + '%');
     var btc = '<span><i class="k btcv"></i>BTC value <b>' + U.esc(U.abbr(bv)) + '</b> ' + pb + '%</span>';
-    var left = en > 0 ? '<span><i class="k v3-e"></i>Energy &amp; BM <b>' + U.esc(U.abbr(en)) + '</b> ' + pe + '%</span>' + btc
-      : btc + '<span>Energy export <b>£0</b></span>';
+    // Hydro: the contract values only the stranded share, so the bar is all BTC and the legend says just that (an
+    // "Energy export £0" beside it would contradict the export-limited sites, which do export the rest)
+    var left = en > 0 ? '<span><i class="k v3-e"></i>Energy &amp; BM <b>' + U.esc(U.abbr(en)) + '</b> ' + pe + '%</span>' + btc : btc;
     return bar + '<div class="capbar-l v3-split-l">' + left + '</div>';
   }
 
@@ -147,4 +150,44 @@
   ['sam', 'hydro', 'tam'].forEach(function (k) {
     if ((Sh.actions[k] || []).some(function (a) { return a.id === 'zoom'; })) Sh.action(k, 'zoom', zoom);
   });
+
+  // ------------------------------------------------------------------ foot: Confidential · as of · disclaimer (§15.13)
+  // On a phone the sheet covers the peek (and its disclaimer line), and on a tablet the panel folds beside it, so
+  // the sheet carries the line itself there: one quiet foot above the actions, shown by v3-sheet.css only when
+  // nothing else on screen does (the desktop sheet stays calm beside the panel's caveat).
+  var LOCK = '<svg class="i" viewBox="0 0 20 20" aria-hidden="true"><rect x="4.5" y="9" width="11" height="8" rx="1.8"/><path d="M7 9V6.8a3 3 0 0 1 6 0V9"/></svg>';
+  function footHtml(kind) {
+    var V3 = RBX.v3 || {}, a = V3.asOf ? V3.asOf(kind) : { stamp: '', caveat: 'Indicative; not investment advice.' };
+    // three unbreakable parts; each dot stays with the part before it, so a wrapped line never starts with one
+    var conf = String(RBX.config.confidential || 'Confidential').split(' · ')[0], dot = '<span class="d" aria-hidden="true">&nbsp;·</span>';
+    return '<p class="sh-disc"><span>' + LOCK + '<b>' + U.esc(conf) + '</b>' + dot + '</span> ' + (a.stamp ? '<span>' + U.esc(a.stamp.replace(' · ', ' ')) + dot + '</span> ' : '') +
+      '<span>' + U.esc(a.caveat) + '</span></p>';
+  }
+  function foot(kind) {
+    var el = document.getElementById('sheet'); if (!el || el.hidden) return;
+    var old = el.querySelector(':scope > .sh-disc'); if (old) old.remove();
+    var act = el.querySelector(':scope > .sh-actions'), h = footHtml(kind === 'hydro' || kind === 'tam' ? kind : 'sam');
+    if (act) act.insertAdjacentHTML('beforebegin', h); else el.insertAdjacentHTML('beforeend', h);
+  }
+  function view() { var v = RBX.state.view; return v === 'ppa' ? RBX.state.lastPeaker || 'sam' : v; }
+  var open0 = Sh.open, chooser0 = Sh.chooser, panel0 = Sh.panel;
+  Sh.open = function (row) { var r = open0.apply(this, arguments); foot(row && row.kind); return r; };
+  Sh.chooser = function (rows) { var r = chooser0.apply(this, arguments); foot(rows && rows[0] ? rows[0].kind : view()); return r; };
+  Sh.panel = function () { var r = panel0.apply(this, arguments); foot(view()); return r; };
+
+  // ------------------------------------------------------------------ search → site → close: focus goes back to search
+  // Choosing a result closes the palette keeping focus in its (now hidden) input, so the sheet recorded no usable
+  // opener and Esc / × dropped focus to <body>. Focus moves to the header search button first, which the sheet
+  // (or a panel, or "Zoom to all") then returns to.
+  var Sr = RBX.search;
+  if (Sr && Sr.close) {
+    var srClose0 = Sr.close;
+    Sr.close = function (keepFocus) {
+      var r = srClose0.apply(this, arguments), pal = document.getElementById('palette'), s = document.getElementById('hdrSearch');
+      if (keepFocus && pal && pal.hidden && pal.contains(document.activeElement) && s && s.offsetParent !== null && getComputedStyle(s).visibility !== 'hidden') {
+        s.focus({ preventScroll: true });
+      }
+      return r;
+    };
+  }
 })();
