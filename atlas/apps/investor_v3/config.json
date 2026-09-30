@@ -73,7 +73,8 @@
           "label": "with BTC held in treasury",
           "metric": "tcvT",
           "role": "sub",
-          "caption": "Year 5"
+          "caption": "Year 5",
+          "labelShort": "with treasury"
         },
         {
           "label": "Priced sites",
@@ -112,7 +113,8 @@
         {
           "label": "of it from sites ≥ 10 MW",
           "metric": "tcvPot",
-          "role": "sub"
+          "role": "sub",
+          "labelShort": "≥ 10 MW"
         },
         {
           "label": "Sites",
@@ -156,7 +158,8 @@
           "label": "with BTC held in treasury",
           "metric": "tcvT",
           "role": "sub",
-          "caption": "Year 5"
+          "caption": "Year 5",
+          "labelShort": "with treasury"
         },
         {
           "label": "Sites",
@@ -384,13 +387,14 @@
     },
     "tam": {
       "title": "Subsidised generators",
-      "subsidyTitle": "SUBSIDY · SHAPE",
+      "subsidyTitle": "Subsidy · shape",
       "techTitle": "TECHNOLOGY · RING",
       "tierTitle": "BM TIER · INDICATIVE",
       "scaleTitle": "SCALE",
       "techNote": "Colours group fuels into three families for colour-blind legibility; each site card names its exact fuel.",
       "techNoteFuels": "Ring colour shows each site's fuel; shape shows its subsidy. Each site card names its fuel.",
-      "tierCaption": "Filter only; not shown by colour on the map."
+      "tierCaption": "Filter only; not shown by colour on the map.",
+      "fuelTitle": "Fuel · ring colour"
     },
     "hydro": {
       "title": "Stranded Hydro",

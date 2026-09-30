@@ -27,7 +27,7 @@
   --v3-split-b:repeating-linear-gradient(135deg,#83CBEB 0 2px,rgba(131,203,235,.28) 2px 5px);
   --v3-fine:#8298A7;
 }
-@media (max-width:760px){ :root[data-skin="product"][data-app="investor"]{--peek-h:180px} }
+@media (max-width:760px){ :root[data-skin="product"][data-app="investor"]{--peek-h:196px} }
 /* money: full-size £ on the baseline, small magnitude letter (spec §14.4) */
 :root[data-skin="product"] .money{white-space:nowrap}
 :root[data-skin="product"] .money .mag{font-size:.62em;font-weight:400;margin-left:.06em;letter-spacing:0}
@@ -117,3 +117,179 @@
 :root[data-skin="product"] .dr-sec h4{margin:10px 0 4px;font:600 12px/1.3 var(--font-ui);color:var(--ink-1)}
 :root[data-skin="product"] .dr-tbl{margin:0 0 10px}
 :root[data-skin="product"] .dr-sec td.num,:root[data-skin="product"] .dr-sec th.num{text-align:right}
+
+/* ============================================================== header: "Investor Atlas / Confidential" lockup (spec §3) */
+:root[data-skin="product"][data-app="investor"] .hdr-pill{gap:12px}
+:root[data-skin="product"][data-app="investor"] .prod-lock{display:flex;flex-direction:column;justify-content:center;gap:6px;min-width:0}
+:root[data-skin="product"][data-app="investor"] .prod-lock .brand-prod{line-height:1}
+:root[data-skin="product"][data-app="investor"] .conf{display:flex;align-items:center;gap:4px;font:400 10.5px/1 var(--font-ui);letter-spacing:.01em;color:var(--sk-tagline);white-space:nowrap}
+:root[data-skin="product"][data-app="investor"] .conf .i{width:10px;height:10px;stroke-width:1.8;margin-top:-1px;flex:none}
+:root[data-skin="product"][data-app="investor"] .hdr-search{width:316px}
+/* Present: a glass button like its neighbours; the only colour is the teal play disc */
+:root[data-skin="product"][data-app="investor"] .hbtn-present,:root[data-skin="product"][data-app="investor"][data-theme="night"] .hbtn-present{display:inline-flex;align-items:center;gap:9px;height:44px;margin:0;padding:0 16px 0 11px;border-radius:12px;
+  background:var(--surface-float);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);border:1px solid var(--rule);box-shadow:var(--sh-2);
+  color:var(--ink-1);font:600 13px/1 var(--font-ui);white-space:nowrap;transition:box-shadow .2s var(--ease)}
+:root[data-skin="product"][data-app="investor"] .hbtn-present:hover,:root[data-skin="product"][data-app="investor"][data-theme="night"] .hbtn-present:hover{background:var(--surface-float);box-shadow:var(--sh-3)}
+:root[data-skin="product"][data-app="investor"] .hbtn-present .i{box-sizing:border-box;width:24px;height:24px;padding:7px 6px 7px 8px;border-radius:50%;background:var(--sk-accent);color:var(--sk-accent-ink);
+  box-shadow:0 2px 6px -2px rgba(11,53,73,.45);transition:background .2s var(--ease)}
+:root[data-skin="product"][data-app="investor"] .hbtn-present:hover .i{background:var(--sk-accent-2)}
+:root[data-skin="product"][data-app="investor"] .hbtn-present:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+@media (max-width:1320px){
+  :root[data-skin="product"][data-app="investor"] .hdr-search{width:44px;padding:0;justify-content:center}
+  :root[data-skin="product"][data-app="investor"] .hdr-search .lbl,:root[data-skin="product"][data-app="investor"] .hdr-search .kbd{display:none}
+}
+@media (max-width:1100px){ :root[data-skin="product"][data-app="investor"] .prod-lock{display:none} }
+@media (max-width:900px){
+  :root[data-skin="product"][data-app="investor"] .hbtn-present{width:44px;padding:0;justify-content:center}
+  :root[data-skin="product"][data-app="investor"] .hbtn-present span{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+}
+@media (max-width:760px){ :root[data-skin="product"][data-app="investor"] .hbtn-present,:root[data-skin="product"][data-app="investor"][data-theme="night"] .hbtn-present{display:none} }
+
+/* ============================================================== panel (spec §4) */
+:root[data-skin="product"][data-app="investor"] .rail-body{padding:14px 16px 12px;-webkit-mask-image:none;mask-image:none}
+:root[data-skin="product"][data-app="investor"] .rail-body.v3-overflow{-webkit-mask-image:linear-gradient(#000 calc(100% - 28px),transparent);mask-image:linear-gradient(#000 calc(100% - 28px),transparent)}
+:root[data-skin="product"][data-app="investor"] .rail-body > .rail-foot{display:none}
+:root[data-skin="product"][data-app="investor"] .rail-body > #capSec{order:8}
+:root[data-skin="product"][data-app="investor"] .p-label{margin:2px 34px 8px 2px}
+:root[data-skin="product"][data-app="investor"] .p-scope button{height:34px}
+:root[data-skin="product"][data-app="investor"] .p-desc{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ============================================================== KPI card: hero, treasury line, ledger, disclaimer (spec §5) */
+:root[data-skin="product"][data-app="investor"] .kcard{margin:12px 0 0;border:1px solid var(--rule);border-radius:12px;overflow:hidden;background:var(--sk-strong)}
+:root[data-skin="product"][data-app="investor"] .kcard .kpis.v3-ledger{display:block;border:0;border-radius:0;background:none}
+:root[data-skin="product"][data-app="investor"] .kcard .v3-ledger .kpi:not(.kpi-hero){display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:5px 16px;background:none}
+:root[data-skin="product"][data-app="investor"] .kcard .v3-ledger .kpi-hero + .kpi{margin-top:2px}
+:root[data-skin="product"][data-app="investor"] .kcard .v3-ledger .kpi:not(.kpi-hero) + .kpi{border-top:1px solid var(--v3-hair)}
+:root[data-skin="product"][data-app="investor"] .kcard .v3-ledger .kpi:not(.kpi-hero) .kpi-l{margin:0;font:400 12px/1.3 var(--font-ui);color:var(--ink-2)}
+:root[data-skin="product"][data-app="investor"] .kcard .v3-ledger .kpi:not(.kpi-hero) .kpi-v{font:600 13px/1.3 var(--font-ui);letter-spacing:0;white-space:nowrap}
+:root[data-skin="product"][data-app="investor"] .kcard .v3-ledger .kpi:not(.kpi-hero) .kpi-v small{margin-left:4px;font:400 11.5px var(--font-ui);color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .kcard .v3-ledger .kpi:not(.kpi-hero) .kpi-c{display:none}
+:root[data-skin="product"][data-app="investor"] .kcard .v3-ledger .kpi:last-of-type{margin-bottom:2px}
+/* the hero */
+:root[data-skin="product"][data-app="investor"] .kcard .kpi-hero,:root[data-skin="product"][data-app="investor"][data-theme="night"] .kcard .kpi-hero{display:block;padding:12px 16px 11px;background:var(--v3-hero);color:#FFFFFF}
+:root[data-skin="product"][data-app="investor"] .kcard .kpi-hero::before{content:none}
+:root[data-skin="product"][data-app="investor"] .kcard .kpi-hero::after{right:-56px;bottom:-56px;width:112px;height:112px;background:var(--v3-motif);opacity:var(--v3-motif-op)}
+:root[data-skin="product"][data-app="investor"] .kcard .kpi-top{display:flex;align-items:center;justify-content:space-between;height:18px}
+:root[data-skin="product"][data-app="investor"] .kcard .kpi-hero .kpi-top .kpi-l{margin:0;font:500 11.5px/1.25 var(--font-ui);color:rgba(255,255,255,.88)}
+:root[data-skin="product"][data-app="investor"] .kcard .kpi-hero.filtered .kpi-top .kpi-l{color:#FFFFFF}
+:root[data-skin="product"][data-app="investor"] .i-btn{display:grid;place-items:center;width:20px;height:20px;margin-right:-3px;border-radius:50%;color:rgba(255,255,255,.88);flex:none}
+:root[data-skin="product"][data-app="investor"] .i-btn .i{width:15px;height:15px;stroke-width:1.5}
+:root[data-skin="product"][data-app="investor"] .i-btn:hover,:root[data-skin="product"][data-app="investor"] .i-btn[aria-expanded="true"]{background:rgba(255,255,255,.16);color:#FFFFFF}
+:root[data-skin="product"][data-app="investor"] .i-btn:focus-visible{outline:2px solid #FFFFFF;outline-offset:1px}
+:root[data-skin="product"][data-app="investor"] .kcard .kpi-hero > .kpi-v{display:inline-block;margin:5px 0 10px;font:var(--v3-num-w) 40px/1 var(--font-ui);letter-spacing:-.025em;color:#FFFFFF}
+:root[data-skin="product"][data-app="investor"] .kcard .kpi-hero > .kpi-c{display:inline-block;margin-left:8px;font:500 12px/1 var(--font-ui);color:rgba(255,255,255,.8)}
+:root[data-skin="product"][data-app="investor"] .kpi-sub{padding-top:9px;border-top:1px solid rgba(255,255,255,.18);font:400 12px/1.3 var(--font-ui);color:rgba(255,255,255,.84)}
+:root[data-skin="product"][data-app="investor"] .kcard .kpi-sub .kpi-v{display:inline;margin:0 3px 0 0;font:600 12px/1.3 var(--font-ui);letter-spacing:0;color:#FFFFFF}
+:root[data-skin="product"][data-app="investor"] .kcard .kpi-sub .kpi-v .mag{font-size:1em;margin-left:0}
+:root[data-skin="product"][data-app="investor"] .kcard .kpi-sub .kpi-l{display:inline;margin:0;font:inherit;color:inherit;white-space:normal}
+:root[data-skin="product"][data-app="investor"] .kpi-sub .ls{display:none}
+/* the disclaimer band */
+:root[data-skin="product"][data-app="investor"] .caveat{display:flex;gap:8px;padding:8px 16px 9px;border-top:1px solid var(--v3-hair);background:var(--surface-2);font:400 11px/1.45 var(--font-ui);color:var(--v3-fine)}
+:root[data-skin="product"][data-app="investor"] .caveat > .i{width:13px;height:13px;margin-top:2px;stroke-width:1.5;color:var(--ink-3);flex:none}
+:root[data-skin="product"][data-app="investor"] .caveat .cv{flex:1;min-width:0}
+:root[data-skin="product"][data-app="investor"] .caveat b{display:block;font-weight:500;color:var(--ink-2)}
+:root[data-skin="product"][data-app="investor"] .caveat .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+:root[data-skin="product"][data-app="investor"] .caveat .row{flex-wrap:wrap;row-gap:0}
+:root[data-skin="product"][data-app="investor"] .caveat .row > span{white-space:nowrap}
+:root[data-skin="product"][data-app="investor"] .caveat .conf-fb{display:none;align-items:center;gap:4px;font:500 11px/1.45 var(--font-ui);color:var(--ink-2)}
+:root[data-skin="product"][data-app="investor"] .caveat .conf-fb .i{width:10px;height:10px;stroke-width:1.8}
+@media (max-width:1100px){ :root[data-skin="product"][data-app="investor"] .caveat .conf-fb{display:flex} }
+:root[data-skin="product"][data-app="investor"] .src-link{display:inline-flex;align-items:center;gap:2px;font:600 11px/1.5 var(--font-ui);color:var(--sk-accent);white-space:nowrap}
+:root[data-skin="product"][data-app="investor"] .src-link .i{width:11px;height:11px;stroke-width:1.9}
+:root[data-skin="product"][data-app="investor"] .src-link:hover{text-decoration:underline;text-underline-offset:2px}
+:root[data-skin="product"][data-app="investor"] .v3-peekline{display:none}
+@media (max-height:760px) and (min-width:761px){ :root[data-skin="product"][data-app="investor"] .kcard .kpi-hero > .kpi-v{font-size:34px} }
+
+/* ============================================================== legend (spec §6) */
+:root[data-skin="product"][data-app="investor"] .v3-lg .r-sec-h{align-items:baseline;margin:0 2px 2px}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-cap{margin-left:auto;font:500 11px/1.3 var(--font-ui);color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .r-sub{display:flex;align-items:center;gap:5px;margin:3px 2px 5px;font:400 11.5px/1.4 var(--font-ui);color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .r-sub .stub{display:inline-block;width:14px;height:4px;border-radius:2px;background:var(--v3-base)}
+:root[data-skin="product"][data-app="investor"] .lg{margin-top:13px}
+:root[data-skin="product"][data-app="investor"] .v3-lg-tam{margin-top:11px}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-rows{margin:0 -8px;gap:0}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row{position:relative}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-main{grid-template-columns:20px minmax(0,1fr) auto;grid-template-areas:"sw lbl mw" "sw lbl n";column-gap:8px;padding:4px 8px;border-radius:9px}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-lbl{display:block;min-width:0;font:600 12.5px/1.2 var(--font-ui);color:var(--ink-1)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-lbl .lg-q{font-weight:400;color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-mw{align-self:end;font:600 12.5px/1.2 var(--font-ui);color:var(--ink-1);text-align:right;font-variant-numeric:tabular-nums lining-nums}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-n{align-self:start;font:400 11px/1.2 var(--font-ui);color:var(--ink-3);text-align:right;font-variant-numeric:tabular-nums}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-sec.v3t{display:flex;align-items:center;margin:2px 0 0;font:500 11px/1.2 var(--font-ui);color:var(--ink-2);white-space:nowrap;font-variant-numeric:tabular-nums}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-sec .bar{display:flex;gap:1.5px;height:4px;flex:none;margin-right:7px}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-sec .bar i{display:block;height:100%}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-sec .bar .b0{width:calc(8 * var(--v3-ppx));border-radius:2px 0 0 2px;background:var(--v3-base)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-sec .bar .b1{border-radius:0 2px 2px 0}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-sec .dot{margin:0 5px;font-style:normal;color:var(--ink-4)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-sec .up{font-weight:600;color:var(--v3-gain)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-sw svg{filter:drop-shadow(0 1px 1.5px rgba(8,37,51,.22))}
+/* awaiting row: one inset hairline, no dash */
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.await{margin-top:6px}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.await::before{content:"";position:absolute;top:-3px;left:36px;right:8px;height:1px;background:var(--v3-hair)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.await .lg-mw{font:400 11.5px/1.2 var(--font-ui);color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-sec.v3a{display:block;margin:2px 0 0;font:400 11px/1.2 var(--font-ui);color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-only{right:74px;top:4px;transform:none}
+/* single-line rows (hydro, TAM fuels) */
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.one .lg-main{grid-template-areas:"sw lbl n mw";grid-template-columns:20px minmax(0,1fr) auto auto;align-items:center;padding:4.5px 8px}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.one .lg-lbl{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.one .lg-n{align-self:center;font:400 11px/1.2 var(--font-ui)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.one .lg-n::after{content:"·";margin:0 0 0 4px;color:var(--ink-4)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.one .lg-mw{align-self:center}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.one .lg-mw small{margin-left:4px;font:400 11px var(--font-ui);color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.one .lg-only{right:112px;top:50%;transform:translateY(-50%)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-group-h{margin:0;padding:0;min-height:0}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-group-t{margin:6px 2px 3px;font:600 10.5px/1.3 var(--font-ui);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-group{margin-top:6px}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-group:first-of-type{margin-top:0}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-chips{padding:0}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-chip{padding:4px 8px}
+/* TAM: Scale in the header, the rest behind "More filters" */
+:root[data-skin="product"][data-app="investor"] .v3-lg-tam .r-sec-h{align-items:center;min-height:26px}
+:root[data-skin="product"][data-app="investor"] .seg-mini{display:inline-grid;grid-auto-flow:column;margin-left:auto;padding:2px;border-radius:9px;background:var(--surface-2)}
+:root[data-skin="product"][data-app="investor"] .seg-mini button{height:22px;padding:0 9px;border-radius:7px;font:600 11px/1 var(--font-ui);color:var(--ink-3);white-space:nowrap}
+:root[data-skin="product"][data-app="investor"] .seg-mini button[aria-checked="true"]{color:var(--ink-1);background:var(--sk-thumb);box-shadow:var(--sk-thumb-sh)}
+:root[data-skin="product"][data-app="investor"] .v3-showall{display:block;margin:0 2px 4px auto;font:500 11px/1.3 var(--font-ui);color:var(--sk-accent)}
+:root[data-skin="product"][data-app="investor"] .v3-more{margin-top:6px}
+:root[data-skin="product"][data-app="investor"] .v3-more > summary{display:flex;align-items:center;gap:8px;padding:8px 2px 2px;border-top:1px solid var(--v3-hair);list-style:none;cursor:pointer;font:500 11.5px/1.3 var(--font-ui);color:var(--ink-2)}
+:root[data-skin="product"][data-app="investor"] .v3-more > summary::-webkit-details-marker{display:none}
+:root[data-skin="product"][data-app="investor"] .v3-more > summary em{margin-left:auto;font-style:normal;color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .v3-more > summary .i{width:13px;height:13px;color:var(--ink-3);transition:transform .2s var(--ease)}
+:root[data-skin="product"][data-app="investor"] .v3-more[open] > summary .i{transform:rotate(180deg)}
+:root[data-skin="product"][data-app="investor"] .v3-more > summary:hover{color:var(--ink-1)}
+:root[data-skin="product"][data-app="investor"] .v3-more > summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:6px}
+
+/* ============================================================== capacity: a one-row disclosure (spec §7) */
+:root[data-skin="product"][data-app="investor"] #capSec{margin-top:10px;padding-top:10px;border-top:1px solid var(--rule)}
+:root[data-skin="product"][data-app="investor"] .v3-cap-h{margin:0;font:inherit}
+:root[data-skin="product"][data-app="investor"] .cap-row{display:flex;align-items:center;gap:8px;width:100%;padding:0 2px;font:600 12px/1.3 var(--font-ui);color:var(--ink-1);text-align:left}
+:root[data-skin="product"][data-app="investor"] .cap-row .cap-read{margin-left:auto;font:500 11.5px/1.3 var(--font-ui);color:var(--ink-2)}
+:root[data-skin="product"][data-app="investor"] #capSec.active .cap-row .cap-read{color:var(--sk-accent);font-weight:600}
+:root[data-skin="product"][data-app="investor"] .cap-row .i{width:14px;height:14px;color:var(--ink-3);transition:transform .2s var(--ease)}
+:root[data-skin="product"][data-app="investor"] .cap-row[aria-expanded="true"] .i{transform:rotate(180deg)}
+:root[data-skin="product"][data-app="investor"] .cap-row:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:6px}
+:root[data-skin="product"][data-app="investor"] .cap-body{display:flex;flex-direction:column;margin-top:10px}
+:root[data-skin="product"][data-app="investor"] .cap-body[hidden]{display:none}
+:root[data-skin="product"][data-app="investor"] .cap-body > #hist{order:1}
+:root[data-skin="product"][data-app="investor"] .cap-body > #capSeg{order:2}
+
+/* ============================================================== phone (≤ 760 px): the peek is the hero strip + one caveat line (spec §12) */
+@media (max-width:760px){
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .v3-ledger .kpi:not(.kpi-hero),:root[data-skin="product"][data-app="investor"] .rail:not(.open) .caveat,:root[data-skin="product"][data-app="investor"] .rail:not(.open) .lg,:root[data-skin="product"][data-app="investor"] .rail:not(.open) #capSec{display:none}
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kcard{margin-top:10px;border:0;background:none;border-radius:12px}
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kcard .kpi-hero{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"l l s" "v c s";align-items:end;padding:10px 14px 11px;border-radius:12px}
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kcard .kpi-hero::after{content:none}
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kcard .kpi-top{grid-area:l;height:auto}
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kcard .kpi-top .kpi-l{font-size:11px}
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kcard .i-btn{display:none}
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kcard .kpi-hero > .kpi-v{grid-area:v;margin:5px 0 0;font-size:30px}
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kcard .kpi-hero > .kpi-c{grid-area:c;align-self:end;margin:0 0 3px 6px;font-size:11px;white-space:nowrap}
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kpi-sub{grid-area:s;align-self:end;padding:0 0 1px 12px;border-top:0;border-left:1px solid rgba(255,255,255,.22);text-align:right}
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kcard .kpi-sub .kpi-v{display:block;margin:0;font-size:14px;line-height:1.15}
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kcard .kpi-sub .kpi-l{display:block;margin-top:3px;font-size:11px}
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kpi-sub .lf{display:none}
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kpi-sub .ls{display:inline}
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .v3-peekline{display:flex;align-items:center;justify-content:center;gap:5px;margin:9px 0 0;font:400 10.5px/1.3 var(--font-ui);color:var(--v3-fine);white-space:nowrap;overflow:hidden}
+  :root[data-skin="product"][data-app="investor"] .v3-peekline .i{width:10px;height:10px;stroke-width:1.8;flex:none}
+  :root[data-skin="product"][data-app="investor"] .v3-peekline i{font-style:normal;color:var(--ink-4)}
+  :root[data-skin="product"][data-app="investor"] .rail.open .v3-peekline{display:none}
+  :root[data-skin="product"][data-app="investor"] .rail .p-desc{white-space:normal}
+}
