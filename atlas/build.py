@@ -530,8 +530,9 @@ COPY = {
     ],
 }
 # Investor v3 keeps every investor disclaimer, note, footer and card string (they ship in its drawer and cards), drops
-# the rail subtitles (the headline block is gone) and the v2 header colours, and adds its own identity.
-COPY['investor_v3'] = [s for s in COPY['investor'] if s not in (
+# the rail subtitles (the headline block is gone) and the v2 header colours, and adds its own identity. Its TAM footer
+# writes register months as 'Jul 2026', like the rest of the page (v2: 'Jul-2026').
+COPY['investor_v3'] = [s.replace('Jul-2026', 'Jul 2026').replace('(Aug-2026)', '(Aug 2026)') for s in COPY['investor'] if s not in (
     '#16323A', '#1F6F78', 'Balancing Mechanism Tiers', 'avg BM revenue vs 8.0p wholesale baseline',
     'Total Contract Value · Year 5 · 129 AD-peaker sites in the GB Balancing Mechanism',
     'Total addressable market · 1,309 subsidised biogas, biomass & EfW sites · 3,612 MW',

@@ -294,7 +294,7 @@
   },
   "footers": {
     "sam": "RenewaBlox Investor Atlas · Year-5 Total Contract Values modelled from the Scrivelsby peaker and 1,000 kW stranded-hydro client cases, scaled across the portfolio. Sources: RenewaBlox_AD_BM_CRM & RenewaBlox_Hydro_Stranded (16 Jun 2026). Indicative; not investment advice.",
-    "tam": "RenewaBlox Investor Atlas · TAM — every subsidised biogas, biomass, EfW, landfill and sewage-gas CHP holding an RO or FiT accreditation. Sources: DNO Embedded Capacity Registers (NGED, NPG, SPEN, SSEN Jul-2026, UKPN) + Ofgem FiT, RO and REGO registers (Aug-2026). Co-located records are collapsed to one marker per site with capacity capped at the DNO connection figure (194 MW of double-counting removed across 87 sites); 8 transmission-connected thermal stations >100 MW are excluded. 220 sites are plotted at postcode-district centroid (dashed). BM tier is indicative, modelled from the 129 verified SAM sites; Scotland sits outside the modelled tiers.",
+    "tam": "RenewaBlox Investor Atlas · TAM — every subsidised biogas, biomass, EfW, landfill and sewage-gas CHP holding an RO or FiT accreditation. Sources: DNO Embedded Capacity Registers (NGED, NPG, SPEN, SSEN Jul 2026, UKPN) + Ofgem FiT, RO and REGO registers (Aug 2026). Co-located records are collapsed to one marker per site with capacity capped at the DNO connection figure (194 MW of double-counting removed across 87 sites); 8 transmission-connected thermal stations >100 MW are excluded. 220 sites are plotted at postcode-district centroid (dashed). BM tier is indicative, modelled from the 129 verified SAM sites; Scotland sits outside the modelled tiers.",
     "ppa": "RenewaBlox Investor Atlas · PPA & Price Benchmark — Elexon BMRS Market Index (APXMIDP) settlement data, Montel/EEX forward curve snapshot 11 Aug 2026, Ofgem Feed-in Tariff and REGO registers. Contracted PPA prices are private bilateral terms and are not shown anywhere; the counterparty is inferred from REGO certificate holdings."
   },
   "notes": {
@@ -414,7 +414,7 @@
     "sources": [
       "Ofgem FiT Installation Report (Mar 2026)",
       "Ofgem RO / REGO registers (Aug 2026)",
-      "DNO Embedded Capacity Registers (NGED, NPG, SPEN, SSEN Jul-2026, UKPN)",
+      "DNO Embedded Capacity Registers (NGED, NPG, SPEN, SSEN Jul 2026, UKPN)",
       "Elexon BMRS MID",
       "Montel / EEX (11 Aug 2026)",
       "postcodes.io",
