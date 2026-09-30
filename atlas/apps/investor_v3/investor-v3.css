@@ -4,6 +4,34 @@
    restyled below. Every selector starts with :root[data-skin="product"] (the v3 template sets data-skin and
    data-app="investor"), so nothing here can reach another build. */
 
+/* ============================================================== v3 tokens (design spec §14.2) */
+:root[data-skin="product"][data-app="investor"]{
+  --v3-hero:linear-gradient(128deg,#176589 0%,#156082 46%,#0B3549 100%);
+  --v3-num-w:400;                       /* hero numerals; the owner's heavier fallback is 600 */
+  --v3-hair:rgba(11,53,73,.075);
+  --v3-gain:#156082;
+  --v3-motif:#83CBEB; --v3-motif-op:.20;
+  --v3-base:rgba(11,53,73,.16);
+  --v3-ppx:3.5px;
+  --v3-split-e:#156082;
+  --v3-split-b:repeating-linear-gradient(135deg,#83CBEB 0 2px,rgba(131,203,235,.30) 2px 5px);
+  --v3-fine:#5F7282;
+}
+:root[data-skin="product"][data-app="investor"][data-theme="night"]{
+  --v3-hero:linear-gradient(128deg,#176589 0%,#156082 50%,#0E4561 100%);
+  --v3-hair:rgba(200,225,240,.075);
+  --v3-gain:#83CBEB;
+  --v3-motif-op:.18;
+  --v3-base:rgba(200,225,240,.22);
+  --v3-split-e:#2E8FBA;
+  --v3-split-b:repeating-linear-gradient(135deg,#83CBEB 0 2px,rgba(131,203,235,.28) 2px 5px);
+  --v3-fine:#8298A7;
+}
+@media (max-width:760px){ :root[data-skin="product"][data-app="investor"]{--peek-h:180px} }
+/* money: full-size £ on the baseline, small magnitude letter (spec §14.4) */
+:root[data-skin="product"] .money{white-space:nowrap}
+:root[data-skin="product"] .money .mag{font-size:.62em;font-weight:400;margin-left:.06em;letter-spacing:0}
+
 /* ============================================================== chrome v3 does not render */
 :root[data-skin="product"] .band-slot,:root[data-skin="product"] .foot-slot{display:none}
 

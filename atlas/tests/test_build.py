@@ -509,9 +509,12 @@ def test_investor_v3_builds_within_budget_with_skin_and_investor_modules():
               'core/js/investor/present.js', 'core/js/ppa.js', 'skins/product/skin-product.js'):
         assert f in files, f
     assert files.index('skins/product/skin-product.js') < files.index('core/js/investor/model.js')
-    assert [f for f in files if f.endswith('.js')][-2:] == ['apps/investor_v3/investor-v3.js', 'core/js/app.js']
+    js = [f for f in files if f.endswith('.js')]
+    assert js[-1] == 'core/js/app.js' and js[-5] == 'apps/investor_v3/investor-v3.js', js[-6:]
+    assert all(f.startswith('apps/investor_v3/') for f in js[-5:-1]), js[-6:]
+    assert js.index('core/js/investor/present.js') < js.index('apps/investor_v3/investor-v3.js')
     css = [f for f in files if f.endswith('.css')]
-    assert css[-1] == 'apps/investor_v3/investor-v3.css'
+    assert css[-4] == 'apps/investor_v3/investor-v3.css' and all(f.startswith('apps/investor_v3/') for f in css[-4:]), css[-5:]
     assert css.index('core/css/present.css') < css.index('skins/product/skin-product.css')
     assert 'apps/investor/investor.css' not in files and 'core/css/notes.css' not in files
     assert not [f for f in files if f.startswith('apps/client/')], files
@@ -559,8 +562,7 @@ def test_investor_v3_brand_and_identity():
     assert cfg['storageKey'] != inv['storageKey']                    # never inherits v2's saved theme or view
     assert cfg['switches'] == inv['switches']
     assert 'Confidential' in cfg['csvHeader'] and 'Confidential' in cfg['imageBadge']
-    js = open(os.path.join(V3_DIR, 'investor-v3.js'), encoding='utf-8').read()
-    assert 'o.cfg.imageBadge' in js                                   # PNG exports keep the confidentiality marking
+
 
 
 def test_investor_v3_kpis_use_known_metrics():
@@ -578,7 +580,8 @@ def test_investor_v3_kpis_use_known_metrics():
 
 def test_investor_v3_overlay_rules_are_scoped():
     """Every selector in investor-v3.css starts with :root[data-skin="product"]; the overlay JS is inert elsewhere."""
-    css = build.strip_css_comments(open(os.path.join(V3_DIR, 'investor-v3.css'), encoding='utf-8').read())
+    css = ''.join(build.strip_css_comments(open(os.path.join(V3_DIR, f), encoding='utf-8').read())
+                  for f in sorted(os.listdir(V3_DIR)) if f.endswith('.css'))
     css = re.sub(r'@keyframes[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}', '', css)
     bad = []
     for m in re.finditer(r'([^{}]+)\{', css):
@@ -587,8 +590,10 @@ def test_investor_v3_overlay_rules_are_scoped():
             continue
         bad += [sel.strip()[:80] for sel in _split_selectors(prelude) if not sel.strip().startswith(SKIN_SCOPE)]
     assert not bad, bad[:10]
-    js = open(os.path.join(V3_DIR, 'investor-v3.js'), encoding='utf-8').read()
-    assert "getAttribute('data-skin') !== 'product' || doc.getAttribute('data-app') !== 'investor'" in js
+    for f in sorted(os.listdir(V3_DIR)):
+        if f.endswith('.js'):
+            js = open(os.path.join(V3_DIR, f), encoding='utf-8').read()
+            assert "getAttribute('data-skin') !== 'product' || doc.getAttribute('data-app') !== 'investor'" in js, f
 
 
 def test_investor_v3_wrapper_gated_and_deep_links_whitelisted():

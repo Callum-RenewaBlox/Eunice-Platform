@@ -4,6 +4,7 @@
   "title": "RenewaBlox Investor Atlas",
   "h1": "RenewaBlox Investor Atlas",
   "productLabel": "Investor Atlas",
+  "confidential": "Confidential · investor use only",
   "defaultTheme": "paper",
   "defaultView": "sam",
   "storageKey": "rbx-investor-atlas-v3",
@@ -59,23 +60,34 @@
         ]
       },
       "searchGroup": "VERIFIED AD · SAM",
-      "label": "Peaker plants",
-      "summary": "{{sam_n}} AD peakers in the Balancing Mechanism, sized by Year-5 contract value; hollow rings await a BM figure.",
+      "label": "Peaker market",
+      "summary": "Verified AD peakers, sized by contract value.",
       "kpis": [
         {
           "label": "Total contract value · Year 5",
+          "labelFiltered": "Contract value shown · Year 5",
           "metric": "tcv",
           "caption": "no treasury"
         },
         {
-          "label": "With BTC in treasury",
+          "label": "with BTC held in treasury",
           "metric": "tcvT",
-          "caption": "BTC held in treasury"
+          "role": "sub",
+          "caption": "Year 5"
         },
         {
-          "label": "Sites priced",
+          "label": "Priced sites",
           "metric": "samPriced",
-          "caption": "of {{sam_n}}"
+          "caption": "of {total}"
+        },
+        {
+          "label": "Available for BM",
+          "metric": "samAv"
+        },
+        {
+          "label": "BTC mined · Year 5",
+          "metric": "btc",
+          "unit": "BTC"
         }
       ]
     },
@@ -88,22 +100,31 @@
         "title": "Capacity band"
       },
       "searchGroup": "ALL SUBSIDISED · TAM",
-      "label": "Peaker plants",
-      "summary": "Every subsidised biogas, biomass, EfW, landfill and sewage-gas site; ring colour = fuel, shape = subsidy.",
+      "label": "Peaker market",
+      "summary": "Every subsidised fuelled generator in GB.",
       "kpis": [
         {
-          "label": "TCV potential",
-          "metric": "tcvPot"
+          "label": "TCV potential · indicative",
+          "labelFiltered": "TCV potential shown · indicative",
+          "metric": "tcvPot",
+          "caption": "all sizes"
         },
         {
-          "label": "Capacity",
-          "metric": "tamCap",
-          "caption": "installed"
+          "label": "of it from sites ≥ 10 MW",
+          "metric": "tcvPot",
+          "role": "sub"
         },
         {
-          "label": "In BM tiers",
-          "metric": "tamInBm",
-          "caption": "excludes Scotland"
+          "label": "Sites",
+          "metric": "count"
+        },
+        {
+          "label": "Installed",
+          "metric": "tamCap"
+        },
+        {
+          "label": "In BM tiers · excludes Scotland",
+          "metric": "tamInBm"
         }
       ]
     },
@@ -123,22 +144,32 @@
       "searchGroup": "STRANDED HYDRO",
       "highlandsChip": "Zoom to Highlands · {{highlands_n}} sites",
       "label": "Stranded hydro",
-      "summary": "{{hydro_n}} hydro units generating more than the grid will take; the stranded power mines Bitcoin.",
+      "summary": "Run-of-river units stranded behind the meter.",
       "kpis": [
         {
           "label": "Total contract value · Year 5",
+          "labelFiltered": "Contract value shown · Year 5",
           "metric": "tcv",
           "caption": "no treasury"
         },
         {
-          "label": "Stranded",
-          "metric": "stranded",
-          "caption": "behind the meter"
+          "label": "with BTC held in treasury",
+          "metric": "tcvT",
+          "role": "sub",
+          "caption": "Year 5"
         },
         {
-          "label": "BTC mined",
+          "label": "Sites",
+          "metric": "count"
+        },
+        {
+          "label": "Stranded behind the meter",
+          "metric": "stranded"
+        },
+        {
+          "label": "BTC mined · Year 5",
           "metric": "btc",
-          "caption": "Year 5"
+          "unit": "BTC"
         }
       ]
     },
@@ -346,13 +377,13 @@
   },
   "legend": {
     "sam": {
-      "title": "Balancing Mechanism Tiers",
-      "sub": "avg BM revenue vs 8.0p wholesale baseline",
+      "title": "Balancing Mechanism tiers",
+      "sub": "Avg BM price against 8.0p wholesale",
       "pricingTitle": "Contract value",
       "awaiting": "Awaiting BM figure"
     },
     "tam": {
-      "title": "TAM · total addressable market",
+      "title": "Subsidised generators",
       "subsidyTitle": "SUBSIDY · SHAPE",
       "techTitle": "TECHNOLOGY · RING",
       "tierTitle": "BM TIER · INDICATIVE",

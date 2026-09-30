@@ -1,5 +1,5 @@
 {
-  "_doc": "Bundle order for the Investor Atlas v3 build (paths relative to atlas/). It reuses the investor data, numbers, copy tokens, story and modules of apps/investor, and wears the shared product skin with the RenewaBlox brand. The skin JS comes BEFORE the investor modules so their sheet sections and legends take precedence; apps/investor_v3/investor-v3.js comes last before core/js/app.js (which boots) and adapts the investor modules to the skin: the KPI band becomes the rail's brand card, and the band, its GB power strip and the footer bar are not rendered. apps/investor/investor.css is deliberately not bundled (investor-v3.css restyles the components v3 keeps); present.css comes before the skin so the overlay wins.",
+  "_doc": "Bundle order for the Investor Atlas v3 build (paths relative to atlas/). It reuses the investor data, numbers, copy tokens, story and modules of apps/investor, and wears the shared product skin with the RenewaBlox brand. The skin JS comes BEFORE the investor modules so their sheet sections and legends take precedence; the v3 overlay files (apps/investor_v3/investor-v3.js, then v3-sheet.js, v3-present.js and v3-map.js) come last before core/js/app.js (which boots) and adapt the investor modules to the skin: the KPI band becomes the rail's brand card, and the band, its GB power strip and the footer bar are not rendered. apps/investor/investor.css is deliberately not bundled (investor-v3.css restyles the components v3 keeps); present.css comes before the skin so the overlay wins.",
   "brand": {
     "favicon": "brand/roundel-64.png",
     "fontsUrl": "https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap",
@@ -25,7 +25,10 @@
     "core/css/mobile.css",
     "core/css/present.css",
     "skins/product/skin-product.css",
-    "apps/investor_v3/investor-v3.css"
+    "apps/investor_v3/investor-v3.css",
+    "apps/investor_v3/v3-sheet.css",
+    "apps/investor_v3/v3-present.css",
+    "apps/investor_v3/v3-map.css"
   ],
   "js": [
     "core/js/util.js",
@@ -61,6 +64,9 @@
     "core/js/investor/exports.js",
     "core/js/investor/present.js",
     "apps/investor_v3/investor-v3.js",
+    "apps/investor_v3/v3-sheet.js",
+    "apps/investor_v3/v3-present.js",
+    "apps/investor_v3/v3-map.js",
     "core/js/app.js"
   ],
   "optional": []

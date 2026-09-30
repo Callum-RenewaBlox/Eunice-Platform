@@ -3,7 +3,6 @@
    edited, so the Investor Atlas v2 page is unchanged; every change is a replaced property or a wrapper:
    - the KPI band, its GB power strip and the footer bar are not rendered: the headline figures move into the
      skin's brand KPI card in the panel (config views[v].kpis, formatted by the investor band metrics);
-   - PNG exports keep the "Confidential" marking under the skin's brand band;
    - hollow "Awaiting BM figure" rings keep no shadow; Present mode frames the map clear of the floating header.
    Inert unless <html data-skin="product" data-app="investor"> (apps/investor_v3/template.html). */
 (function () {
@@ -13,6 +12,21 @@
   var B = RBX.band, K = RBX.kpi, I = RBX.inv;
   var V3 = RBX.v3 = {};
   var INFO = '<svg class="i" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v5M10 6.2v.1"/></svg>';
+
+  // ------------------------------------------------------------------ shared helpers (also used by v3-sheet/present/map.js)
+  /** Money in the v3 grammar: full-size £ on the baseline, small magnitude letter (£221.9M, £7.17bn, £595k). */
+  V3.money = function (v) {
+    var s = typeof v === 'number' ? U.abbr(v) : String(v == null ? '' : v);
+    var m = /^(-?£?[\d.,]+)\s*(k|M|bn)?$/.exec(s);
+    return m ? '<span class="money">' + U.esc(m[1]) + (m[2] ? '<span class="mag">' + m[2] + '</span>' : '') + '</span>' : U.esc(s);
+  };
+  /** The model / registers stamp and the disclaimer for a view (config band.asOf), always ending in the caveat. */
+  V3.CAVEAT = 'Indicative; not investment advice.';
+  V3.asOf = function (view) {
+    var bc = (RBX.config.band || {}).asOf || {}, s = String(bc[view === 'tam' ? 'tam' : view === 'ppa' ? 'ppa' : view === 'hydro' ? 'hydro' : 'sam'] || '');
+    var stamp = s.split(' · Indicative')[0].replace(/\s*·\s*$/, '');
+    return { stamp: stamp, caveat: V3.CAVEAT, line: stamp + ' · ' + V3.CAVEAT };
+  };
 
   // ------------------------------------------------------------------ no band, no market strip, no footer bar
   // band.js looks these up on RBX.band at call time; its popover, Scale control, Present button, drawer sections
@@ -65,20 +79,7 @@
     if (!instant) announce((RBX.state.inView ? 'In view: ' : '') + parts.join(', '));
   };
 
-  // ------------------------------------------------------------------ PNG export: the brand band keeps the confidentiality marking
-  if (RBX.brand && RBX.brand.exportBand) {
-    var band0 = RBX.brand.exportBand;
-    RBX.brand.exportBand = function (g, o) {
-      band0.apply(this, arguments);
-      var badge = o.cfg && o.cfg.imageBadge;
-      if (!badge) return;
-      g.save();
-      g.textAlign = 'right'; g.textBaseline = 'alphabetic';
-      g.fillStyle = 'rgba(255,255,255,.78)'; g.font = '400 11px ' + o.UI;
-      g.fillText(badge, o.W - 28, 53);
-      g.restore();
-    };
-  }
+  // (the PNG export band with the confidentiality marking and the disclaimer is drawn by v3-map.js)
 
   // ------------------------------------------------------------------ map: hollow "Awaiting BM figure" rings stay hollow
   if (RBX.skin && RBX.skin.syncShadows) {
