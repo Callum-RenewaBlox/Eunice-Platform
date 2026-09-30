@@ -125,7 +125,7 @@
           "metric": "tamCap"
         },
         {
-          "label": "In BM tiers · excludes Scotland",
+          "label": "In BM tiers · excl. Scotland",
           "metric": "tamInBm"
         }
       ]
@@ -397,7 +397,7 @@
       "fuelTitle": "Fuel · ring colour"
     },
     "hydro": {
-      "title": "Stranded Hydro",
+      "title": "Stranded hydro",
       "exportTitle": "Export class",
       "confTitle": "Confidence"
     }

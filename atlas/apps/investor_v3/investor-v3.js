@@ -309,6 +309,7 @@
       var by = {}; sp.groups.forEach(function (g) { by[g.type === 'html' ? 'scale' : g.set] = g; });
       if (by.fuels) { by.fuels.title = lc.fuelTitle || 'Fuel · ring colour'; by.fuels.note = ''; }
       if (by.shapes) by.shapes.title = lc.subsidyTitle || 'Subsidy · shape';
+      if (by.precision) by.precision.title = lc.locationTitle || 'Location';   // its chips read "Exact" / "Approximate" (RBX.legend.html)
       if (by.tamTiers) by.tamTiers.caption = '';
       sp.groups = [by.fuels, by.shapes, by.fuels && by.fuels.items.length > 6 ? { type: 'html', html: '<span class="v3-more-mark"></span>' } : null,
         by.fuels && by.fuels.items.length > 6 ? { type: 'rows', set: 'fuels', prop: 'fu', mwDigits: 0, items: by.fuels.items.slice(6) } : null,
@@ -340,19 +341,30 @@
     if (view === 'sam') {
       var subEl = f.querySelector('.r-sub');
       if (subEl) subEl.innerHTML = U.esc(subEl.textContent).replace(/(\d+(?:\.\d+)?p wholesale)/, '<i class="stub" aria-hidden="true"></i>$1');
+      // a tier row counts its PRICED sites (the ones its £ comes from), so tiers + "Awaiting BM figure" = 129, as in the PNG
+      var priced = {};
+      RBX.data.rows.sam.forEach(function (r) { if (r.pr === 1 && RBX.filters.pass(r, 'tiers')) priced[r.t] = (priced[r.t] || 0) + 1; });
       U.$$('.lg-row[data-set="tiers"]', f).forEach(function (row) {
         var t0 = +row.getAttribute('data-v'), a = +((cfg().bmrev || {})[t0] || {}).a || 0, s = row.querySelector('.lg-sec'), bar = row.querySelector('.lg-bar b');
         var col = bar ? bar.style.background : 'var(--ink-3)';
         if (s) s.innerHTML = '<span class="bar" aria-hidden="true"><i class="b0"></i><i class="b1" style="width:calc(' + Math.max(0, a - (I.WHOLESALE || 8)).toFixed(1) + ' * var(--v3-ppx));background:' + col + '"></i></span>' +
           U.esc(U.num(a, 1) + 'p') + '<i class="dot">·</i><span class="up">+' + I.uplift(t0) + '%</span>';
-        var n = row.querySelector('.lg-n'); if (n) { var k = +n.textContent.replace(/[^\d]/g, ''); n.textContent = U.int(k) + (k === 1 ? ' site' : ' sites'); }
+        var n = row.querySelector('.lg-n'); if (n) { var k = priced[t0] || 0; n.textContent = U.int(k) + (k === 1 ? ' site' : ' sites'); }
         var bb = row.querySelector('.lg-bar'); if (bb) bb.remove();
       });
       U.$$('.lg-row[data-set="pricing"]', f).forEach(function (row) {
         row.classList.add('await');
         var n = row.querySelector('.lg-n'); if (n) { var k = +n.textContent.replace(/[^\d]/g, ''); n.textContent = U.int(k) + (k === 1 ? ' site' : ' sites'); }
+        // the hollow ring: 11 px, 1.6 px --ink-3 (lighter than the tier discs, spec §6.1)
+        var ring = row.querySelector('.lg-sw circle'); if (ring) { ring.setAttribute('r', '4.7'); ring.setAttribute('style', 'stroke:var(--ink-3);stroke-width:1.6'); }
       });
     }
+    // filled discs (SAM tiers, Hydro confidence) are the map marker in miniature: a 12 px disc in a 1.5 px
+    // --marker-stroke ring (the ring overhangs the 14 px box; .lg-sw svg is overflow:visible)
+    U.$$('.lg-row[data-set="tiers"] .lg-sw circle, .lg-row[data-set="confs"] .lg-sw circle', f).forEach(function (c) {
+      if (c.getAttribute('fill') === 'none') return;
+      c.setAttribute('r', '6.75'); c.setAttribute('style', 'stroke:var(--marker-stroke);stroke-width:1.5');
+    });
     if (view === 'hydro' || view === 'tam') U.$$('.lg-row', f).forEach(function (row) {
       row.classList.add('one');
       // the "·" between count and MW is CSS: give the toggle a spoken name that keeps the figures apart
@@ -369,6 +381,7 @@
           var ad = b.getAttribute('data-scale-set') === 'ad', n = b.querySelector('.n');
           b.title = (ad ? 'AD-scale only (<10 MW)' : 'All sizes') + (n ? ': ' + n.textContent + ' sites' : '');
           b.innerHTML = ad ? '&lt; 10 MW' : 'All sizes';
+          b.tabIndex = b.getAttribute('aria-checked') === 'true' ? 0 : -1;   // one Tab stop; arrows move (keydown below)
         });
         head.appendChild(seg);
         if (grp) grp.remove();
@@ -385,6 +398,14 @@
         after.forEach(function (x) { if (x.classList.contains('lg-group')) det.appendChild(x); });
         mg.replaceWith(det);
       }
+      // two-column chips stay untruncated at the 300 px panel: location reads "Exact" / "Approximate" under its
+      // "Location" title, BM tiers read "Tier 1" … "Scotland" under the tier bar; the full label is the tooltip
+      U.$$('.lg-chip[data-set="precision"], .lg-chip[data-set="tamTiers"]', f).forEach(function (c) {
+        var s = c.querySelector('span:not(.n)'); if (!s) return;
+        var full = s.textContent, short = c.getAttribute('data-set') === 'precision' ? (c.getAttribute('data-v') === '1' ? 'Approximate' : 'Exact') : full.split(' · ')[0];
+        if (short === full) return;
+        s.textContent = short; c.title = c.getAttribute('data-set') === 'precision' && short === 'Approximate' ? 'Approximate location (postcode district)' : full;
+      });
     }
     if (showAll && view === 'tam') {           // right of the first group title, whose row is empty on the right (no extra row)
       var gh = f.querySelector('.lg-group-h');
@@ -394,8 +415,18 @@
     return t.innerHTML;
   };
   document.addEventListener('toggle', function (e) {
-    if (e.target && e.target.classList && e.target.classList.contains('v3-more')) V3.moreOpen = e.target.open;
+    if (e.target && e.target.classList && e.target.classList.contains('v3-more')) { V3.moreOpen = e.target.open; fitRail(); }
   }, true);
+  // TAM Scale is a radio group: arrows (and Home / End) move the choice; the rail re-render keeps focus on it
+  document.addEventListener('keydown', function (e) {
+    var b = e.target.closest && e.target.closest('.seg-mini [data-scale-set]'); if (!b) return;
+    var k = e.key, next = k === 'Home' ? 'all' : k === 'End' ? 'ad' : null;
+    if (!next && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].indexOf(k) >= 0) next = b.getAttribute('data-scale-set') === 'ad' ? 'all' : 'ad';
+    if (!next) return;
+    e.preventDefault();
+    var nb = b.parentNode.querySelector('[data-scale-set="' + next + '"]');
+    if (nb && nb.getAttribute('aria-checked') !== 'true') { nb.focus({ preventScroll: true }); nb.click(); }
+  });
 
   // ------------------------------------------------------------------ capacity: a one-row disclosure at the panel foot
   V3.capOpen = false;
@@ -411,7 +442,9 @@
       U.esc(title ? title.textContent : 'Capacity') + '</span>' + (read ? read.outerHTML : '') + DOWN + '</button>';
     head.replaceWith(h3);
     var body = document.createElement('div'); body.className = 'cap-body'; body.id = 'capBody'; if (!open) body.hidden = true;
-    ['#capSeg', '#histToggle', '#hist'].forEach(function (q) { var x = capSec.querySelector(q); if (x) body.appendChild(x); });
+    // DOM order = visual order (histogram and range, then presets) so Tab follows the eye; #histToggle stays a hidden
+    // direct child of #capSec (the skin's rule), never a second disclosure inside this one
+    ['#hist', '#capSeg'].forEach(function (q) { var x = capSec.querySelector(q); if (x) body.appendChild(x); });
     capSec.appendChild(body);
     capSec.classList.toggle('active', !!RBX.state.kw[view]);
     return t.innerHTML;
@@ -429,11 +462,28 @@
     if (V3.capOpen && rb) requestAnimationFrame(function () { rb.scrollTop = rb.scrollHeight; });
   });
 
-  // ------------------------------------------------------------------ panel: the bottom fade only when it actually scrolls
-  // and, once it has scrolled, a top fade too, so the content passes under a clear head (the collapse button stays
-  // on clean glass instead of floating over the hero)
+  // ------------------------------------------------------------------ panel: fit short laptop screens, the bottom fade only when it scrolls
+  // On desktop screens a little short of 1440×820 (1440×800, 1366×768, 1180×800 …) the panel first tightens its
+  // spacing (.v3-c1), then sets the hero numeral at 34 px (.v3-c2), then drops the one-line description (.v3-c3), so
+  // Capacity stays on screen instead of under the fade; shorter still, it scrolls under the fade (§4.4). What the
+  // user opened (Capacity, More filters) is left out of the sum: that part scrolls by design.
+  // Once it has scrolled, a top fade too, so the content passes under a clear head (the collapse button stays
+  // on clean glass instead of floating over the hero).
+  var COMPACT = ['v3-c1', 'v3-c2', 'v3-c3'];
+  function opened(body) {
+    var x = 0, cap = document.getElementById('capBody'), more = body.querySelector('.v3-more[open]');
+    if (cap && !cap.hidden) x += cap.offsetHeight + (parseFloat(getComputedStyle(cap).marginTop) || 0);
+    if (more) { var sm = more.querySelector('summary'); x += more.offsetHeight - (sm ? sm.offsetHeight : 0); }
+    return x;
+  }
   function fitRail() {
-    var body = document.getElementById('railBody'); if (!body) return;
+    var body = document.getElementById('railBody'); if (!body || !body.clientHeight) return;
+    COMPACT.forEach(function (c) { body.classList.remove(c); });
+    if (!U.isMobile() && RBX.state.view !== 'ppa') {
+      for (var i = 0; i < COMPACT.length && body.scrollHeight - opened(body) > body.clientHeight; i++) body.classList.add(COMPACT[i]);
+      // the description only goes when that makes the panel fit; if it scrolls anyway, it stays
+      if (i === COMPACT.length && body.scrollHeight - opened(body) > body.clientHeight) body.classList.remove(COMPACT[i - 1]);
+    }
     body.classList.toggle('v3-overflow', body.scrollHeight > body.clientHeight + 1);
     railScrolled();
   }
@@ -442,13 +492,27 @@
     rail.classList.toggle('v3-scrolled', body.scrollTop > 2 && body.classList.contains('v3-overflow'));
   }
   var rail0 = RBX.rail.render;
-  RBX.rail.render = function () { rail0.apply(this, arguments); requestAnimationFrame(fitRail); };
+  RBX.rail.render = function () {
+    // keep keyboard focus on the Scale radio across the re-render it triggers (rail.js cannot key it)
+    var ae = document.activeElement, sc = ae && ae.closest && ae.closest('.seg-mini') ? ae.getAttribute('data-scale-set') : null;
+    rail0.apply(this, arguments);
+    if (sc) { var nb = document.querySelector('.seg-mini [data-scale-set="' + sc + '"]'); if (nb) nb.focus({ preventScroll: true }); }
+    requestAnimationFrame(fitRail);
+  };
   if (window.ResizeObserver) {
     var ro = new ResizeObserver(U.rafThrottle(fitRail));
     RBX.bus.on('ready', function () { var body = document.getElementById('railBody'); if (body) ro.observe(body); });
   }
   window.addEventListener('resize', U.rafThrottle(fitRail));
   document.addEventListener('scroll', function (e) { if (e.target && e.target.id === 'railBody') railScrolled(); }, { capture: true, passive: true });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { requestAnimationFrame(fitRail); });
+
+  // a panel collapsed on a desktop never stays a 44 px stub after a resize or rotation to phone width: the phone peek
+  // carries the hero and the full disclaimer
+  var mqPhone = window.matchMedia ? window.matchMedia('(max-width: 760px)') : null;
+  function unstub() { if (mqPhone && mqPhone.matches && RBX.state.railCollapsed && RBX.rail.setCollapsed) RBX.rail.setCollapsed(false); }
+  if (mqPhone) { if (mqPhone.addEventListener) mqPhone.addEventListener('change', unstub); else if (mqPhone.addListener) mqPhone.addListener(unstub); }
+  RBX.bus.on('ready', unstub);
 
   // (the PNG export band with the confidentiality marking and the disclaimer is drawn by v3-map.js)
 

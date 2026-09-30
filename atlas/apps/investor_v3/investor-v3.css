@@ -27,7 +27,12 @@
   --v3-split-b:repeating-linear-gradient(135deg,#83CBEB 0 2px,rgba(131,203,235,.28) 2px 5px);
   --v3-fine:#8298A7;
 }
-@media (max-width:760px){ :root[data-skin="product"][data-app="investor"]{--peek-h:196px} }
+/* the phone peek: switch + hero strip + a two-line foot (§12); Hydro has no SAM/TAM switch, so its peek is shorter.
+   Set on :root because map.js and drag.js read --peek-h from the document element. */
+@media (max-width:760px){
+  :root[data-skin="product"][data-app="investor"]{--peek-h:210px}
+  :root[data-skin="product"][data-app="investor"]:has(.app[data-view="hydro"]){--peek-h:158px}
+}
 /* money: full-size £ on the baseline, small magnitude letter (spec §14.4) */
 :root[data-skin="product"] .money{white-space:nowrap}
 :root[data-skin="product"] .money .mag{font-size:.62em;font-weight:400;margin-left:.06em;letter-spacing:0}
@@ -244,11 +249,12 @@
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-sec .bar .b1{border-radius:0 2px 2px 0}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-sec .dot{margin:0 5px;font-style:normal;color:var(--ink-4)}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-sec .up{font-weight:600;color:var(--v3-gain)}
-:root[data-skin="product"][data-app="investor"] .v3-lg .lg-sw svg{filter:drop-shadow(0 1px 1.5px rgba(8,37,51,.22))}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-sw svg{overflow:visible;filter:drop-shadow(0 1px 1.5px rgba(8,37,51,.22))}
 /* awaiting row: one inset hairline, no dash */
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.await{margin-top:6px}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.await::before{content:"";position:absolute;top:-3px;left:36px;right:8px;height:1px;background:var(--v3-hair)}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.await .lg-mw{font:400 11.5px/1.2 var(--font-ui);color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.await .lg-sw svg{filter:none}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-sec.v3a{display:block;margin:2px 0 0;font:400 11px/1.2 var(--font-ui);color:var(--ink-3)}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-only{right:74px;top:4px;transform:none}
 /* single-line rows (hydro, TAM fuels) */
@@ -259,14 +265,27 @@
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.one .lg-mw{align-self:center}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.one .lg-mw small{margin-left:4px;font:400 11px var(--font-ui);color:var(--ink-3)}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.one .lg-only{right:112px;top:50%;transform:translateY(-50%)}
+/* while the Only pill shows, a long label ellipsises before it instead of running under it */
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.one .lg-main{container-type:inline-size}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.one:is(:hover,:focus-within) .lg-lbl{max-width:calc(100cqw - 178px)}
+/* filtered-off rows and chips: dimmed by colour, not by opacity on the button, so the text stays legible and the
+   focus ring keeps its full contrast */
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.off .lg-main{opacity:1}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.off .lg-sw,:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.off .lg-sec .bar{opacity:.38;filter:grayscale(1)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.off :is(.lg-lbl,.lg-lbl .lg-q,.lg-mw,.lg-mw small,.lg-n,.lg-sec,.lg-sec .up){color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-chip[aria-pressed="false"]{opacity:1;color:var(--ink-3);background:none;border-color:var(--rule)}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-chip[aria-pressed="false"] > svg{opacity:.42}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-chip[aria-pressed="false"]:hover{background:var(--wash)}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-group-h{margin:0;padding:0;min-height:0}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-group-t{margin:6px 2px 3px;font:600 10.5px/1.3 var(--font-ui);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-group{margin-top:6px}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-group:first-of-type{margin-top:0}
 :root[data-skin="product"][data-app="investor"] .v3-lg .lg-chips{padding:0}
-:root[data-skin="product"][data-app="investor"] .v3-lg .lg-chip{padding:4px 6px}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-chip{padding:4px 5px;gap:3px}
+:root[data-skin="product"][data-app="investor"] .v3-lg .lg-chip .n{padding-left:0}
 /* TAM: Scale in the header, the rest behind "More filters" */
 :root[data-skin="product"][data-app="investor"] .v3-lg-tam .r-sec-h{align-items:center;min-height:26px}
+:root[data-skin="product"][data-app="investor"] .v3-lg-tam .r-sec-t{white-space:nowrap}
 :root[data-skin="product"][data-app="investor"] .seg-mini{display:inline-grid;grid-auto-flow:column;margin-left:auto;padding:2px;border-radius:9px;background:var(--surface-2)}
 :root[data-skin="product"][data-app="investor"] .seg-mini button{height:22px;padding:0 9px;border-radius:7px;font:600 11px/1 var(--font-ui);color:var(--ink-3);white-space:nowrap}
 :root[data-skin="product"][data-app="investor"] .seg-mini button[aria-checked="true"]{color:var(--ink-1);background:var(--sk-thumb);box-shadow:var(--sk-thumb-sh)}
@@ -279,6 +298,17 @@
 :root[data-skin="product"][data-app="investor"] .v3-more[open] > summary .i{transform:rotate(180deg)}
 :root[data-skin="product"][data-app="investor"] .v3-more > summary:hover{color:var(--ink-1)}
 :root[data-skin="product"][data-app="investor"] .v3-more > summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:6px}
+/* the 300 px panel (≤1180): the Scale control and the longest fuel label keep their full text */
+@media (max-width:1180px) and (min-width:761px){
+  :root[data-skin="product"][data-app="investor"] .seg-mini button{padding:0 7px}
+  :root[data-skin="product"][data-app="investor"] .v3-lg .lg-row.one .lg-main{column-gap:6px}
+}
+/* inactive segment labels on their tinted tracks (TAM Scale, SAM/TAM switch, header modes, the search keycap): --ink-2
+   keeps them at 4.5:1 or better; hover goes to --ink-1 */
+:root[data-skin="product"][data-app="investor"] :is(.seg-mini,.p-scope) button[aria-checked="false"],:root[data-skin="product"][data-app="investor"] .p-scope button[aria-checked="false"] .n,
+:root[data-skin="product"][data-app="investor"] .tabs .tab[aria-selected="false"],:root[data-skin="product"][data-app="investor"] .hdr-search .kbd{color:var(--ink-2)}
+:root[data-skin="product"][data-app="investor"] :is(.seg-mini,.p-scope) button[aria-checked="false"]:hover,:root[data-skin="product"][data-app="investor"] .tabs .tab[aria-selected="false"]:hover{color:var(--ink-1)}
+:root[data-skin="product"][data-app="investor"][data-theme="night"] .p-scope button[aria-checked="true"] .n{color:var(--ink-1)}
 
 /* ============================================================== capacity: a one-row disclosure (spec §7) */
 :root[data-skin="product"][data-app="investor"] #capSec{margin-top:10px;padding-top:10px;border-top:1px solid var(--rule)}
@@ -291,10 +321,24 @@
 :root[data-skin="product"][data-app="investor"] .cap-row:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:6px}
 :root[data-skin="product"][data-app="investor"] .cap-body{display:flex;flex-direction:column;margin-top:10px}
 :root[data-skin="product"][data-app="investor"] .cap-body[hidden]{display:none}
-:root[data-skin="product"][data-app="investor"] .cap-body > #hist{order:1}
-:root[data-skin="product"][data-app="investor"] .cap-body > #capSeg{order:2}
+:root[data-skin="product"][data-app="investor"] .hist-toggle[hidden]{display:none}
 
-/* ============================================================== phone (≤ 760 px): the peek is the hero strip + one caveat line (spec §12) */
+/* ============================================================== panel fit on short laptop screens (fitRail in investor-v3.js) */
+/* step 1 (.v3-c1): tighter spacing; step 2 (.v3-c2): the hero numeral at 34 px (as ≤760 tall); step 3 (.v3-c3): the
+   one-line description goes, only when that makes the panel fit. Otherwise it scrolls under the fade (§4.4). */
+@media (min-width:761px){
+  :root[data-skin="product"][data-app="investor"] .rail-body.v3-c1 .kcard .v3-ledger .kpi:not(.kpi-hero){padding-top:4px;padding-bottom:4px}
+  :root[data-skin="product"][data-app="investor"] .rail-body.v3-c1 .caveat{padding-top:6px;padding-bottom:7px}
+  :root[data-skin="product"][data-app="investor"] .rail-body.v3-c1 .lg{margin-top:10px}
+  :root[data-skin="product"][data-app="investor"] .rail-body.v3-c1 .v3-lg .lg-main{padding-top:3px;padding-bottom:3px}
+  :root[data-skin="product"][data-app="investor"] .rail-body.v3-c1 .v3-lg .lg-row.one .lg-main{padding-top:3.5px;padding-bottom:3.5px}
+  :root[data-skin="product"][data-app="investor"] .rail-body.v3-c1 #capSec{margin-top:8px;padding-top:8px}
+  :root[data-skin="product"][data-app="investor"] .rail-body.v3-c2 .kcard .kpi-hero{padding-top:10px;padding-bottom:9px}
+  :root[data-skin="product"][data-app="investor"] .rail-body.v3-c2 .kcard .kpi-hero > .kpi-v{margin:4px 0 8px;font-size:34px}
+  :root[data-skin="product"][data-app="investor"] .rail-body.v3-c3 > .p-desc{display:none}
+}
+
+/* ============================================================== phone (≤ 760 px): the peek is the hero strip + a two-line foot (spec §12) */
 @media (max-width:760px){
   :root[data-skin="product"][data-app="investor"] .rail:not(.open) .v3-ledger .kpi:not(.kpi-hero),:root[data-skin="product"][data-app="investor"] .rail:not(.open) .caveat,:root[data-skin="product"][data-app="investor"] .rail:not(.open) .lg,:root[data-skin="product"][data-app="investor"] .rail:not(.open) #capSec{display:none}
   :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kcard{margin-top:10px;border:0;background:none;border-radius:12px}
@@ -310,7 +354,11 @@
   :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kcard .kpi-sub .kpi-l{display:block;margin-top:3px;font-size:11px}
   :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kpi-sub .lf{display:none}
   :root[data-skin="product"][data-app="investor"] .rail:not(.open) .kpi-sub .ls{display:inline}
-  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .v3-peekline{display:flex;align-items:center;justify-content:center;gap:5px;margin:9px 0 0;font:400 10.5px/1.3 var(--font-ui);color:var(--v3-fine);white-space:nowrap;overflow:hidden}
+  /* the foot never clips (the full disclaimer is always shown): "🔒 Confidential · Model 16 Jun 2026" over the caveat */
+  :root[data-skin="product"][data-app="investor"] .rail:not(.open) .v3-peekline{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;column-gap:5px;row-gap:2px;margin:9px 0 0;font:400 10.5px/1.3 var(--font-ui);color:var(--v3-fine);text-align:center}
+  :root[data-skin="product"][data-app="investor"] .v3-peekline > span{white-space:nowrap}
+  :root[data-skin="product"][data-app="investor"] .v3-peekline > span:last-child{flex:0 0 100%}
+  :root[data-skin="product"][data-app="investor"] .v3-peekline > i:nth-of-type(2){display:none}
   :root[data-skin="product"][data-app="investor"] .v3-peekline .i{width:10px;height:10px;stroke-width:1.8;flex:none}
   :root[data-skin="product"][data-app="investor"] .v3-peekline i{font-style:normal;color:var(--ink-4)}
   :root[data-skin="product"][data-app="investor"] .rail.open .v3-peekline{display:none}

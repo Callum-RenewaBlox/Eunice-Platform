@@ -533,12 +533,12 @@ COPY = {
 # the rail subtitles (the headline block is gone) and the v2 header colours, and adds its own identity. Its TAM footer
 # writes register months as 'Jul 2026', like the rest of the page (v2: 'Jul-2026').
 COPY['investor_v3'] = [s.replace('Jul-2026', 'Jul 2026').replace('(Aug-2026)', '(Aug 2026)') for s in COPY['investor'] if s not in (
-    '#16323A', '#1F6F78', 'Balancing Mechanism Tiers', 'avg BM revenue vs 8.0p wholesale baseline',
+    '#16323A', '#1F6F78', 'Balancing Mechanism Tiers', 'avg BM revenue vs 8.0p wholesale baseline', 'Stranded Hydro',
     'Total Contract Value · Year 5 · 129 AD-peaker sites in the GB Balancing Mechanism',
     'Total addressable market · 1,309 subsidised biogas, biomass & EfW sites · 3,612 MW',
     'Total Contract Value · Year 5 · 57 stranded hydro units · 100% Bitcoin mining',
 )] + ['Investor Atlas', 'Confidential — investor use only · Indicative; not investment advice',
-      'Confidential · investor use only', 'Balancing Mechanism tiers', 'Avg BM price against 8.0p wholesale',
+      'Confidential · investor use only', 'Balancing Mechanism tiers', 'Avg BM price against 8.0p wholesale', 'Stranded hydro',
       'Total contract value · Year 5', 'with BTC held in treasury', 'TCV potential · indicative']
 # PPA page copy lives in core/js/ppa.js (separate module); checked whenever that module is bundled.
 COPY_PPA = [
