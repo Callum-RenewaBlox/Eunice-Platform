@@ -486,7 +486,46 @@
   "attribution": "Geocoding: <a href=\"https://postcodes.io\">postcodes.io</a>",
   "ppaPlaceholder": "The PPA Benchmark module loads here.",
   "csvHeader": "Confidential — investor use only",
-  "imageBadge": "Confidential — investor use only · Indicative; not investment advice",
+  "csvNote": {
+    "_doc": "v3-map.js: row 2 of each CSV download, under the csvHeader confidentiality row (sites shown per view; register = the PPA site register).",
+    "sam": "Model · {{model_as_of}} · Indicative; not investment advice.",
+    "hydro": "Model · {{model_as_of}} · Indicative; not investment advice.",
+    "tam": "Registers · {{registers_as_of}} · Model · {{model_as_of}} · Indicative; not investment advice.",
+    "register": "Prices · {{as_of}} · Indicative; not investment advice."
+  },
+  "png": {
+    "_doc": "v3-map.js, PNG export card and footer per view: measure = the small label under the card title (views[v].label), measureFiltered its form under any filter; sources = the footer's source list (in place of drawer.sources), dated by band.asOf[v]. No headline sentence and no card kicker: the band carries the kicker once.",
+    "sam": {
+      "measure": "Contract value · Year 5",
+      "measureFiltered": "Contract value shown · Year 5",
+      "sources": [
+        "RenewaBlox_AD_BM_CRM ({{model_as_of}})",
+        "Elexon BMRS MID",
+        "Ofgem FiT, RO & REGO registers",
+        "DNO Embedded Capacity Registers"
+      ]
+    },
+    "tam": {
+      "measure": "TCV potential · indicative",
+      "measureFiltered": "TCV potential shown · indicative",
+      "sources": [
+        "Ofgem FiT Installation Report (Mar 2026)",
+        "Ofgem RO / REGO registers (Aug 2026)",
+        "DNO Embedded Capacity Registers (Jul 2026)",
+        "RenewaBlox_AD_BM_CRM ({{model_as_of}})"
+      ]
+    },
+    "hydro": {
+      "measure": "Contract value · Year 5",
+      "measureFiltered": "Contract value shown · Year 5",
+      "sources": [
+        "RenewaBlox_Hydro_Stranded ({{model_as_of}})",
+        "Ofgem FiT Installation Report (Mar 2026)",
+        "DNO Embedded Capacity Registers"
+      ]
+    }
+  },
+  "imageBadge":"Confidential — investor use only · Indicative; not investment advice",
   "about": {
     "title": "About this map",
     "body": [
@@ -495,5 +534,5 @@
       "Contract values are modelled from the Scrivelsby peaker and 1,000 kW stranded-hydro client cases and scaled across the portfolio. Indicative; not investment advice. Confidential — investor use only."
     ]
   },
-  "_doc_v3": "Investor Atlas v3: the investor config (apps/investor/config.json) re-dressed for the product skin. Differences: no GB power strip (\"market\" removed) and no rail headline block (views.*.standfirst removed; kicker/headline stay for the screen-reader heading and the PNG export card); views.*.label/summary/kpis feed the skin panel and the brand KPI card; own storageKey and publicUrl."
+  "_doc_v3": "Investor Atlas v3: the investor config (apps/investor/config.json) re-dressed for the product skin. Differences: no GB power strip (\"market\" removed) and no rail headline block (views.*.standfirst removed; kicker/headline stay for the screen-reader heading, and the kicker heads the PNG export band; see png); views.*.label/summary/kpis feed the skin panel and the brand KPI card; own storageKey and publicUrl."
 }
