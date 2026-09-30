@@ -530,14 +530,23 @@ COPY = {
     ],
 }
 # Investor v3 keeps every investor disclaimer, note, footer and card string (they ship in its drawer and cards), drops
-# the rail subtitles (the headline block is gone) and the v2 header colours, and adds its own identity. Its TAM footer
-# writes register months as 'Jul 2026', like the rest of the page (v2: 'Jul-2026').
+# the rail subtitles (the headline block is gone, the PPA page's standfirst too) and the v2 header colours, opens the SAM
+# note with a sentence instead of the '+% =' formula, and adds its own identity. Its TAM footer writes register months
+# as 'Jul 2026', like the rest of the page (v2: 'Jul-2026').
 COPY['investor_v3'] = [s.replace('Jul-2026', 'Jul 2026').replace('(Aug-2026)', '(Aug 2026)') for s in COPY['investor'] if s not in (
     '#16323A', '#1F6F78', 'Balancing Mechanism Tiers', 'avg BM revenue vs 8.0p wholesale baseline', 'Stranded Hydro',
     'Total Contract Value · Year 5 · 129 AD-peaker sites in the GB Balancing Mechanism',
     'Total addressable market · 1,309 subsidised biogas, biomass & EfW sites · 3,612 MW',
     'Total Contract Value · Year 5 · 57 stranded hydro units · 100% Bitcoin mining',
-)] + ['Investor Atlas', 'Confidential — investor use only · Indicative; not investment advice',
+    'PPA & price benchmark · 129 SAM sites · applies across peakers and hydro',
+    '+% = average BM revenue per tier vs a wholesale market baseline. TCV is per kW of available-for-BM; 24 sites '
+    '(hollow) await a figure. Card offtaker is inferred from the largest external REGO certificate holder — strong '
+    'evidence of who buys the power, not contractual proof. Full detail on the PPA Benchmark tab.',
+)] + ['TCV is modelled per kW available for BM; 24 sites (hollow) await a figure. In the legend, the + figures compare '
+      'each tier’s average BM revenue with the 8.0p wholesale baseline. Card offtaker is inferred from the largest '
+      'external REGO certificate holder — strong evidence of who buys the power, not contractual proof. Full detail on '
+      'the PPA Benchmark tab.',
+      'Investor Atlas', 'Confidential — investor use only · Indicative; not investment advice',
       'Confidential · investor use only', 'Balancing Mechanism tiers', 'Avg BM price against 8.0p wholesale', 'Stranded hydro',
       'Total contract value · Year 5', 'with BTC held in treasury', 'TCV potential · indicative']
 # PPA page copy lives in core/js/ppa.js (separate module); checked whenever that module is bundled.

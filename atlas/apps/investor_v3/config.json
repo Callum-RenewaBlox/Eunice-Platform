@@ -177,8 +177,7 @@
       ]
     },
     "ppa": {
-      "kicker": "PPA & PRICE BENCHMARK",
-      "standfirst": "PPA & price benchmark · {{sam_n}} SAM sites · applies across peakers and hydro"
+      "kicker": "PPA & PRICE BENCHMARK"
     }
   },
   "band": {
@@ -298,7 +297,7 @@
     "ppa": "RenewaBlox Investor Atlas · PPA & Price Benchmark — Elexon BMRS Market Index (APXMIDP) settlement data, Montel/EEX forward curve snapshot 11 Aug 2026, Ofgem Feed-in Tariff and REGO registers. Contracted PPA prices are private bilateral terms and are not shown anywhere; the counterparty is inferred from REGO certificate holdings."
   },
   "notes": {
-    "sam": "+% = average BM revenue per tier vs a wholesale market baseline. TCV is per kW of available-for-BM; 24 sites (hollow) await a figure. Card offtaker is inferred from the largest external REGO certificate holder — strong evidence of who buys the power, not contractual proof. Full detail on the PPA Benchmark tab.",
+    "sam": "TCV is modelled per kW available for BM; 24 sites (hollow) await a figure. In the legend, the + figures compare each tier’s average BM revenue with the 8.0p wholesale baseline. Card offtaker is inferred from the largest external REGO certificate holder — strong evidence of who buys the power, not contractual proof. Full detail on the PPA Benchmark tab.",
     "tam": "Markers are unfilled: ring colour = technology, shape = subsidy (triangle = RO, circle = FiT), size = capacity, dashed = approximate location. BM tier is indicative, modelled from the verified SAM sites. TCV Potential applies the priced SAM sites’ own Year-5 TCV per kW-available (by tier) to each site’s available-for-BM capacity — the DNO maximum export capacity where the register gives one (727 sites), otherwise installed capacity at the SAM fleet’s ratio. Scotland sits outside the modelled tiers, so it carries no BM revenue and is excluded from TCV Potential.",
     "hydro": "Stranded generation runs Bitcoin mining 24/7 — no grid export and no BM revenue, so TCV = mined BTC value."
   },

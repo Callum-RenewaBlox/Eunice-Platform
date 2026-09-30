@@ -401,8 +401,8 @@
       if (k.role === 'sub' && k.metric === 'tcvPot') {
         o.metric = 'v3PotBig';
         o.caption = 'of it, ' + U.int(nBig) + (nBig === 1 ? ' site' : ' sites');
-      } else if (k.metric === 'tcvPot' && adOnly) {
-        o.caption = 'AD-scale only';
+      } else if (k.metric === 'tcvPot' && V3.potCaption) {     // "AD-scale only", the capacity range shown, or "all sizes"
+        o.caption = V3.potCaption(view, rows, k);
       } else {
         var m = (K.metrics[k.metric] || K.metrics.count)(rows);
         o.caption = U.template(k.caption || '', { known: U.int(m.known), n: U.int(rows.length), total: U.int(all.length) });

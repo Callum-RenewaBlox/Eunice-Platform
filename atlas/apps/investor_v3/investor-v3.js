@@ -62,6 +62,27 @@
   }
   /** A hero label never silently changes meaning: any filter swaps in views[v].kpis[0].labelFiltered. */
   function filtered(view) { return RBX.filters.anyHidden(view); }
+  /** The capacity range shown, in the Capacity row's own words (core histogram.js presets and readout, mirrored):
+      "over 1 MW", "1 MW and under", "4 kW–500 kW", "1.2–45.0 MW"; null while every size is shown. */
+  var capDom = {};
+  function capWords(view) {
+    var k = RBX.state.kw[view]; if (!k) return null;
+    if (k[0] === 1000.001 && k[1] === Infinity) return 'over 1 MW';
+    if (k[0] === 0 && k[1] === 1000) return '1 MW and under';
+    var d = capDom[view];
+    if (!d) {
+      var v = (RBX.data.rows[view] || []).map(RBX.filters.capOf).filter(function (x) { return x > 0; });
+      d = capDom[view] = [Math.min.apply(null, v), Math.max.apply(null, v)];
+    }
+    var lo = Math.max(k[0], d[0]), hi = Math.min(k[1], d[1]);
+    return lo >= 1000 && hi >= 1000 ? U.num(lo / 1000, 1) + '–' + U.num(hi / 1000, 1) + ' MW' : U.cap(lo) + '–' + U.cap(hi);
+  }
+  /** The caption beside TAM's TCV potential, in the panel and the PNG: "AD-scale only" under Scale < 10 MW, else the
+      capacity range shown, else views.tam.kpis[0].caption ("all sizes"). */
+  V3.potCaption = function (view, rows, k) {
+    if (bigPot(rows).adOnly) return 'AD-scale only';
+    return capWords(view) || (k && k.caption) || '';
+  };
 
   // the card markup: the skin's hero + tiles become hero + treasury line + ledger + disclaimer band
   var kpiHtml = K.html;
@@ -77,7 +98,7 @@
     var top = hero.querySelector('.kpi-top');
     var pp = document.getElementById('tcvPop'), popOpen = !!(pp && !pp.hidden && B && B.popAnchor && B.popAnchor.id === 'tcvInfo');
     if (top) top.insertAdjacentHTML('beforeend', '<button type="button" class="i-btn" id="tcvInfo" aria-haspopup="dialog" aria-expanded="' + popOpen + '" aria-controls="tcvPop" aria-label="' +
-      (view === 'tam' ? 'How TCV Potential is calculated' : 'How contract value is modelled') + '">' + INFO + '</button>');
+      (view === 'tam' ? 'How TCV potential is calculated' : 'How contract value is modelled') + '">' + INFO + '</button>');
     kp.forEach(function (k, i) {
       if (k.role !== 'sub') return;
       var cell = f.querySelector('#kpi' + i); cell = cell && cell.closest('.kpi'); if (!cell) return;
@@ -123,7 +144,7 @@
         label = bp.rows.length ? 'of it from ' + U.int(bp.rows.length) + ' sites ≥ 10 MW' : bp.adOnly ? 'AD-scale only (<10 MW)' : 'no sites ≥ 10 MW shown';
       } else m = (K.metrics[k.metric] || K.metrics.count)(rows);
       var base = m.f ? m.f : function (x) { return U.num(x, m.d); };
-      if (i === 0 && k.metric === 'tcvPot') capTxt = bigPot(rows).adOnly ? 'AD-scale only' : (k.caption || '');
+      if (i === 0 && k.metric === 'tcvPot') capTxt = V3.potCaption(view, rows, k);
       else capTxt = U.template(k.caption || '', { known: U.int(m.known), n: U.int(rows.length), total: U.int(all.length) });
       if (MONEY[k.metric]) fmt = function (x) { return V3.money(base(x)); };
       else if (i === 0 || sub) fmt = function (x) { return base(x); };
@@ -155,11 +176,18 @@
     var s = bigSplit();
     return 'The <span class="nw">&lt; 10 MW</span> view hides all ' + U.int(s.all) + ' sites of that size' + (s.rest > 0 ? ', including ' + U.int(s.rest) + ' in Scotland with no modelled potential.' : '.');
   }
+  var SRC = '<button type="button" class="src-link" data-foot="sources">Sources &amp; method' + CHEV + '</button>';
   if (B && B.popHtml) {
     var pop0 = B.popHtml;
     B.popHtml = function () {
       var view = RBX.state.view;
-      if (view === 'tam') return pop0.apply(this, arguments).replace('The AD-scale view excludes them.', scaleNote()).replace('tiers 1–5', 'tiers <span class="nw">1–5</span>');
+      // TAM: band.js's popover without its formula list (the drawer's "How contract value is modelled" keeps it), in
+      // sentence case, with the Sources link beside the Scale button
+      if (view === 'tam') {
+        return pop0.apply(this, arguments).replace('How TCV Potential is calculated', 'How TCV potential is calculated')
+          .replace(/<dl class="pop-kv">[\s\S]*?<\/dl>/, '').replace('1–5 MW AD peakers', '<span class="nw">1–5 MW</span> AD peakers')
+          .replace('The AD-scale view excludes them.', scaleNote()).replace('<div class="pop-act">', '<div class="pop-act pop-act2">' + SRC);
+      }
       var c = cfg(), n = (c.notes || {})[view === 'hydro' ? 'hydro' : 'sam'] || '', a = V3.asOf(view), L = (c.labels || {}).tiers || {}, r = I.TCVRATE || {};
       var tbl = view === 'hydro' ? '' : '<table class="pop-tbl"><caption>' + U.caseSafe('TCV rate by tier, £ per kW available for BM') + '</caption><tbody>' +
         [1, 2, 3, 4, 5].map(function (k) { return '<tr><th scope="row">' + U.esc(L[k] || 'Tier ' + k) + '</th><td class="num">£' + U.num(r[k], 2) + '</td></tr>'; }).join('') + '</tbody></table>';
@@ -167,28 +195,82 @@
       return '<div class="pop-h"><h2 class="pop-t" id="tcvPopT">How contract value is modelled</h2>' +
         '<button type="button" class="sh-x" data-pop-close="1" aria-label="Close (Esc)"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15"/></svg></button></div>' +
         '<p>' + U.esc(n) + '</p>' + tbl +
-        '<p class="pop-warn"><b>' + U.esc(a.caveat) + '</b> ' + U.esc(a.stamp) + '.</p>' +
-        '<div class="pop-act"><button type="button" class="src-link" data-foot="sources">Sources &amp; method' + CHEV + '</button></div>';
+        '<p class="pop-warn"><b>' + U.esc(a.caveat) + '</b> <span class="nw">' + U.esc(a.stamp) + '.</span></p>' +
+        '<div class="pop-act">' + SRC + '</div>';
     };
   }
   // Placement: band.js drops the popover under its anchor (over the rail, and off the bottom on TAM). v3 docks it
   // beside the open panel, level with the card, and keeps it inside the viewport (it scrolls if it still does not fit).
+  // Beside an open site sheet it narrows to the gap between the two (the sheet slides in by transform, so its layout
+  // box is read); where that gap is under 300 px it lies over the panel instead, never over the sheet.
+  function placePop(anchor) {
+    var pop = document.getElementById('tcvPop'); if (!pop || pop.hidden) return;
+    var rail = anchor && anchor.closest && anchor.closest('.rail'), top = parseFloat(pop.style.top) || 0;
+    var min = (RBX.skin && RBX.skin.headerBottom ? RBX.skin.headerBottom() : 0) + 14;
+    if (rail && !rail.classList.contains('collapsed') && !U.isMobile()) {
+      var rr = rail.getBoundingClientRect(), kc = anchor.closest('.kcard'), w = Math.min(400, window.innerWidth - 16), left = rr.right + 14;
+      var sh = document.getElementById('sheet'), p = sh && !sh.hidden ? sh.offsetParent : null;
+      if (p) {
+        var room = Math.floor(p.getBoundingClientRect().left + p.clientLeft + sh.offsetLeft - 14 - left);
+        if (room >= 300) w = Math.min(w, room); else { left = rr.left; w = rr.width; }
+      }
+      pop.style.left = Math.round(left) + 'px';
+      pop.style.width = Math.round(w) + 'px';
+      top = (kc || rail).getBoundingClientRect().top;
+    }
+    pop.style.maxHeight = '';
+    top = Math.max(min, Math.min(top, window.innerHeight - 14 - pop.getBoundingClientRect().height));
+    pop.style.top = Math.round(top) + 'px';
+    pop.style.maxHeight = Math.round(window.innerHeight - top - 14) + 'px';
+  }
   if (B && B.openPop) {
     var open0 = B.openPop;
     B.openPop = function (anchor) {
       open0.apply(this, arguments);
-      var pop = document.getElementById('tcvPop'); if (!pop || pop.hidden) return;
-      var rail = anchor && anchor.closest && anchor.closest('.rail'), top = parseFloat(pop.style.top) || 0;
-      var min = (RBX.skin && RBX.skin.headerBottom ? RBX.skin.headerBottom() : 0) + 14;
-      if (rail && !rail.classList.contains('collapsed') && !U.isMobile()) {
-        var rr = rail.getBoundingClientRect(), kc = anchor.closest('.kcard');
-        pop.style.left = Math.round(rr.right + 14) + 'px';
-        top = (kc || rail).getBoundingClientRect().top;
+      placePop(anchor);
+    };
+  }
+  // a site sheet that opens while the popover is up (a tap on the map, a programmatic open) moves it clear
+  if (RBX.sheet) ['open', 'chooser', 'panel'].forEach(function (fn) {
+    var f0 = RBX.sheet[fn]; if (!f0) return;
+    RBX.sheet[fn] = function () {
+      var r = f0.apply(this, arguments), pop = document.getElementById('tcvPop'), a;
+      if (pop && !pop.hidden && (a = popAnchor())) placePop(a);
+      return r;
+    };
+  });
+  // Closing puts focus back on the (i) (or, with the panel folded, its collapse button) whenever the popover held it
+  // and band.js left it nowhere: a view switch closes without refocusing, and Esc aims at an (i) the fold has hidden.
+  function focusable(el) { return !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden'; }
+  function popHasFocus(pop) { return !!(pop && !pop.hidden && pop.contains(document.activeElement)); }
+  if (B && B.closePop) {
+    var close0 = B.closePop;
+    B.closePop = function () {
+      var pop = document.getElementById('tcvPop'), had = popHasFocus(pop);
+      var r = close0.apply(this, arguments);
+      if (had) {
+        var ae = document.activeElement;
+        if (!ae || ae === document.body || !focusable(ae) || pop.contains(ae)) {
+          var t = document.getElementById('tcvInfo');
+          if (!focusable(t)) t = document.getElementById('railCollapse');
+          if (focusable(t)) t.focus({ preventScroll: true });
+        }
       }
-      pop.style.maxHeight = '';
-      top = Math.max(min, Math.min(top, window.innerHeight - 14 - pop.getBoundingClientRect().height));
-      pop.style.top = Math.round(top) + 'px';
-      pop.style.maxHeight = Math.round(window.innerHeight - top - 14) + 'px';
+      return r;
+    };
+  }
+  // folding the panel (L, its button) takes the popover's anchor away: close it rather than leave it floating, and
+  // hand its focus to the collapse button (the (i) is hidden in the folded panel)
+  if (RBX.rail && RBX.rail.setCollapsed) {
+    var fold0 = RBX.rail.setCollapsed;
+    RBX.rail.setCollapsed = function (c) {
+      var r = fold0.apply(this, arguments), pop = document.getElementById('tcvPop');
+      if (c && pop && !pop.hidden && B && B.closePop) {
+        var btn = document.getElementById('railCollapse');
+        if (popHasFocus(pop) && focusable(btn)) btn.focus({ preventScroll: true });
+        B.closePop(false);
+      }
+      return r;
     };
   }
   // The popover sits at the end of <body>: Tab past its last control returns to the control after its trigger,
