@@ -1,1 +1,57 @@
-/* Investor Atlas v3 · map. Every selector starts with :root[data-skin="product"]. */
+/* Investor Atlas v3 · map chrome (design spec §8, §4.6): the size-key capsule, the collapsed-panel disclaimer chip,
+   the scale bar and the attribution (i). Every selector starts with :root[data-skin="product"]. */
+
+/* ============================================================== size key: one horizontal glass capsule (§8.1) */
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk{display:flex;align-items:center;gap:13px;box-sizing:border-box;min-height:42px;padding:4px 14px;
+  left:calc(var(--rail-w) + 28px);bottom:40px;border-radius:12px;border:1px solid var(--rule);background:var(--surface-float);
+  -webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);box-shadow:var(--sh-2);white-space:nowrap;
+  transition:left var(--dur-3) var(--ease),bottom var(--dur-3) var(--ease)}
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk:empty{display:none}
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk[data-sk="tam"]{gap:11px}
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk .sizekey-t{margin:0;font:600 10px/1.35 var(--font-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--sk-label)}
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk .sk-i{display:flex;align-items:center;gap:6px;font:500 11px/1 var(--font-ui);color:var(--ink-2);
+  font-variant-numeric:tabular-nums lining-nums;white-space:nowrap}
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk .sk-i svg{display:block;flex:none;overflow:visible}
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk .sk-i circle{fill:var(--wash);stroke:var(--ink-2);stroke-width:1}
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk .sk-i circle.hollow{fill:none;stroke:var(--ink-3);stroke-width:1.6}
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk .sk-i circle.band{fill:none;stroke-width:1.4}
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk .sk-i circle.dash{stroke-dasharray:2.2 1.6}
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk .sk-div{flex:none;width:1px;height:20px;background:var(--rule-2)}
+
+/* ============================================================== scale bar and attribution (§8.2) */
+:root[data-skin="product"][data-app="investor"] .maplibregl-ctrl-bottom-left{transition:left var(--dur-3) var(--ease),bottom var(--dur-3) var(--ease)}
+:root[data-skin="product"][data-app="investor"] .maplibregl-ctrl-scale{box-sizing:border-box;height:17px;padding:0 5px!important;border-color:var(--ink-3)!important;
+  background:var(--surface-float)!important;color:var(--ink-2)!important;font:500 10px/15px var(--font-ui)!important;text-shadow:none}
+/* the folded attribution is a 24 px glass disc (its text opens from the (i)) */
+:root[data-skin="product"][data-app="investor"] .maplibregl-ctrl-attrib.maplibregl-compact:not(.maplibregl-compact-show){box-sizing:border-box;width:24px;height:24px;min-height:0;
+  padding:0;border-radius:50%!important;box-shadow:var(--sh-2)}
+:root[data-skin="product"][data-app="investor"] .maplibregl-ctrl-attrib.maplibregl-compact:not(.maplibregl-compact-show) .maplibregl-ctrl-attrib-button{top:0;right:0;width:24px;height:24px;
+  border-radius:50%;background-color:transparent}
+/* its (i) is the chrome's outline icon in --ink-2 (not MapLibre's black disc, nor the core's night invert) */
+:root[data-skin="product"][data-app="investor"] .maplibregl-ctrl-attrib-button{background-image:none!important;filter:none!important}
+:root[data-skin="product"][data-app="investor"] .maplibregl-ctrl-attrib-button::before{content:"";position:absolute;inset:0;background:var(--ink-2);
+  -webkit-mask:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'%3E%3Ccircle cx='10' cy='10' r='7.5'/%3E%3Cpath d='M10 9v5M10 6.2v.1'/%3E%3C/svg%3E") center/14px 14px no-repeat;
+  mask:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'%3E%3Ccircle cx='10' cy='10' r='7.5'/%3E%3Cpath d='M10 9v5M10 6.2v.1'/%3E%3C/svg%3E") center/14px 14px no-repeat}
+:root[data-skin="product"][data-app="investor"] .maplibregl-ctrl-attrib-button:hover::before{background:var(--ink-1)}
+:root[data-skin="product"][data-app="investor"] .maplibregl-ctrl-attrib-button:focus{box-shadow:none}
+:root[data-skin="product"][data-app="investor"] .maplibregl-ctrl-attrib-button:focus-visible{outline:2px solid var(--focus);outline-offset:1px;border-radius:50%}
+/* no annotation pencil in the investor zoom stack */
+:root[data-skin="product"][data-app="investor"] .notes-btn,:root[data-skin="product"][data-app="investor"] #notesBtn{display:none!important}
+
+/* ============================================================== panel collapsed: the disclaimer never leaves the screen (§4.6) */
+:root[data-skin="product"][data-app="investor"] .v3-disc{position:absolute;z-index:6;left:72px;bottom:14px;display:none;align-items:center;gap:6px;box-sizing:border-box;height:26px;padding:0 10px;
+  border-radius:8px;border:1px solid var(--rule);background:var(--surface-float);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);box-shadow:var(--sh-2);
+  font:400 11px/1 var(--font-ui);color:var(--ink-3);white-space:nowrap;font-variant-numeric:tabular-nums lining-nums}
+:root[data-skin="product"][data-app="investor"] .v3-disc b{font-weight:500;color:var(--ink-2)}
+:root[data-skin="product"][data-app="investor"] .v3-disc .d{color:inherit}
+:root[data-skin="product"][data-app="investor"] .v3-disc svg.i{flex:none;width:12px;height:12px;stroke-width:1.5;color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .app.rail-collapsed .v3-disc{display:flex}
+:root[data-skin="product"][data-app="investor"] .app.rail-collapsed .sizekey,:root[data-skin="product"][data-app="investor"] .app.rail-collapsed .sizekey.v3-sk{left:72px;bottom:74px}
+:root[data-skin="product"][data-app="investor"] .app.rail-collapsed .maplibregl-ctrl-bottom-left{left:72px;bottom:48px}
+:root[data-skin="product"][data-app="investor"] .app[data-view="ppa"] .v3-disc,:root[data-skin="product"][data-app="investor"] .app.presenting .v3-disc{display:none}
+
+/* ============================================================== phone: the key and the chip give way to the peek (§12) */
+@media (max-width:760px){
+  :root[data-skin="product"][data-app="investor"] .sizekey.v3-sk,:root[data-skin="product"][data-app="investor"] .app.rail-collapsed .v3-disc{display:none}
+  :root[data-skin="product"][data-app="investor"] .app.rail-collapsed .maplibregl-ctrl-bottom-left{left:10px;bottom:calc(var(--peek-h) + 8px)}
+}
