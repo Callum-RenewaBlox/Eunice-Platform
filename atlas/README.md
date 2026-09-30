@@ -1,15 +1,16 @@
 # RenewaBlox Atlas v2
 
-One design system and one codebase for the two public-facing map pages:
+One design system and one codebase for the map pages:
 
 | Build | Output (repo root) | Wrapper | Default theme |
 |---|---|---|---|
 | Client Atlas (public) | `client_atlas_v2.html` | `app_client_atlas_v2.py` | Paper (light), "product" skin — see below |
 | Investor Atlas (gated) | `investor_atlas_v2.html` | `app_investor_atlas_v2.py` | Night |
+| Investor Atlas v3 (gated) | `investor_atlas_v3.html` | `app_investor_atlas_v3.py` | Paper, "product" skin + RenewaBlox brand — see "Investor Atlas v3" |
 
-Both outputs are single self-contained HTML files (data, CSS, JS and the Natural Earth basemap pack inlined;
-MapLibre GL 4.7.1 from jsDelivr; Google Fonts: Inter + Newsreader for the investor build, Open Sans for the
-client's RenewaBlox brand). The build contract is
+All outputs are single self-contained HTML files (data, CSS, JS and the Natural Earth basemap pack inlined;
+MapLibre GL 4.7.1 from jsDelivr; Google Fonts: Inter + Newsreader for the investor v2 build, Open Sans for the
+RenewaBlox-branded client and investor v3 builds). The build contract is
 `DESIGN_SPEC.md` (design director's spec; section numbers below refer to it).
 
 The internal `atlas.html` / `app_atlas.py` are not part of this tree.
@@ -142,16 +143,17 @@ theme button, a left panel (label, SAM/TAM switch, one-line description, KPI car
 and presets, legend-as-filter) and a right slide-in mini-report card. Light by default with a dark theme (theme ids
 stay `paper` / `night`). Map notes are kept but default to off.
 
-* **Files (client only):** `apps/client/skin-product.css` (every selector starts with `:root[data-skin="product"]`,
-  tokens included) and `apps/client/skin-product.js` (`RBX.skin`; wraps `RBX.header.render`, `RBX.kpi.html`,
+* **Files (shared by the client and Investor v3):** `skins/product/skin-product.css` (every selector starts with
+  `:root[data-skin="product"]`, tokens included) and `skins/product/skin-product.js` (`RBX.skin`; wraps `RBX.header.render`, `RBX.kpi.html`,
   `RBX.hist.html`, `RBX.legend.html`, `RBX.rail.render` and `RBX.mapctl.obstruction / fitPadding / offset`; registers
   `hooks.railBefore`, the TAM `hooks.legendGroups` order and the sheet sections `sam.capacity`, `sam.revenue` (tier
   badge + meter) and `tam.facts`; adds soft SAM/Hydro shadow layers; registers RenewaBlox basemap palettes on the kit's
   light/dark; sets `RBX.brand.exportBand`, the PNG export's header band). Panel copy: `views[v].label` and
   `views[v].summary` in `apps/client/config.json`. The only `core/` hook it relies on is `RBX.brand.exportBand` in
   `core/js/export.js` (without it the export draws the core band).
-* **Isolation:** only `apps/client/template.html` sets `data-skin="product"`, only the client manifest lists the two
-  files, and the JS returns at once without the attribute. Tests: `test_client_uses_product_skin`,
+* **Isolation:** only the client and Investor v3 templates set `data-skin="product"`, only their manifests list the
+  two files, and the JS returns at once without the attribute. The skin stays audience-neutral (the client-safety scan
+  reads it inside the client page), so every investor adaptation lives in `apps/investor_v3/`. Tests: `test_client_uses_product_skin`,
   `test_investor_never_gets_the_client_skin`, `test_product_skin_rules_are_scoped`,
   `test_product_skin_tier_ramp_is_ordered_and_visible`, `test_client_carries_the_renewablox_brand`.
 * **Palettes** (dataviz `validate_palette.js`, 29 Sep 2026): BM tiers, claret → gold, luminance rising Tier 1 → 5 —
@@ -228,6 +230,39 @@ client (`view site theme present`). Access is controlled by the Streamlit Cloud 
 
 ---
 
+## Investor Atlas v3
+
+`apps/investor_v3/` builds `investor_atlas_v3.html`, wrapped by `app_investor_atlas_v3.py`. It is the investor
+build in the RenewaBlox-branded "product" skin (owner request, 30 Sep 2026: branded, beautiful, not busy). The design
+came from a three-direction design panel ("quiet luxury" won; the spec and mock-ups were kept outside the repo).
+Investor v2 is kept as it is.
+
+* **Same data and checks as v2:** `config.audience = "investor"`, so `build.py` runs the investor assembly, all 50
+  canonical-number asserts, the investor copy tokens, the name checks and the story (from its own `story.json`,
+  else `apps/investor/story.json`). `COPY['investor_v3']` keeps every investor disclaimer, note, footer and card string.
+* **Bundle:** core → `skins/product/skin-product.js` → the investor modules (so their sheet sections and legends win)
+  → `apps/investor_v3/investor-v3.js`, `v3-sheet.js`, `v3-present.js`, `v3-map.js` → `core/js/app.js`. The CSS is
+  core → `present.css` → the skin → the v3 files. `apps/investor/investor.css` is not bundled.
+* **What v3 removes:** the KPI band, its GB power strip and the footer bar (`RBX.band.render`, `renderFoot` and
+  `fitMkt` are no-ops), and the rail headline block (the skin hides the kicker and standfirst; `views.*.standfirst`
+  is gone; the headline stays for screen readers and the PNG title). The legend notes and the "In view" switch are
+  also gone.
+* **The panel:**
+  * one teal hero per view (SAM £221.9M, TAM £7.17bn, Hydro £13.6M), with the treasury or ≥ 10 MW line;
+  * a three-row ledger;
+  * the disclaimer band ("Indicative; not investment advice." · model or registers stamp · Sources & method);
+  * legend rows that show why each tier pays (an 8.0p wholesale stub plus the uplift in the tier colour);
+  * TAM extras behind "More filters";
+  * a one-row capacity disclosure.
+
+  When any filter is active, the hero label reads "Contract value shown".
+* **Confidentiality:**
+  * The header carries "Investor Atlas / Confidential · investor use only". Below 1100 px that moves to the
+    disclaimer band.
+  * The phone peek, the Present card and PNG exports carry the confidential mark and the disclaimer.
+* **Tokens:** `--v3-*` in `investor-v3.css` (`--v3-num-w` 400 is the hero weight; set 600 for the client's heavier
+  look).
+
 ## Architecture
 
 ### Tree
@@ -244,6 +279,8 @@ atlas/
                            (+ ppa.js, PPA module). notes/dialogs/export/nearme/drag are the client P1 features; any
                            audience can list them in its manifest.
     js/investor/           investor-only modules (never in the client manifest; build.py enforces it)
+  skins/product/           the shared "product" skin (client + investor v3)
+  brand/                   RenewaBlox wordmarks, roundel and brand tokens (README.md)
   apps/<app>/              template.html · manifest.json (bundle order) · config.json (copy, views, switches)
   data/                    see "Refreshing data"
   tools/                   extract_v1.py (migration) · v1/ (frozen v1 pages) · validate_layers.js · validate_palettes.sh
