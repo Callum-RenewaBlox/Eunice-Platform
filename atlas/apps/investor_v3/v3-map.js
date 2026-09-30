@@ -3,18 +3,20 @@
    a wrapper or an extra map layer:
    - the size key is a horizontal glass capsule whose discs are zoom-true (RBX.layers.radiusAt / tamScaleAt): SAM
      £1M / £4M / £9M plus the hollow "Awaiting BM figure" ring, Hydro 100 kW / 500 kW / 1.3 MW, TAM the five capacity
-     bands in one row plus the dashed "Postcode district" ring; it stops short of the zoom stack and an open sheet
-     (wrapping onto a second row, or standing down when there is no room for it);
+     bands in one row plus the dashed "Postcode district" ring; it stops short of the zoom stack, the attribution (i)
+     and an open sheet, staying one row (its title, then the item after its divider give way; else it stands down);
    - while the panel is collapsed a small glass chip keeps the disclaimer and the model date on screen (with the
      Confidential mark at ≤ 1100 px, where the header lockup is hidden), and the scale bar and the size key restack
-     above it; on tablets (761–1050 px) opening a sheet folds the panel and the sheet's foot carries that line;
+     above it; on tablets (761–1050 px) a sheet folds the panel (opened there, or brought there by a resize or a
+     rotation) and the sheet's foot carries that line; opening the panel beside it re-frames the selected site;
    - the selected site gets a 2.5 px ring, a 2 px halo and a soft teal wash; hollow Hydro "Unverified" rings keep no
      shadow; the attribution folds to its (i) on desktop too; no annotation pencil; the hover tooltip stays clear of
      an open sheet and prints money as the panel does (£2.9M);
    - the PNG export band carries "Confidential · investor use only · <as of> · Indicative; not
      investment advice." right-aligned, with the brand quarter-circle moved clear of the text; the export card is
      v3's own (a quiet title, the panel's three figures, the legend over the sites shown) and the footer names the
-     view's sources and date; downloads drop the internal "v3" from their names; CSVs add the as-of and disclaimer.
+     view's sources and date; the basemap is rendered at the image's own resolution for the frame it grabs;
+     downloads drop the internal "v3" from their names; CSVs add the as-of and disclaimer.
    Inert unless <html data-skin="product" data-app="investor">. */
 (function () {
   'use strict';
@@ -105,20 +107,33 @@
     return { left: r.left + dx, right: r.right + dx + dw, top: r.top, bottom: r.bottom };
   }
   function shown(el) { return !!el && !el.hidden && el.offsetParent !== null; }
-  /** The key ends 12 px short of the zoom stack (when it shares the bottom of the map) and 14 px short of an open
-      sheet: past that it wraps onto a second row under its title, and below ~220 px it stands down (the legend in
-      the panel still explains the discs). Phones hide it altogether (§12). */
+  /** The key ends 12 px short of the zoom stack (when it shares the bottom of the map), 10 px short of the
+      attribution (i) (when that sits at the key's height) and 14 px short of an open sheet. It is always one 42 px row
+      (§8.1): short of room, first its title gives way (the discs' labels name their measure), then the item after the
+      divider (SAM "Awaiting BM figure", TAM "Postcode district": the panel's legend and the sheet still explain
+      them); if even that does not fit, it stands down rather than stacking into a box. Phones hide it (§12). */
   V3.fitSizeKey = function () {
     var el = document.getElementById('sizekey'); if (!el) return;
-    el.classList.remove('sk-wrap', 'sk-off'); el.style.maxWidth = '';
+    el.classList.remove('sk-off', 'sk-tight', 'sk-tight2'); el.style.maxWidth = '';
     if (!el.innerHTML || U.isMobile() || !shown(el)) return;
     var k = restX(el), lim = window.innerWidth - 14, ctl = document.getElementById('mapCtl'), sh = document.getElementById('sheet');
+    var at = document.querySelector('#map .maplibregl-ctrl-bottom-right');
     if (shown(sh)) lim = Math.min(lim, restX(sh).left - 14);
     if (shown(ctl)) { var c = restX(ctl); if (c.bottom > k.top - 80 && c.top < k.bottom) lim = Math.min(lim, c.left - 12); }
+    if (shown(at) && at.offsetWidth) {
+      // the container slides with the sheet (restX reads where it comes to rest); opened, the attribution text runs
+      // left under the key's row, so only its (i) at the right end counts
+      var a = restX(at), ai = at.querySelector('.maplibregl-compact-show') ? a.right - 24 : a.left;
+      if (a.top < k.bottom + 8) lim = Math.min(lim, ai - 10);
+    }
     var room = Math.floor(lim - k.left);
-    if (room < 220) { el.classList.add('sk-off'); return; }
+    if (room < 180) { el.classList.add('sk-off'); return; }
     el.style.maxWidth = room + 'px';
-    if (el.scrollWidth > room + 1) el.classList.add('sk-wrap');
+    var over = function () { return el.scrollWidth > room + 1; };
+    if (!over()) return;
+    el.classList.add('sk-tight'); if (!over()) return;
+    if (el.querySelector('.sk-div')) { el.classList.add('sk-tight2'); if (!over()) return; }
+    el.classList.remove('sk-tight', 'sk-tight2'); el.classList.add('sk-off'); el.style.maxWidth = '';
   };
 
   // ------------------------------------------------------------------ disclaimer chip while the panel is collapsed (§4.6)
@@ -152,11 +167,14 @@
   var autoRail = false, inAuto = false;
   if (RBX.rail && RBX.rail.setCollapsed) {
     var coll0 = RBX.rail.setCollapsed;
-    RBX.rail.setCollapsed = function () {
+    RBX.rail.setCollapsed = function (c) {
       if (!inAuto) autoRail = false;                           // the reader folded or opened the panel: theirs from now on
       var r = coll0.apply(this, arguments);
       V3.syncDisc();
       if (Sk && Sk.clearLabels) setTimeout(Sk.clearLabels, 320);
+      // the reader opened the panel beside a sheet (a tablet's narrow strip of map): the selected site comes back
+      // out from under it (not when a closing sheet unfolds the panel, so the camera never moves as it closes)
+      if (!inAuto && !c) reframeSoon();
       return r;
     };
   }
@@ -188,6 +206,30 @@
       if (autoRail && Sh.isOpen()) { autoRail = false; if (RBX.state.railCollapsed) railAuto(false); }
       return close0.apply(this, arguments);
     };
+  }
+  // a rotation or a resize into tablet width with a sheet already open folds the panel as opening one there does (an
+  // iPad turned to portrait otherwise kept a 140 px strip of map, and a phone turned to landscape lost the disclaimer
+  // with the sheet foot hidden); back above 1050 px, a panel folded that way opens again
+  var mqTab = window.matchMedia ? window.matchMedia('(min-width: 761px) and (max-width: ' + TABLET_MAX + 'px)') : null;
+  function onTab(e) {
+    if (!Sh || !Sh.isOpen || !Sh.isOpen()) return;
+    if (e.matches) {
+      var was = RBX.state.railCollapsed;
+      autoFold();
+      if (!was && RBX.state.railCollapsed) reframeSoon();
+    } else if (autoRail && window.innerWidth > TABLET_MAX) {
+      autoRail = false;
+      if (RBX.state.railCollapsed) { railAuto(false); reframeSoon(); }
+    }
+  }
+  if (mqTab) { if (mqTab.addEventListener) mqTab.addEventListener('change', onTab); else if (mqTab.addListener) mqTab.addListener(onTab); }
+  /** Once the panel has come to rest (0.32 s), keep the open sheet's site in the map left between the panel and the
+      sheet: ensureVisible moves the camera only when the site is covered or off-screen. */
+  function reframeSoon() {
+    setTimeout(function () {
+      var row = Sh && Sh.isOpen && Sh.isOpen() && Sh.current && Sh.current();
+      if (row && !U.isMobile() && Mc && Mc.ensureVisible) Mc.ensureVisible(row);
+    }, 340);
   }
   // the camera frames the site between the panels where they come to rest: core mapctl measures them mid-slide (the
   // folding panel at full width, the sheet still off-screen), which jammed the selected site against the sheet
@@ -539,6 +581,35 @@
         } catch (e) { /* the core card stays */ }
       }
       return cv;
+    };
+  }
+
+  // ------------------------------------------------------------------ PNG export: the basemap at the image's resolution (§11)
+  // core composite cover-fits the map canvas into the 1600 × 900 @2x image, so a 1× screen's canvas (1440 px wide)
+  // was stretched 2.2× and the basemap labels and markers went soft beside the card's sharp text. For the one frame
+  // it grabs, the map renders at the pixel ratio the image needs (at most 3), then follows the screen again (null
+  // clears the override: core never sets one, and a number would stop it tracking devicePixelRatio). If no sharp
+  // frame comes (core's grab gives up after 3 s), the screen's own frame is grabbed instead: never an image without
+  // its map.
+  var EXP_W = 1600, EXP_MAP_H = 900 - 64 - FOOT;               // core composite: image width, map between band and footer
+  if (E && E.grabMap) {
+    var grab0 = E.grabMap;
+    E.grabMap = function (cb) {
+      var m = RBX.map, box = document.getElementById('map'), self = this, args = arguments;
+      if (!m || !box || !m.setPixelRatio || !m.getPixelRatio || !box.clientWidth || !box.clientHeight) return grab0.apply(self, args);
+      var need = Math.min(3, 2 * Math.max(EXP_W / box.clientWidth, EXP_MAP_H / box.clientHeight));
+      if (need <= m.getPixelRatio() * 1.2) return grab0.apply(self, args);   // a stretch under 1.2× stays crisp (2× screens)
+      var started = false, restored = false;
+      var restore = function () { if (restored) return; restored = true; try { m.setPixelRatio(null); } catch (e) { /* stays sharp */ } };
+      var go = function () {
+        if (started) return; started = true;
+        var back = function (cv) { restore(); if (cv) cb(cv); else grab0.call(self, cb); };
+        try { grab0.call(self, back); } catch (e) { back(null); }
+      };
+      try { m.setPixelRatio(need); } catch (e) { restore(); return grab0.apply(self, args); }
+      m.once('idle', go);
+      m.triggerRepaint();
+      setTimeout(go, 2500);                                    // 'idle' never comes while something keeps repainting
     };
   }
 

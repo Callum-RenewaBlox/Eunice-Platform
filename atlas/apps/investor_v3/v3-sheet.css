@@ -13,6 +13,9 @@
 :root[data-skin="product"][data-app="investor"] .sheet .sh-x:hover{background:var(--wash)}
 :root[data-skin="product"][data-app="investor"] .sheet .sh-body{padding:10px 18px 24px;
   -webkit-mask-image:linear-gradient(#000 calc(100% - 22px),transparent);mask-image:linear-gradient(#000 calc(100% - 22px),transparent)}
+/* scrolled (v3-sheet.js): the content fades in under the chip row as it does under the panel's header */
+:root[data-skin="product"][data-app="investor"] .sheet .sh-body.v3-scrolled{
+  -webkit-mask-image:linear-gradient(transparent 0,#000 18px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(transparent 0,#000 18px,#000 calc(100% - 22px),transparent)}
 :root[data-skin="product"][data-app="investor"] .sheet .sh-name{margin:0;font:700 21px/1.2 var(--font-ui);letter-spacing:-.022em;color:var(--ink-1)}
 :root[data-skin="product"][data-app="investor"] .sheet .sh-meta{margin:4px 0 0;font:400 12.5px/1.45 var(--font-ui);color:var(--ink-2)}
 :root[data-skin="product"][data-app="investor"] .sheet .sh-meta::before{display:none}
@@ -92,10 +95,14 @@
 :root[data-skin="product"][data-app="investor"] .sheet .sh-sec .hero{display:flex;align-items:baseline;gap:7px;font:var(--v3-num-w,400) 30px/1 var(--font-ui);letter-spacing:-.025em;
   color:var(--ink-1);font-variant-numeric:tabular-nums lining-nums}
 :root[data-skin="product"][data-app="investor"] .sheet .sh-sec .hero small{font:500 11.5px/1 var(--font-ui);letter-spacing:0;color:var(--ink-3)}
-/* key-value lists as hairline ledgers bleeding to the card edges */
-:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .kv{grid-template-columns:auto minmax(0,1fr);gap:0;margin:0 -16px;font:400 12.5px/1.35 var(--font-ui)}
-:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .kv dt{padding:7px 14px 7px 16px;border-top:1px solid var(--v3-hair);color:var(--ink-2)}
-:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .kv dd{padding:7px 16px 7px 0;border-top:1px solid var(--v3-hair);font-weight:600;color:var(--ink-1)}
+/* key-value lists as hairline ledgers bleeding to the card edges, in the contract-value ledger's row style (label 12 px,
+   value 13 px semibold, 8 px padding). Label and value share one px line height, so their baselines meet without
+   baseline alignment (which would step the per-cell hairlines); a chip (the "inferred" tag, the export chip) sits on
+   that baseline with negative block margins, so it no longer deepens its row */
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .kv{grid-template-columns:auto minmax(0,1fr);gap:0;margin:0 -16px;font:400 12px/17px var(--font-ui)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .kv dt{padding:8px 14px 8px 16px;border-top:1px solid var(--v3-hair);color:var(--ink-2)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .kv dd{padding:8px 16px 8px 0;border-top:1px solid var(--v3-hair);font-size:13px;font-weight:600;color:var(--ink-1)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .kv dd :is(.tag,.expchip){margin-block:-4px;vertical-align:baseline}
 :root[data-skin="product"][data-app="investor"] .sheet .sh-sec .kv :is(dt,dd):nth-child(-n+2){border-top:0}
 :root[data-skin="product"][data-app="investor"] .sheet .sh-sec .sh-sec-h + .kv :is(dt,dd):nth-child(-n+2){padding-top:2px}
 :root[data-skin="product"][data-app="investor"] .sheet .sh-sec > .kv:last-child,:root[data-skin="product"][data-app="investor"] .sheet .sh-sec > div:last-child > .kv:last-child{margin-bottom:-5px}

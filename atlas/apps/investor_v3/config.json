@@ -484,7 +484,7 @@
   },
   "attribution": "Geocoding: <a href=\"https://postcodes.io\">postcodes.io</a>",
   "ppaPlaceholder": "The PPA Benchmark module loads here.",
-  "csvHeader": "Confidential — investor use only",
+  "csvHeader": "Confidential · investor use only",
   "csvNote": {
     "_doc": "v3-map.js: row 2 of each CSV download, under the csvHeader confidentiality row (sites shown per view; register = the PPA site register).",
     "sam": "Model · {{model_as_of}} · Indicative; not investment advice.",

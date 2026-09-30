@@ -17,11 +17,11 @@
 :root[data-skin="product"][data-app="investor"] .sizekey.v3-sk .sk-i circle.band{fill:none;stroke-width:1.4}
 :root[data-skin="product"][data-app="investor"] .sizekey.v3-sk .sk-i circle.dash{stroke-dasharray:2.2 1.6}
 :root[data-skin="product"][data-app="investor"] .sizekey.v3-sk .sk-div{flex:none;width:1px;height:20px;background:var(--rule-2)}
-/* short of room (V3.fitSizeKey measures it against the zoom stack and an open sheet): the title on its own row, the
-   discs wrapping under it; no room at all: the key stands down */
-:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk.sk-wrap{flex-wrap:wrap;column-gap:12px;row-gap:3px;padding-top:7px;padding-bottom:7px}
-:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk.sk-wrap .sizekey-t{flex:0 0 100%}
-:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk.sk-wrap .sk-div{display:none}
+/* short of room (V3.fitSizeKey measures it against the zoom stack, the attribution (i) and an open sheet) it stays
+   one row: the title gives way, then the item after the divider; if that still does not fit, the key stands down */
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk.sk-tight{gap:10px}
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk.sk-tight .sizekey-t{display:none}
+:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk.sk-tight2 .sk-div,:root[data-skin="product"][data-app="investor"] .sizekey.v3-sk.sk-tight2 .sk-div ~ *{display:none}
 :root[data-skin="product"][data-app="investor"] .sizekey.v3-sk.sk-off{display:none}
 
 /* ============================================================== scale bar and attribution (§8.2) */

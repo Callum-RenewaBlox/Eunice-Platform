@@ -8,6 +8,7 @@
    - Projected BM revenue (SAM, order 20): the uplift over wholesale, average and top 5% figures and the core ladder
      (the registered section's own `after`), redrawn in the v3 grammar;
    - Capacity, route, register, stranded and nearby keep the investor modules' content and take the card style;
+   - once the body is scrolled, it fades in softly under the chip row (as the panel does under its header);
    - a quiet foot line (Confidential · as of · disclaimer) for phones and folded-panel tablets, where nothing else on
      screen carries it; a site chosen from search returns focus to the search button when its sheet closes.
    Inert unless <html data-skin="product" data-app="investor">. */
@@ -174,6 +175,14 @@
   Sh.open = function (row) { var r = open0.apply(this, arguments); foot(row && row.kind); return r; };
   Sh.chooser = function (rows) { var r = chooser0.apply(this, arguments); foot(rows && rows[0] ? rows[0].kind : view()); return r; };
   Sh.panel = function () { var r = panel0.apply(this, arguments); foot(view()); return r; };
+
+  // ------------------------------------------------------------------ body scrolled: a soft top fade, as the panel has
+  // Scrolled content otherwise meets the chip row in a hard cut (large figures sliced through). Every open renders a
+  // fresh body at the top, so the class goes with it.
+  document.addEventListener('scroll', function (e) {
+    var b = e.target;
+    if (b && b.id === 'shBody') b.classList.toggle('v3-scrolled', b.scrollTop > 2);
+  }, { capture: true, passive: true });
 
   // ------------------------------------------------------------------ search → site → close: focus goes back to search
   // Choosing a result closes the palette keeping focus in its (now hidden) input, so the sheet recorded no usable
