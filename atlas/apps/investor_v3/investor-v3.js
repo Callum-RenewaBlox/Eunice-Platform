@@ -75,7 +75,8 @@
     grid.classList.add('v3-ledger');
     var sw = f.querySelector('#ivSw'); if (sw) sw.remove();
     var top = hero.querySelector('.kpi-top');
-    if (top) top.insertAdjacentHTML('beforeend', '<button type="button" class="i-btn" id="tcvInfo" aria-haspopup="dialog" aria-expanded="false" aria-controls="tcvPop" aria-label="' +
+    var pp = document.getElementById('tcvPop'), popOpen = !!(pp && !pp.hidden && B && B.popAnchor && B.popAnchor.id === 'tcvInfo');
+    if (top) top.insertAdjacentHTML('beforeend', '<button type="button" class="i-btn" id="tcvInfo" aria-haspopup="dialog" aria-expanded="' + popOpen + '" aria-controls="tcvPop" aria-label="' +
       (view === 'tam' ? 'How TCV Potential is calculated' : 'How contract value is modelled') + '">' + INFO + '</button>');
     kp.forEach(function (k, i) {
       if (k.role !== 'sub') return;
@@ -85,8 +86,8 @@
     });
     var uni = f.querySelector('.universe');
     var a = V3.asOf(view);
-    var cav = document.createElement('div'); cav.className = 'caveat';
-    cav.innerHTML = INFO + '<div class="cv"><span class="conf-fb">' + LOCK + U.esc(confText()) + '</span><b>' + U.esc(a.caveat) + '</b>' +
+    var cav = document.createElement('div'); cav.className = 'caveat';   // no icon: the text sits flush with the ledger
+    cav.innerHTML = '<div class="cv"><span class="conf-fb">' + LOCK + U.esc(confText()) + '</span><b>' + U.esc(a.caveat) + '</b>' +
       '<div class="row"><span>' + U.esc(a.stamp) + '</span><button type="button" class="src-link" data-foot="sources" aria-label="Sources &amp; method">Sources' + CHEV + '</button></div></div>';
     if (uni) uni.replaceWith(cav); else grid.appendChild(cav);
     var card = f.querySelector('.kcard');
@@ -96,11 +97,22 @@
   };
 
   var announce = U.debounce(function (msg) { var l = document.getElementById('live'); if (l) l.textContent = msg; }, 400);
+  /** The rail's screen-reader h2 (rail.js prints views[v].headline, a fixed sentence with unfiltered figures): a
+      neutral name for the panel instead, which says when the figures below cover only the sites shown. */
+  var SCOPE = { sam: 'serviceable market (SAM)', tam: 'addressable market (TAM)' };
+  function railHeading(view, vc, filt) {
+    var h2 = document.querySelector('#rail h2.headline'); if (!h2) return;
+    var t = (vc.label || '') + (SCOPE[view] ? ', ' + SCOPE[view] : '') + (filt ? ': figures for the sites shown' : '');
+    if (h2.textContent !== t) h2.textContent = t;
+  }
   K.update = function (instant) {
     var view = RBX.state.view, vc = (RBX.config.views || {})[view] || {};
     if (!vc.kpis || view === 'ppa') return;
     var rows = K.rows(view), all = RBX.data.rows[view] || [], parts = [], filt = filtered(view);
     var heroEl = document.querySelector('.kcard .kpi-hero'); if (heroEl) heroEl.classList.toggle('filtered', filt);
+    // TAM with Scale = < 10 MW: the hero caption already says "AD-scale only", so the variant line steps aside
+    if (heroEl) heroEl.classList.toggle('v3-adonly', view === 'tam' && bigPot(rows).adOnly);
+    railHeading(view, vc, filt);
     vc.kpis.forEach(function (k, i) {
       var el = document.getElementById('kpi' + i), cap = document.getElementById('kpic' + i), lb = document.getElementById('kpil' + i);
       if (!el) return;
@@ -108,7 +120,7 @@
       if (sub && k.metric === 'tcvPot') {                          // TAM: "£4.08bn of it from 76 sites ≥ 10 MW"
         var bp = bigPot(rows);
         m = { v: bp.v, f: U.abbr };
-        label = bp.rows.length ? 'of it from ' + U.int(bp.rows.length) + ' sites ≥ 10 MW' : bp.adOnly ? 'AD-scale only (<10 MW)' : 'no sites ≥ 10 MW in view';
+        label = bp.rows.length ? 'of it from ' + U.int(bp.rows.length) + ' sites ≥ 10 MW' : bp.adOnly ? 'AD-scale only (<10 MW)' : 'no sites ≥ 10 MW shown';
       } else m = (K.metrics[k.metric] || K.metrics.count)(rows);
       var base = m.f ? m.f : function (x) { return U.num(x, m.d); };
       if (i === 0 && k.metric === 'tcvPot') capTxt = bigPot(rows).adOnly ? 'AD-scale only' : (k.caption || '');
@@ -116,9 +128,9 @@
       if (MONEY[k.metric]) fmt = function (x) { return V3.money(base(x)); };
       else if (i === 0 || sub) fmt = function (x) { return base(x); };
       else fmt = function (x) {                                     // ledger: value, then its unit and caption small
-        var v = String(base(x));
+        var v = String(base(x));                                    // (a real space before each, so it reads "105 of 129")
         if (k.unit && v.indexOf('<small>') < 0) v += '<small>' + U.esc(k.unit) + '</small>';
-        return v + (capTxt ? '<small>' + U.esc(capTxt) + '</small>' : '');
+        return v.replace(/\s*<small>/g, ' <small>') + (capTxt ? ' <small>' + U.esc(capTxt) + '</small>' : '');
       };
       if (sub && k.metric === 'tcvPot' && !bigPot(rows).rows.length) { el.setAttribute('data-v', '0'); el.innerHTML = ''; }
       else if (instant || RBX.reduced) { el.setAttribute('data-v', String(m.v)); el.innerHTML = fmt(m.v); } else U.countUp(el, m.v, fmt, 600);
@@ -133,27 +145,102 @@
   };
 
   // ------------------------------------------------------------------ (i) popover: view-aware ("How contract value is modelled")
+  /** TAM's ≥ 10 MW arithmetic: the £4.08bn comes from the 76 sites ≥ 10 MW with a BM tier, while "< 10 MW" hides all
+      81 sites of that size (the other 5 are in Scotland, outside the modelled tiers, and carry no potential). */
+  function bigSplit() {
+    var big = (RBX.data.rows.tam || []).filter(function (r) { return r.big; }), pot = big.filter(function (r) { return r.bt > 0; }).length;
+    return { all: big.length, pot: pot, rest: big.length - pot };
+  }
+  function scaleNote() {
+    var s = bigSplit();
+    return 'The <span class="nw">&lt; 10 MW</span> view hides all ' + U.int(s.all) + ' sites of that size' + (s.rest > 0 ? ', including ' + U.int(s.rest) + ' in Scotland with no modelled potential.' : '.');
+  }
   if (B && B.popHtml) {
     var pop0 = B.popHtml;
     B.popHtml = function () {
       var view = RBX.state.view;
-      if (view === 'tam') return pop0.apply(this, arguments);
+      if (view === 'tam') return pop0.apply(this, arguments).replace('The AD-scale view excludes them.', scaleNote()).replace('tiers 1–5', 'tiers <span class="nw">1–5</span>');
       var c = cfg(), n = (c.notes || {})[view === 'hydro' ? 'hydro' : 'sam'] || '', a = V3.asOf(view), L = (c.labels || {}).tiers || {}, r = I.TCVRATE || {};
       var tbl = view === 'hydro' ? '' : '<table class="pop-tbl"><caption>' + U.caseSafe('TCV rate by tier, £ per kW available for BM') + '</caption><tbody>' +
         [1, 2, 3, 4, 5].map(function (k) { return '<tr><th scope="row">' + U.esc(L[k] || 'Tier ' + k) + '</th><td class="num">£' + U.num(r[k], 2) + '</td></tr>'; }).join('') + '</tbody></table>';
+      // the Sources link carries no data-pop-close: band.js would stop there and never open the drawer (closed below)
       return '<div class="pop-h"><h2 class="pop-t" id="tcvPopT">How contract value is modelled</h2>' +
         '<button type="button" class="sh-x" data-pop-close="1" aria-label="Close (Esc)"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15"/></svg></button></div>' +
         '<p>' + U.esc(n) + '</p>' + tbl +
         '<p class="pop-warn"><b>' + U.esc(a.caveat) + '</b> ' + U.esc(a.stamp) + '.</p>' +
-        '<div class="pop-act"><button type="button" class="src-link" data-foot="sources" data-pop-close="1">Sources &amp; method' + CHEV + '</button></div>';
+        '<div class="pop-act"><button type="button" class="src-link" data-foot="sources">Sources &amp; method' + CHEV + '</button></div>';
     };
   }
+  // Placement: band.js drops the popover under its anchor (over the rail, and off the bottom on TAM). v3 docks it
+  // beside the open panel, level with the card, and keeps it inside the viewport (it scrolls if it still does not fit).
+  if (B && B.openPop) {
+    var open0 = B.openPop;
+    B.openPop = function (anchor) {
+      open0.apply(this, arguments);
+      var pop = document.getElementById('tcvPop'); if (!pop || pop.hidden) return;
+      var rail = anchor && anchor.closest && anchor.closest('.rail'), top = parseFloat(pop.style.top) || 0;
+      var min = (RBX.skin && RBX.skin.headerBottom ? RBX.skin.headerBottom() : 0) + 14;
+      if (rail && !rail.classList.contains('collapsed') && !U.isMobile()) {
+        var rr = rail.getBoundingClientRect(), kc = anchor.closest('.kcard');
+        pop.style.left = Math.round(rr.right + 14) + 'px';
+        top = (kc || rail).getBoundingClientRect().top;
+      }
+      pop.style.maxHeight = '';
+      top = Math.max(min, Math.min(top, window.innerHeight - 14 - pop.getBoundingClientRect().height));
+      pop.style.top = Math.round(top) + 'px';
+      pop.style.maxHeight = Math.round(window.innerHeight - top - 14) + 'px';
+    };
+  }
+  // The popover sits at the end of <body>: Tab past its last control returns to the control after its trigger,
+  // Shift+Tab before its first returns to the trigger, and it closes once focus has left it and its trigger.
+  /** The popover's trigger; a rail re-render (the TAM Scale button inside the popover) replaces #tcvInfo. */
+  function popAnchor() {
+    var a = B && B.popAnchor;
+    if (a && !a.isConnected && a.id) a = B.popAnchor = document.getElementById(a.id);
+    return a && a.isConnected ? a : null;
+  }
+  function tabbables(root) {
+    return U.$$('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])', root)
+      .filter(function (el) { return el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden'; });
+  }
+  document.addEventListener('keydown', function (e) {
+    var pop = document.getElementById('tcvPop'), ae = document.activeElement, anchor;
+    if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey || !pop || pop.hidden || !pop.contains(ae) || !(anchor = popAnchor())) return;
+    var f = tabbables(pop); if (!f.length || ae !== (e.shiftKey ? f[0] : f[f.length - 1])) return;
+    var target = anchor;
+    if (!e.shiftKey) {
+      var all = tabbables(document).filter(function (el) { return !pop.contains(el); }), i = all.indexOf(anchor);
+      target = i >= 0 && all[i + 1] ? all[i + 1] : anchor;
+    }
+    e.preventDefault();
+    B.closePop(false);
+    target.focus();
+  });
+  document.addEventListener('focusout', function (e) {
+    var pop = document.getElementById('tcvPop'), to = e.relatedTarget;
+    if (!pop || pop.hidden || !pop.contains(e.target) || !to || pop.contains(to) || to === popAnchor()) return;
+    B.closePop(false);
+  });
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('#tcvPop [data-foot="sources"], #tcvPop [data-scale-set]'); if (!t) return;
+    // Sources & method: close the popover first (focus back on its trigger, which the drawer returns to on Esc);
+    // band.js's own delegation then opens the drawer
+    if (t.hasAttribute('data-foot')) { B.closePop(); return; }
+    // Scale: band.js re-renders the popover, so put focus back on its (new) Scale button
+    setTimeout(function () { var b = document.querySelector('#tcvPop:not([hidden]) [data-scale-set]'); if (b) b.focus({ preventScroll: true }); }, 0);
+  }, true);
 
-  // ------------------------------------------------------------------ Sources & method drawer: plainer section titles
+  // ------------------------------------------------------------------ Sources & method drawer: plainer section titles and words
+  // (the method text names the model's variables, AVRATIO and bmKw; the reader sees the words the popover uses)
   if (RBX.hooks.drawerSections) {
     var dr0 = RBX.hooks.drawerSections, RENAME = { 'Legend notes': 'How to read the map', 'TCV method': 'How contract value is modelled', 'Footers': 'Sources' };
+    var plain = function (h) {
+      return String(h || '').replace(/<b>AVRATIO<\/b>/g, '<b>Available-for-BM ratio</b>').replace(/\bAVRATIO\b/g, 'the available-for-BM ratio')
+        .replace(/<b>bmKw<\/b>/g, '<b>Available for BM</b>').replace(/\bbmKw\b/g, 'available-for-BM kW')
+        .replace(/( of it from [\d,]+ sites ≥ 10 MW)\./, '$1 with a BM tier; ' + scaleNote().replace(/^The /, 'the '));
+    };
     RBX.hooks.drawerSections = function () {
-      return (dr0.apply(this, arguments) || []).map(function (sec) { return Object.assign({}, sec, { title: RENAME[sec.title] || sec.title }); });
+      return (dr0.apply(this, arguments) || []).map(function (sec) { return Object.assign({}, sec, { title: RENAME[sec.title] || sec.title, html: plain(sec.html) }); });
     };
   }
 
@@ -168,6 +255,20 @@
       lock.insertAdjacentHTML('beforeend', '<span class="conf">' + LOCK + U.esc(confText()) + '</span>');
     }
   };
+  // PPA Benchmark: the disclaimer joins the page's "Data as of" line (and the Confidential mark wherever the header
+  // lockup is hidden, ≤ 1100 px); ppa.js builds its page once, on first entry
+  if (RBX.ppaHost && RBX.ppaHost.show) {
+    var ppaShow0 = RBX.ppaHost.show;
+    RBX.ppaHost.show = function () {
+      var r = ppaShow0.apply(this, arguments);
+      var as = document.querySelector('#ppa .ppa-asof');
+      if (as && !as.querySelector('.v3-ppa-disc')) {
+        as.insertAdjacentHTML('afterbegin', '<span class="v3-ppa-conf">' + LOCK + U.esc(confText()) + ' <i>·</i> </span>');
+        as.insertAdjacentHTML('beforeend', '<span class="v3-ppa-disc"> <i>·</i> ' + U.esc(V3.CAVEAT) + '</span>');
+      }
+      return r;
+    };
+  }
   RBX.header.menu.push({ id: 'present', order: 5, label: 'Present', hint: 'P',
     icon: '<svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 4.5v11l9-5.5z" fill="currentColor" stroke="none"/></svg>',
     run: function () { if (RBX.present) RBX.present.enter(0, { gesture: true }); } });
@@ -252,7 +353,12 @@
         var n = row.querySelector('.lg-n'); if (n) { var k = +n.textContent.replace(/[^\d]/g, ''); n.textContent = U.int(k) + (k === 1 ? ' site' : ' sites'); }
       });
     }
-    if (view === 'hydro' || view === 'tam') U.$$('.lg-row', f).forEach(function (row) { row.classList.add('one'); });
+    if (view === 'hydro' || view === 'tam') U.$$('.lg-row', f).forEach(function (row) {
+      row.classList.add('one');
+      // the "·" between count and MW is CSS: give the toggle a spoken name that keeps the figures apart
+      var b = row.querySelector('.lg-main'), lbl = row.querySelector('.lg-lbl'), n = row.querySelector('.lg-n'), mw = row.querySelector('.lg-mw'), k = n ? +n.textContent.replace(/[^\d]/g, '') : 0;
+      if (b && lbl && n && mw) b.setAttribute('aria-label', lbl.textContent.trim() + ', ' + U.int(k) + (k === 1 ? ' site, ' : ' sites, ') + mw.textContent.replace(/(\d)([A-Za-z])/, '$1 $2').trim());
+    });
     if (view === 'tam') {
       // Scale → a mini segmented control in the legend header
       var seg = f.querySelector('.inv-seg');
@@ -280,7 +386,11 @@
         mg.replaceWith(det);
       }
     }
-    if (showAll && view === 'tam') { showAll.classList.add('v3-showall'); head.insertAdjacentElement('afterend', showAll); }
+    if (showAll && view === 'tam') {           // right of the first group title, whose row is empty on the right (no extra row)
+      var gh = f.querySelector('.lg-group-h');
+      showAll.classList.add('v3-showall');
+      if (gh) gh.appendChild(showAll); else head.insertAdjacentElement('afterend', showAll);
+    }
     return t.innerHTML;
   };
   document.addEventListener('toggle', function (e) {
@@ -320,9 +430,16 @@
   });
 
   // ------------------------------------------------------------------ panel: the bottom fade only when it actually scrolls
+  // and, once it has scrolled, a top fade too, so the content passes under a clear head (the collapse button stays
+  // on clean glass instead of floating over the hero)
   function fitRail() {
     var body = document.getElementById('railBody'); if (!body) return;
     body.classList.toggle('v3-overflow', body.scrollHeight > body.clientHeight + 1);
+    railScrolled();
+  }
+  function railScrolled() {
+    var body = document.getElementById('railBody'), rail = document.getElementById('rail'); if (!body || !rail) return;
+    rail.classList.toggle('v3-scrolled', body.scrollTop > 2 && body.classList.contains('v3-overflow'));
   }
   var rail0 = RBX.rail.render;
   RBX.rail.render = function () { rail0.apply(this, arguments); requestAnimationFrame(fitRail); };
@@ -331,6 +448,7 @@
     RBX.bus.on('ready', function () { var body = document.getElementById('railBody'); if (body) ro.observe(body); });
   }
   window.addEventListener('resize', U.rafThrottle(fitRail));
+  document.addEventListener('scroll', function (e) { if (e.target && e.target.id === 'railBody') railScrolled(); }, { capture: true, passive: true });
 
   // (the PNG export band with the confidentiality marking and the disclaimer is drawn by v3-map.js)
 
