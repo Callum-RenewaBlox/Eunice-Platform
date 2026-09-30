@@ -1,5 +1,5 @@
-/* Client skin "product" (Direction B · premium product UI). Client-only (apps/client/manifest.json); every rule
-   is scoped to :root[data-skin="product"], which only apps/client/template.html sets. Bundled after the core CSS.
+/* Skin "product" (Direction B · premium product UI), shared by the client and Investor v3 builds; every rule
+   is scoped to :root[data-skin="product"], which only their template.html sets. Bundled after the core CSS.
    Specificity note: :root[data-skin] (0,2,0) beats the core :root[data-theme="night"] token block, so every
    token set in the light block below is set again in the night block (0,3,0). */
 

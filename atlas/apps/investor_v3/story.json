@@ -1,0 +1,79 @@
+{
+  "_doc": "Investor Atlas v3 Present-mode chapters (design spec §10.6). build.py inlines this file as ATLAS_CONFIG.story for the investor_v3 app (apps/investor/story.json stays the v2 story). Same six views, cameras, chapter-3 filters and 9 s autoplay as v2; the copy is shorter (two-line bodies) and titles carry no digits. New fields read by apps/investor_v3/v3-present.js: kicker (the eyebrow suffix, 'Chapter 2 / 6 · Serviceable market') and stats[].cap (a caption; on the contract-value stat of chapters 1, 2 and 4 it becomes the right-hand figure of the hero, elsewhere a small line under the figure; a leading {token} is set as the figure). Every stats[].expr is a key of RBX.present.STAT in core/js/investor/present.js, and {tokens} in body, labels and caps are computed from data at runtime ({rev.t1up} is registered by v3-present.js); nothing numeric is typed here except the 8.0p wholesale baseline and the 3% CPI assumption, which the model states. *phrase* renders in the accent colour (no italics). A body may bind its last words with no-break spaces, written \\u00a0 (the body is escaped, so never &nbsp;), so a phone never ends it on a short line (chapter 2: 'await a BM figure'). filters = {set: [visible values]} on an all-visible baseline; camera = {fit:view} or {center,zoom,pitch?,bearing?,terrain?}; ppa = PPA section to scroll to.",
+  "autoplayMs": 9000,
+  "chapters": [
+    {
+      "view": "tam",
+      "camera": { "fit": "tam" },
+      "kicker": "Addressable market",
+      "title": "Every *subsidised generator* in Great Britain",
+      "body": "Biogas, biomass, EfW, landfill and sewage-gas generators with RO or FiT accreditation: the market RenewaBlox can address.",
+      "stats": [
+        { "label": "TCV potential · indicative", "expr": "tam.pot", "cap": "{tam.big} from {tam.bigN} sites ≥ 10 MW" },
+        { "label": "Sites", "expr": "tam.n" },
+        { "label": "Capacity", "expr": "tam.mw" }
+      ]
+    },
+    {
+      "view": "sam",
+      "camera": { "fit": "sam" },
+      "kicker": "Serviceable market",
+      "title": "*AD peakers* the grid pays to flex",
+      "body": "{sam.n} AD peakers matched to the Balancing Mechanism, sized by contract value. Hollow rings still await\u00a0a\u00a0BM\u00a0figure.",
+      "stats": [
+        { "label": "Total contract value · Year 5", "expr": "sam.tcv", "cap": "{sam.tcvT} with BTC held in treasury" },
+        { "label": "Priced sites", "expr": "sam.pricedOf" },
+        { "label": "Available for BM", "expr": "sam.av" }
+      ]
+    },
+    {
+      "view": "sam",
+      "filters": { "tiers": [1, 2] },
+      "camera": { "center": [0.35, 51.75], "zoom": 7.4 },
+      "kicker": "Where it pays",
+      "title": "Where flexibility *pays most*",
+      "body": "Tier 1 and 2 sites cluster around London, Kent and East Anglia, where the grid is tightest and offers are called most often.",
+      "stats": [
+        { "label": "Tier 1 average", "expr": "rev.t1avg", "cap": "{rev.t1up} vs 8.0p wholesale" },
+        { "label": "Tier 1 top 5%", "expr": "rev.t1top" },
+        { "label": "Offer frequency", "expr": "rev.t1freq", "cap": "vs GB average" }
+      ]
+    },
+    {
+      "view": "hydro",
+      "camera": { "center": [-4.6, 57.1], "zoom": 6.9, "pitch": 58, "bearing": -12, "terrain": true },
+      "kicker": "Stranded hydro",
+      "title": "Stranded hydro in *the Highlands*",
+      "body": "Run-of-river schemes generating more than the network will take. The stranded share mines Bitcoin around the clock.",
+      "stats": [
+        { "label": "Total contract value · Year 5", "expr": "hydro.tcv", "cap": "{hydro.tcvT} with BTC held in treasury" },
+        { "label": "Sites", "expr": "hydro.n" },
+        { "label": "Stranded", "expr": "hydro.mw" }
+      ]
+    },
+    {
+      "view": "ppa",
+      "ppa": "price",
+      "kicker": "Why now",
+      "title": "FiT export overtakes *the forward curve*",
+      "body": "Guaranteed FiT export rises with CPI while the forward curve falls. At 3% CPI it passes the Cal-28 forward.",
+      "stats": [
+        { "label": "FiT export", "expr": "ppa.fit" },
+        { "label": "Cal-28 forward", "expr": "ppa.cal28" },
+        { "label": "FiT + CPI 2028", "expr": "ppa.fitCpi" }
+      ]
+    },
+    {
+      "view": "ppa",
+      "ppa": "counterparty",
+      "kicker": "Offtakers",
+      "title": "Who *buys the power*",
+      "body": "The largest external REGO certificate holder for each site: strong evidence of the offtaker, not contractual proof.",
+      "stats": [
+        { "label": "Counterparties", "expr": "ppa.cp" },
+        { "label": "{ppa.cp1name}", "expr": "ppa.cp1" },
+        { "label": "{ppa.cp2name}", "expr": "ppa.cp2" }
+      ]
+    }
+  ]
+}

@@ -9,7 +9,7 @@ A sales-facing MapLibre map for prospective clients and partners, in three modes
 - **PPA Benchmark** — realised and forward GB power prices against the FiT export tariff, and
   the certificate counterparty and register for every SAM site.
 
-Look: the "product" skin (atlas/apps/client/skin-product.*) — full-bleed map with floating glass panels,
+Look: the "product" skin (atlas/skins/product/skin-product.*) — full-bleed map with floating glass panels,
 light by default with a dark theme — in the RenewaBlox brand (official wordmark, Blox teal / navy / sky,
 Leelawadee UI with Open Sans as the web fallback; see atlas/brand/README.md).
 

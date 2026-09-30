@@ -1,0 +1,158 @@
+/* Investor Atlas v3 · site sheet (design spec §9): the skin's glass sheet with white cards, a contract-value card,
+   the projected BM revenue card and three ghost actions. Every selector starts with :root[data-skin="product"]. */
+
+/* ============================================================== frame: top row, head, body fade */
+:root[data-skin="product"][data-app="investor"] .sheet .sh-top{padding:14px 12px 0 18px}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-kind{gap:7px;height:24px;padding:0 9px 0 8px;border-radius:7px;background:var(--surface-2);
+  font:600 11.5px/1 var(--font-ui);letter-spacing:0;text-transform:none;color:var(--ink-2)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-kind > span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-dot{flex:none;width:8px;height:8px;border-radius:50%}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-dot.ring{width:9px;height:9px;border:1.6px solid currentColor;background:none}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-step{font:500 11.5px/1 var(--font-ui);color:var(--ink-3);font-variant-numeric:tabular-nums}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-x{background:var(--surface-2)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-x:hover{background:var(--wash)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-body{padding:10px 18px 24px;
+  -webkit-mask-image:linear-gradient(#000 calc(100% - 22px),transparent);mask-image:linear-gradient(#000 calc(100% - 22px),transparent)}
+/* scrolled (v3-sheet.js): the content fades in under the chip row as it does under the panel's header */
+:root[data-skin="product"][data-app="investor"] .sheet .sh-body.v3-scrolled{
+  -webkit-mask-image:linear-gradient(transparent 0,#000 18px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(transparent 0,#000 18px,#000 calc(100% - 22px),transparent)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-name{margin:0;font:700 21px/1.2 var(--font-ui);letter-spacing:-.022em;color:var(--ink-1)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-meta{margin:4px 0 0;font:400 12.5px/1.45 var(--font-ui);color:var(--ink-2)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-meta::before{display:none}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-meta .sep{margin:0 6px;color:var(--ink-4)}
+
+/* ============================================================== cards (every section): white, hairline, tracked caps */
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec{margin-top:14px;padding:13px 16px 12px;border:1px solid var(--rule);border-radius:12px;
+  background:var(--sk-card);box-shadow:var(--sh-1)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 9px}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec-t{margin:0;font:600 10.5px/1.25 var(--font-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--sk-label)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec-a{font:400 11px/1.2 var(--font-ui);color:var(--ink-3);white-space:nowrap}
+:root[data-skin="product"][data-app="investor"] .sheet .num{font-variant-numeric:tabular-nums lining-nums}
+
+/* ============================================================== contract value (SAM and Hydro) */
+:root[data-skin="product"][data-app="investor"] .sheet .v3-com-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-com-l{min-width:0}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-com-big{display:flex;align-items:baseline;gap:7px;white-space:nowrap}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-com-big .money{font:var(--v3-num-w,400) 36px/1 var(--font-ui);letter-spacing:-.025em;color:var(--ink-1);
+  font-variant-numeric:tabular-nums lining-nums}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-com-big .cap{font:500 11.5px/1 var(--font-ui);color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-com-ex{margin-top:6px;font:400 11.5px/1.2 var(--font-ui);color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-com-alt{flex:none;text-align:right;padding-bottom:1px}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-com-alt > span{display:block;font:500 11px/1.2 var(--font-ui);color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-com-alt b{display:block;margin-top:3px;font:600 18px/1.1 var(--font-ui);letter-spacing:-.01em;color:var(--ink-1);
+  font-variant-numeric:tabular-nums lining-nums}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-com-alt b .mag{font-size:.72em}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-com-alt small{display:block;margin-top:4px;font:400 11.5px/1.2 var(--font-ui);color:var(--ink-3)}
+/* split bar: Energy & BM solid teal, BTC value in the sky hatch (sky is never a solid fill on white) */
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .capbar{display:flex;gap:2px;height:8px;margin:15px 0 8px;border-radius:4px;overflow:hidden;background:none}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .capbar span{min-width:2px;border-radius:0}
+:root[data-skin="product"][data-app="investor"] .sheet .capbar .v3-e,:root[data-skin="product"][data-app="investor"] .sheet .capbar-l .k.v3-e{background:var(--v3-split-e)}
+:root[data-skin="product"][data-app="investor"] .sheet .capbar .btcv,:root[data-skin="product"][data-app="investor"] .sheet .capbar-l .k.btcv{background:var(--v3-split-b)}
+:root[data-skin="product"][data-app="investor"] .sheet .capbar-l{display:flex;justify-content:space-between;gap:8px;font:400 11.5px/1.3 var(--font-ui);color:var(--ink-3);
+  font-variant-numeric:tabular-nums lining-nums}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-split-l span{display:flex;align-items:center;gap:6px;white-space:nowrap}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-split-l .k{flex:none;width:9px;height:9px;margin:0;border-radius:2px}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-split-l b{font-weight:600;color:var(--ink-1)}
+/* ledger: hairline rows bleeding to the card edges, closing the card */
+:root[data-skin="product"][data-app="investor"] .sheet .sh-ledger{margin:11px -16px -4px;padding:0;border-top:1px solid var(--v3-hair)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-ledger > div{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:8px 16px}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-ledger > div + div{border-top:1px solid var(--v3-hair)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-ledger dt{font:400 12px/1.3 var(--font-ui);color:var(--ink-2)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-ledger dt em{font-style:normal;color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-ledger dd{margin:0;font:600 13px/1.3 var(--font-ui);color:var(--ink-1);white-space:nowrap}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-ledger dd small{margin-left:4px;font:400 11.5px var(--font-ui);color:var(--ink-3)}
+/* unpriced site: the same card, awaiting its BM figure */
+:root[data-skin="product"][data-app="investor"] .sheet .v3-await{display:flex;align-items:center;gap:9px;font:600 16px/1.25 var(--font-ui);letter-spacing:-.005em;color:var(--ink-1)}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-await .v3-dot.ring{width:12px;height:12px;color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-com.is-await .note-i{margin:8px 0 1px}
+
+/* ============================================================== projected BM revenue */
+:root[data-skin="product"][data-app="investor"] .sheet .v3-why{display:flex;align-items:baseline;flex-wrap:wrap;gap:0 6px;margin:-2px 0 11px;font:400 12px/1.35 var(--font-ui);color:var(--ink-2)}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-why b{font-weight:600;color:var(--v3-gain);font-variant-numeric:tabular-nums lining-nums}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-rev-figs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-rev-figs span{display:block;font:500 11px/1.2 var(--font-ui);color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-rev-figs b{display:block;margin-top:3px;font:var(--v3-num-w,400) 26px/1.05 var(--font-ui);letter-spacing:-.02em;
+  color:var(--ink-1);white-space:nowrap}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-rev-figs b small{margin-left:4px;font:400 11.5px var(--font-ui);letter-spacing:0;color:var(--ink-3)}
+/* the core ladder: T1 cap stays inside the card (the chart ends 8 px short of the content edge) */
+:root[data-skin="product"][data-app="investor"] .sheet .v3-rev .ladder{margin-top:12px;padding-right:0}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-rev .ladder svg{display:block;overflow:visible}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-rev .ladder text{font:500 10.5px var(--font-ui);fill:var(--ink-3);font-variant-numeric:tabular-nums}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-rev .ladder text.on{font-weight:700;fill:var(--ink-1)}
+:root[data-skin="product"][data-app="investor"] .sheet .v3-rev .ladder text.ax{font-size:10px;font-weight:400}
+
+/* ============================================================== below the fold: the investor sections, same card grammar */
+/* figures sit side by side on the card, not in tiles (no boxes inside boxes) */
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .figs.two{gap:12px;margin-top:0}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .figs .fig{padding:0;border:0;border-radius:0;background:none}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .fig-l{min-height:0;font:500 11px/1.25 var(--font-ui);color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .fig-v,:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .fig-v.l{margin-top:3px;
+  font:var(--v3-num-w,400) 22px/1.1 var(--font-ui);letter-spacing:-.02em;color:var(--ink-1);font-variant-numeric:tabular-nums lining-nums}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .fig-v small{margin-left:4px;font:400 11.5px var(--font-ui);letter-spacing:0;color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .fig-v.u{font:500 13px/1.4 var(--font-ui);letter-spacing:0;color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .fig-s{margin-top:4px;font:400 11.5px/1.2 var(--font-ui);color:var(--ink-3)}
+/* hydro stranded capacity: the headline figure in ink at the v3 numeral weight */
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .hero{display:flex;align-items:baseline;gap:7px;font:var(--v3-num-w,400) 30px/1 var(--font-ui);letter-spacing:-.025em;
+  color:var(--ink-1);font-variant-numeric:tabular-nums lining-nums}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .hero small{font:500 11.5px/1 var(--font-ui);letter-spacing:0;color:var(--ink-3)}
+/* key-value lists as hairline ledgers bleeding to the card edges, in the contract-value ledger's row style (label 12 px,
+   value 13 px semibold, 8 px padding). Label and value share one px line height, so their baselines meet without
+   baseline alignment (which would step the per-cell hairlines); a chip (the "inferred" tag, the export chip) sits on
+   that baseline with negative block margins, so it no longer deepens its row */
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .kv{grid-template-columns:auto minmax(0,1fr);gap:0;margin:0 -16px;font:400 12px/17px var(--font-ui)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .kv dt{padding:8px 14px 8px 16px;border-top:1px solid var(--v3-hair);color:var(--ink-2)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .kv dd{padding:8px 16px 8px 0;border-top:1px solid var(--v3-hair);font-size:13px;font-weight:600;color:var(--ink-1)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .kv dd :is(.tag,.expchip){margin-block:-4px;vertical-align:baseline}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .kv :is(dt,dd):nth-child(-n+2){border-top:0}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .sh-sec-h + .kv :is(dt,dd):nth-child(-n+2){padding-top:2px}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec > .kv:last-child,:root[data-skin="product"][data-app="investor"] .sheet .sh-sec > div:last-child > .kv:last-child{margin-bottom:-5px}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .kv dd i{font-style:normal;font-weight:400;color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .capbar + .capbar-l + .kv,:root[data-skin="product"][data-app="investor"] .sheet .sh-sec .figs + .kv{margin-top:10px}
+:root[data-skin="product"][data-app="investor"] .sheet .note-i{margin-top:10px;font:400 11.5px/1.5 var(--font-ui);color:var(--ink-3);text-wrap:pretty}
+:root[data-skin="product"][data-app="investor"] .sheet .stat-dot.good{background:var(--sk-accent)}   /* no green in v3: "active" in the brand accent */
+:root[data-skin="product"][data-app="investor"] .sheet .near{margin:0 -6px -4px}
+:root[data-skin="product"][data-app="investor"] .sheet .banner{border:1px solid var(--rule-2);background:var(--lime-wash)}   /* TAM "Also verified in SAM": no lime edge */
+
+/* ============================================================== actions: three equal ghost buttons */
+:root[data-skin="product"][data-app="investor"] .sheet .sh-actions{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px;padding:12px 16px 14px;
+  border-top:1px solid var(--rule);background:transparent}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-actions .btn{display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;height:36px;padding:0 6px;
+  border-radius:10px;border:1px solid var(--rule-2);background:var(--sk-card);box-shadow:var(--sh-1);font:600 12px/1 var(--font-ui);color:var(--ink-1);white-space:nowrap}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-actions .btn:hover{border-color:var(--ink-4);background:var(--sk-card)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-actions .btn .i{flex:none;width:13px;height:13px;color:var(--ink-3)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-actions .btn span{overflow:hidden;text-overflow:ellipsis}
+
+/* ============================================================== foot: Confidential · as of · disclaimer (phone, folded-panel tablet) */
+:root[data-skin="product"][data-app="investor"] .sheet .sh-disc{flex:none;display:none;margin:0;padding:8px 16px 0;border-top:1px solid var(--rule);
+  font:400 10.5px/1.4 var(--font-ui);color:var(--v3-fine);text-align:center;text-wrap:balance;font-variant-numeric:tabular-nums lining-nums}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-disc > span{white-space:nowrap}   /* breaks only between the three parts */
+:root[data-skin="product"][data-app="investor"] .sheet .sh-disc b{font-weight:500;color:var(--ink-2)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-disc .d{color:var(--ink-4)}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-disc .i{display:inline-block;width:10px;height:10px;margin-right:4px;stroke-width:1.8;vertical-align:-1px}
+:root[data-skin="product"][data-app="investor"] .sheet .sh-disc:last-child{padding-bottom:12px}
+@media (max-width:760px){
+  :root[data-skin="product"][data-app="investor"] .sheet .sh-disc{display:block}
+  :root[data-skin="product"][data-app="investor"] .sheet .sh-disc + .sh-actions{border-top:0;padding-top:8px}
+}
+@media (min-width:761px) and (max-width:1050px){
+  :root[data-skin="product"][data-app="investor"] .app.rail-collapsed .sheet .sh-disc{display:block}
+  :root[data-skin="product"][data-app="investor"] .app.rail-collapsed .sheet .sh-disc + .sh-actions{border-top:0;padding-top:8px}
+}
+
+/* ============================================================== narrow desktop (352 px sheet) and phone */
+:root[data-skin="product"][data-app="investor"] .sheet .v3-split-l{flex-wrap:wrap;row-gap:3px}
+@media (max-width:1180px) and (min-width:761px){
+  :root[data-skin="product"][data-app="investor"] .sheet .v3-split-l{font-size:11px;column-gap:6px}
+  :root[data-skin="product"][data-app="investor"] .sheet .v3-split-l span{gap:5px}
+  :root[data-skin="product"][data-app="investor"] .sheet .sh-actions .btn{gap:5px;padding:0 4px;font-size:11.5px}
+}
+@media (max-width:760px){
+  :root[data-skin="product"][data-app="investor"] .sheet .sh-top{padding:0 10px 0 16px}
+  :root[data-skin="product"][data-app="investor"] .sheet .sh-body{padding:8px 16px 22px}
+  :root[data-skin="product"][data-app="investor"] .sheet .sh-actions{padding:10px 16px 12px}
+}
+
+/* phone: the full bottom sheet stops below the two-row header pill instead of sliding under it */
+@media (max-width:760px){
+  :root[data-skin="product"][data-app="investor"] .sheet.full{height:min(90vh, calc(100% - var(--hdr-b, 118px) - 8px))}
+}

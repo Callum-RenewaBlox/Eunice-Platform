@@ -1,7 +1,8 @@
-/* Client skin "product" (Direction B, premium product UI): full-bleed map with floating glass chrome.
-   Client-only: listed in apps/client/manifest.json after the core modules and before core/js/app.js.
+/* Skin "product" (Direction B, premium product UI): full-bleed map with floating glass chrome.
+   Shared by the apps whose manifest lists it: the client lists it after the core modules, right before
+   core/js/app.js; an app with its own sheet sections and legends lists it before them, so theirs win.
    Every change here is a wrapper or a registered hook around the core modules; nothing in core/ is edited,
-   and the whole file is inert unless <html data-skin="product"> (set by apps/client/template.html). */
+   and the whole file is inert unless <html data-skin="product"> (set by the app's template.html). */
 (function () {
   'use strict';
   var RBX = window.RBX, U = RBX.util, doc = document.documentElement;
