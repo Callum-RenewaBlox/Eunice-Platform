@@ -11,7 +11,9 @@
    A MutationObserver watches #stage for the card and the card for each re-render; it only restyles the new nodes and
    never moves focus (present.js keeps it on the same control across renders). Registers STAT['rev.t1up'].
    While presenting: Space on a focused control presses it, Tab cycles through the card's controls (the passive tabs
-   and the skip link leave the tab order), and phones frame a filtered chapter's sites above the card.
+   and the skip link leave the tab order), digits go to a chapter while the view / scope / theme / rail / reset /
+   search keys do nothing, phones and tablets frame a filtered chapter's sites clear of the card, and on the PPA page
+   the rows under the card's top edge fade out instead of being cut.
    Inert unless <html data-skin="product" data-app="investor">. */
 (function () {
   'use strict';
@@ -209,13 +211,23 @@
   // present.js reads Space as "next" and prevents its default, so Space on a focused Exit, Prev, Play or progress
   // segment moved on a chapter instead of pressing it: leave Space to a focused control (its click runs on keyup;
   // Space on the focused Next still steps on through that click). Arrow keys and PageDown are unchanged.
+  // The view, scope, theme, rail, reset and search keys would change the map behind the chapter card, whose figures
+  // then no longer match (the header tabs are passive for the same reason): while presenting, a digit goes to that
+  // chapter, as in slideware, and the others do nothing until Esc ends the presentation. J / K still step an open
+  // site sheet; search stays shut however it is asked for (/, Ctrl / ⌘ K, which shortcuts.js reads before this).
   if (Pr.key) {
     var key0 = Pr.key;
     Pr.key = function (e) {
-      var t = e && e.target;
-      if (e && e.key === ' ' && t && t.closest && t.closest('button,a[href],[role="button"],summary,input,select,textarea')) return false;
+      var t = e && e.target, k = e && e.key;
+      if (k === ' ' && t && t.closest && t.closest('button,a[href],[role="button"],summary,input,select,textarea')) return false;
+      if (/^[1-9]$/.test(k)) { e.preventDefault(); if (+k <= chapters().length) Pr.go(+k - 1); return true; }
+      if (/^[sStTlLrRpP\/]$/.test(k)) { e.preventDefault(); return true; }
       return key0.apply(this, arguments);
     };
+  }
+  if (RBX.search && RBX.search.open) {
+    var searchOpen0 = RBX.search.open;
+    RBX.search.open = function () { if (Pr.active && Pr.active()) return; return searchOpen0.apply(this, arguments); };
   }
 
   // ------------------------------------------------------------------ phones: focus lands on "…" after Present
@@ -249,33 +261,135 @@
   // pick up the chapter fly offsets (investor-v3.js shifts every flight made during a chapter by half the header,
   // which pushed fitted chapters ~33 px down, ~56 px on phones); it goes straight to MapLibre's own flyTo.
   // On a short phone the card can leave less room than the padding asks for (MapLibre then refuses to fit), so the
-  // bottom padding keeps at least 120 px of map below the header inset (investor-v3.js pads the top to inset + 24).
-  // A filtered chapter with a fixed camera (chapter 3, Tier 1–2 around London) covers ~150 km on a phone, which
-  // leaves most of its sites off screen or under the header: phones fit the chapter's visible sites instead,
-  // never closer than its camera zoom (desktop keeps the story camera).
+  // bottom padding keeps at least 48 px of map below the header inset (investor-v3.js pads the top to inset + 24).
+  // A phone fit may also zoom out past Present's 3.4 floor (to 1.5 at most; present.js restores the floor on exit):
+  // MapLibre would otherwise clamp the zoom and push the fitted sites under the header, or off screen.
+  // A filtered chapter with a fixed camera (chapter 3, Tier 1–2 around London) is framed for a 1440 px stage: on a
+  // phone it covers ~150 km, and on a tablet (761–1100 px) Kent and East Anglia fall off screen or under the card.
+  // Up to 1100 px it fits the chapter's visible sites instead, never closer than its camera zoom: phones above the
+  // card; tablets beside the card or above it, whichever frames the sites larger (wider stages keep the story camera).
+  var TABLET = 1100;
+  function fitPad(map, b, zoom) {
+    if (U.isMobile()) return { top: 20, bottom: 24, left: 20, right: 20 };
+    var el = document.getElementById('presentCard'), h = cardH(), ins = RBX.v3 && RBX.v3.presentInset ? RBX.v3.presentInset() : 0;
+    if (!el || !h) return { top: ins + 24, bottom: 24, left: 20, right: 20 };
+    var above = { top: ins + 24, bottom: h + 24, left: 20, right: 20 };
+    var beside = { top: ins + 24, bottom: 24, left: Math.round(el.getBoundingClientRect().right) + 24, right: 20 };
+    var z = function (p) { try { return (map.cameraForBounds(b, { padding: p, maxZoom: zoom, bearing: 0 }) || {}).zoom || 0; } catch (e) { return 0; } };
+    return z(above) >= z(beside) ? above : beside;
+  }
   RBX.bus.on('mapready', function (map) {
-    var fit0 = map.fitBounds, fly0 = map.flyTo, proto = Object.getPrototypeOf(map), flyP = proto && proto.flyTo, inFit = 0;
+    var fit0 = map.fitBounds, fly0 = map.flyTo, proto = Object.getPrototypeOf(map), flyP = proto && proto.flyTo, fitP = proto && proto.fitBounds, inFit = 0;
     map.fitBounds = function (b, o) {
+      var fit = fit0;
       if (inGo && U.isMobile() && o && o.padding && typeof o.padding === 'object') {
         var h = cardH();
         if (h) {
-          var ins = RBX.v3 && RBX.v3.presentInset ? RBX.v3.presentInset() : 0, top = Math.max(o.padding.top || 0, ins ? ins + 24 : 0);
-          var room = this.getContainer().clientHeight - top - 120;
-          o = Object.assign({}, o, { padding: Object.assign({}, o.padding, { bottom: Math.max(0, Math.min(h + 24, room)) }) });
+          var H = this.getContainer().clientHeight, ins = RBX.v3 && RBX.v3.presentInset ? RBX.v3.presentInset() : 0;
+          var top = Math.max(o.padding.top || 0, ins ? ins + 24 : 0), bottom = h + 24;
+          // the smallest phones (320×568) keep only a thin band of map between header and card: its margins shrink
+          // to 6 px (MapLibre's own fitBounds, as investor-v3.js would pad the top back to inset + 24)
+          if (ins && H - top - bottom < 96 && typeof fitP === 'function') { top = ins + 6; bottom = h + 14; fit = fitP; }
+          o = Object.assign({}, o, { padding: Object.assign({}, o.padding, { top: top, bottom: Math.max(0, Math.min(bottom, H - top - 48)) }) });
+          var co = { padding: o.padding, bearing: 0 };
+          if (o.maxZoom != null) co.maxZoom = o.maxZoom;
+          var cam = this.cameraForBounds(b, co);
+          if (cam && cam.zoom < this.getMinZoom()) this.setMinZoom(Math.max(1.5, Math.floor(cam.zoom * 20) / 20));
         }
       }
       inFit++;
-      try { return fit0.call(this, b, o); } finally { inFit--; }
+      try { return fit.call(this, b, o); } finally { inFit--; }
     };
     map.flyTo = function (o, e) {
       if (inFit && inGo && typeof flyP === 'function') return flyP.call(this, o, e);
-      if (inGo && U.isMobile() && o && o.offset) {
+      if (inGo && o && o.offset && (U.isMobile() || window.innerWidth <= TABLET)) {
         var c = chapters()[RBX.state.present], cam = (c && c.camera) || {}, rows = c && c.filters && cam.center && !cam.terrain ? RBX.filters.active(c.view) : [];
-        if (rows.length) return this.fitBounds(U.bbox(rows, 0.05), { padding: { top: 20, bottom: 24, left: 20, right: 20 }, maxZoom: cam.zoom || 7.4, pitch: 0, bearing: 0, duration: o.duration, essential: true });
-        var h = cardH();
+        if (rows.length) {
+          var b = U.bbox(rows, 0.05), mz = cam.zoom || 7.4;
+          return this.fitBounds(b, { padding: fitPad(this, b, mz), maxZoom: mz, pitch: 0, bearing: 0, duration: o.duration, essential: true });
+        }
+        var h = U.isMobile() ? cardH() : 0;
         if (h) o = Object.assign({}, o, { offset: [o.offset[0], Math.round((20 - (h + 24)) / 2)] });
       }
       return fly0.call(this, o, e);
     };
   });
+
+  // ------------------------------------------------------------------ PPA chapters: the page fades out above the card
+  // Where the card spans the page (docked on narrower desktops, phones), present.js scrolls the section's chart clear
+  // of it, but a row or button could still be sliced by the card's top edge, and a sliver of page showed below it. The
+  // page now fades out over the last ~24 px above the card instead (v3-present.css: .v3-pc-fade, --pc-top = the card's
+  // top in the page's box). The side card of wide stages pads the page and needs none of this.
+  var ppaPage = document.getElementById('ppa'), ppaRO = null;
+  function ppaEdge() {
+    if (!ppaPage) return;
+    var el = document.getElementById('presentCard');
+    var on = !!(Pr.active && Pr.active() && el && !el.hidden && el.getAttribute('data-view') === 'ppa' && cardH() && el.offsetWidth > ppaPage.clientWidth * 0.6);
+    ppaPage.classList.toggle('v3-pc-fade', on);
+    if (on) ppaPage.style.setProperty('--pc-top', Math.max(0, el.offsetTop - ppaPage.offsetTop) + 'px');
+    else ppaPage.style.removeProperty('--pc-top');
+  }
+  var ppaEdgeSoon = U.rafThrottle(ppaEdge);
+  window.addEventListener('resize', ppaEdgeSoon);
+  // present.js scrolls the section 80 ms after the chapter renders; on the page's first showing its chart may not have
+  // its size yet, so the chart could stay under the card (chapter 5 on a phone). Once the page has settled, the same
+  // target (present.js scrollPpa: the chart clear of the card, never past its own top) is measured again.
+  function ppaTarget(name) {
+    var el = ppaPage.querySelector('[data-sec="' + name + '"]'), card = document.getElementById('presentCard'), chart = el && el.querySelector('.ppa-chart');
+    if (!chart || !card || card.hidden) return null;
+    var pr = ppaPage.getBoundingClientRect(), cr = card.getBoundingClientRect(), hr = chart.getBoundingClientRect(), bar = ppaPage.querySelector('.ppa-filters');
+    if (cr.left >= hr.right || cr.right <= hr.left) return null;
+    // the sticky filters bar covers the top of any section after it (read from document order: once stuck, its box
+    // no longer shows where it sits in the page)
+    var top = el.getBoundingClientRect().top - pr.top + ppaPage.scrollTop;
+    var off = bar && bar.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING ? bar.offsetHeight : 0, t = top - off - 16;
+    var cTop = hr.top - pr.top + ppaPage.scrollTop, cBot = hr.bottom - pr.top + ppaPage.scrollTop, room = card.offsetTop - ppaPage.offsetTop - 12;
+    if (cBot - t > room) t = Math.min(cBot - room, cTop - off - 8);
+    return Math.max(0, Math.round(t));
+  }
+  var settleT = null;
+  function settlePpa() {
+    clearTimeout(settleT);
+    var i = RBX.state.present, c = chapters()[i];
+    if (!ppaPage || !c || c.view !== 'ppa') return;
+    settleT = setTimeout(function () {
+      if (!Pr.active() || RBX.state.present !== i) return;
+      var t = ppaTarget(c.ppa || 'price');
+      if (t != null && Math.abs(t - ppaPage.scrollTop) > 4) {
+        try { ppaPage.scrollTo({ top: t, behavior: RBX.reduced ? 'auto' : 'smooth' }); } catch (e) { ppaPage.scrollTop = t; }
+      }
+    }, 420);
+  }
+  if (Pr.go) {
+    var goEdge0 = Pr.go;
+    Pr.go = function () {
+      var r = goEdge0.apply(this, arguments), el = document.getElementById('presentCard');
+      if (el && !ppaRO && window.ResizeObserver) { ppaRO = new ResizeObserver(ppaEdgeSoon); ppaRO.observe(el); }
+      ppaEdge();
+      settlePpa();
+      return r;
+    };
+  }
+  if (Pr.exit) {
+    var exitEdge0 = Pr.exit;
+    Pr.exit = function () { var r = exitEdge0.apply(this, arguments); ppaEdge(); return r; };
+  }
+
+  // ------------------------------------------------------------------ PPA page: no orphaned year or word in the tile notes
+  // The benchmark tiles' notes (core ppa.js copy, built once with the page) broke as "Elexon MID, Aug 25 – Jul" / "26"
+  // and "below the CPI-linked FiT" / "tariff" on phones: a month keeps its year, a date range and a hyphenated word
+  // keep together, and the last two words bind. The notes are plain text: no-break spaces, plus word joiners (U+2060)
+  // after the dash and hyphens, which would otherwise still allow a break.
+  if (RBX.ppaHost && RBX.ppaHost.show) {
+    var ppaShow0 = RBX.ppaHost.show;
+    RBX.ppaHost.show = function () {
+      var r = ppaShow0.apply(this, arguments);
+      U.$$('#ppa .ppa-note').forEach(function (n) {
+        var t = n.textContent, b = t.replace(/\b([A-Z][a-z]{2}) (\d{2})\b/g, '$1\u00a0$2').replace(/(\d) – (?=[A-Z])/g, '$1\u00a0–\u2060\u00a0')
+          .replace(/([A-Za-z0-9])-(?=[A-Za-z0-9])/g, '$1-\u2060').replace(/ (\S+)$/, '\u00a0$1');
+        if (b !== t) n.textContent = b;
+      });
+      return r;
+    };
+  }
 })();
