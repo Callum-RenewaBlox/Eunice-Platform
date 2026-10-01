@@ -5,9 +5,9 @@
   "h1": "RenewaBlox Investor Atlas",
   "productLabel": "Investor Atlas",
   "confidential": "Confidential · investor use only",
-  "defaultTheme": "paper",
+  "defaultTheme": "night",
   "defaultView": "sam",
-  "storageKey": "rbx-investor-atlas-v3",
+  "storageKey": "rbx-investor-atlas-v3-2",
   "contactEmail": "callum@renewablox.com",
   "publicUrl": "https://renewablox-investor-atlas-v3.streamlit.app/",
   "switches": {

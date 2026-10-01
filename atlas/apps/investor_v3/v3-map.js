@@ -614,12 +614,13 @@
   }
 
   // ------------------------------------------------------------------ downloads: file names without the internal "v3"
-  // core names every download after config.storageKey ('rbx-investor-atlas-v3' → 'renewablox-investor-atlas-v3-…').
-  // The key stays (it keeps the v2 and v3 saved state apart); the files an investor receives drop the version label.
+  // core names every download after config.storageKey ('rbx-investor-atlas-v3-2' → 'renewablox-investor-atlas-v3-2-…').
+  // The key stays (it keeps the v2 and v3 saved state apart, and its '-2' retired the saved light-theme choices when
+  // the default became night); the files an investor receives drop the version label.
   // core's PNG and CSV downloads both click an <a download> attached to the page, so one capture-phase listener
   // renames them before the browser reads the attribute.
   V3.fileName = function (name) {
-    var base = String(cfg().storageKey || '').replace(/^rbx-/, 'renewablox-'), plain = base.replace(/-v\d+$/, '');
+    var base = String(cfg().storageKey || '').replace(/^rbx-/, 'renewablox-'), plain = base.replace(/-v\d[\w-]*$/, '');
     name = String(name || '');
     return plain !== base && name.indexOf(base + '-') === 0 ? plain + name.slice(base.length) : name;
   };
