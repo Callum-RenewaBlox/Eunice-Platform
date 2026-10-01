@@ -6,7 +6,7 @@ One design system and one codebase for the map pages:
 |---|---|---|---|
 | Client Atlas (public) | `client_atlas_v2.html` | `app_client_atlas_v2.py` | Paper (light), "product" skin — see below |
 | Investor Atlas (gated) | `investor_atlas_v2.html` | `app_investor_atlas_v2.py` | Night |
-| Investor Atlas v3 (gated) | `investor_atlas_v3.html` | `app_investor_atlas_v3.py` | Paper, "product" skin + RenewaBlox brand — see "Investor Atlas v3" |
+| Investor Atlas v3 (gated) | `investor_atlas_v3.html` | `app_investor_atlas_v3.py` | Night (dark), "product" skin + RenewaBlox brand — see "Investor Atlas v3" |
 
 All outputs are single self-contained HTML files (data, CSS, JS and the Natural Earth basemap pack inlined;
 MapLibre GL 4.7.1 from jsDelivr; Google Fonts: Inter + Newsreader for the investor v2 build, Open Sans for the
