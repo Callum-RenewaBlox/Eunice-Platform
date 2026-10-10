@@ -37,7 +37,7 @@
     var P = RBX.theme.pal();
     if (!r.pr) {
       return C.sec('Commercials', 'Year 5', kv([['Status', '<b>Awaiting BM figure</b>', 'hl']]) +
-        '<p class="note-i">' + C.INFO + '<span>This site has no available-for-BM figure yet, so no contract value is modelled. It is drawn as a hollow ring.</span></p>');
+        '<p class="note-i">' + C.INFO + '<span>' + RBX.inv.awaitNote(r) + '</span></p>');
     }
     return C.sec('Commercials', 'Year 5',
       '<div class="figs two">' + money('TCV · no treasury', r.tcv) + money('TCV · treasury', r.tcvT, 'hl') + '</div>' +
@@ -54,7 +54,7 @@
         '<div class="capbar-l"><span>Available for BM ' + pa + '%</span><span>Onsite / not split ' + (100 - pa) + '%</span></div>';
     }
     return C.sec('Capacity', 'kW', '<div class="figs two">' + C.fig('Installed capacity', U.int(r.kw), 'kW') +
-      C.fig('Available for BM', av == null ? null : U.int(av), 'kW') + '</div>' + bar);
+      C.fig('Available for BM', av == null ? null : U.int(av), 'kW') + '</div>' + bar + (r.mec != null ? '<div class="note-i">' + C.INFO + '<span>Export connection ' + U.int(r.mec) + ' kW on the DNO register, shared with on-site demand.</span></div>' : ''));
   } });
   Sh.section('sam', 'route', { order: 40, render: function (r) {
     var cc = RBX.config.cards || {}, off = r.off === 'Generator is sole holder' ? 'Sole holder · unbundled' : (r.off || 'Not identified');

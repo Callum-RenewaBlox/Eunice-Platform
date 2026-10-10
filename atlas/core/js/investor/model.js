@@ -24,6 +24,13 @@
   I.bmKw = function (d) { return d.bm != null ? d.bm : (d.kw || 0) * I.AVRATIO; };
   /** Indicative TCV potential of one TAM row (Scotland, bt = 0, carries none). */
   I.pot = function (d) { return d.bt > 0 ? I.bmKw(d) * (I.TCVRATE[d.bt] || 0) : 0; };
+  /** Sheet note for a SAM site without a contract value. A site whose output is used on site can carry a provisional
+      available-for-BM figure (kwBm, e.g. 0 kW) and still await confirmation, so it stays unpriced. */
+  I.awaitNote = function (r) {
+    return r.kwBm != null
+      ? 'Its output is used on site, so available-for-BM is provisionally ' + U.int(r.kwBm) + ' kW. No contract value is modelled until half-hourly export data confirms it. It is drawn as a hollow ring.'
+      : 'This site has no available-for-BM figure yet, so no contract value is modelled. It is drawn as a hollow ring.';
+  };
   I.tcvPot = function (rows) { var s = 0; for (var i = 0; i < rows.length; i++) s += rows[i].pot || 0; return s; };
 
   RBX.bus.on('data', function (D) {

@@ -121,9 +121,9 @@ def test_copy_check_reports_missing_strings():
 
 def test_universe_strings_verbatim():
     html = build.norm_text(client_build()['html'])
-    for s in ['129 sites · 144 MW', '1,309 sites · 3,612 MW', '57 sites · 15.2 MW stranded']:
+    for s in ['129 sites · 144 MW', '1,306 sites · 3,610 MW', '57 sites · 15.2 MW stranded']:
         assert s in html, s
-    assert '3611.9' not in html
+    assert '3609.9' not in html
 
 
 def test_pack_roundtrip():
@@ -188,6 +188,43 @@ def test_investor_builds_within_budget():
     assert res['files'][-1] == 'core/js/app.js'
 
 
+
+def test_tam_merged_rows_keep_crm_order_and_drop_at_build():
+    """CRM 10 Oct 2026: tam.json keeps every register row (row n = CRM TAM card #n); rows naming another row's plant in
+    tam_merged.json are dropped at build. The Melton Ross AD's three FiT phases (#1188, #1205, #1240) merge into #110."""
+    raw = build.load(build.DATA, 'shared', 'tam.json')
+    into = build.load(build.DATA, 'shared', 'tam_merged.json')['into']
+    assert len(raw) == 1309
+    assert [raw[n - 1]['key'] for n in (110, 1188, 1205, 1240)] == ['tprospect-farm-bi-gcx', 'tnorth-lincolnshi-gcx',
+                                                                  'tnorth-lincolnshi-gcx-2', 'tnorth-lincolnshi-gcx-3']
+    assert sorted(into) == ['tnorth-lincolnshi-gcx', 'tnorth-lincolnshi-gcx-2', 'tnorth-lincolnshi-gcx-3']
+    assert sum(r['kw'] for r in raw if r['key'] in into) == raw[109]['kw'] == 1993
+    for data in (build.assemble_client({'switches': {}}), build.assemble_investor({'switches': {}})):
+        keys = [r['key'] for r in data['tam']]
+        assert len(keys) == 1306 and not set(into) & set(keys)
+        t = next(r for r in data['tam'] if r['key'] == 'tprospect-farm-bi-gcx')
+        assert t['sam'] == 'DN386AE' and t['bm'] == 0 and t['p'] == 0
+
+
+def test_melton_ross_record_matches_crm():
+    """SAM #110 (once 'Prospect Farm'): Singleton Birch's Melton Ross AD, output used by the lime works, still awaiting a BM figure."""
+    for aud in ('client', 'investor'):
+        data = build.assemble_client({'switches': {}}) if aud == 'client' else build.assemble_investor({'switches': {}})
+        r = next(x for x in data['sam'] if x['key'] == 'DN386AE')
+        assert (r['name'], r['op'], r['pc'], r['town']) == ('Singleton Birch Melton Ross AD', 'Singleton Birch Ltd', 'DN38 6AE', 'Barnetby')
+        assert (r['kw'], r['kwOn'], r['kwBm'], r['mec']) == (1993, 1993, 0, 2800)
+        assert abs(r['lat'] - 53.58647) < 1e-4 and abs(r['lon'] + 0.36446) < 1e-4
+        assert not any('Prospect Farm' in str(v) or 'Castillium' in str(v) for v in r.values())
+        if aud == 'investor':
+            assert r['tcv'] is None and r['rank'] == 110            # stays "awaiting a BM figure"
+    lay = next(r for r in build.load_tam() if r['key'] == 'tlaynes-piggery-b-gcr')
+    assert (lay['f'], lay['kw'], lay['bm']) == ('Biogas (AD)', 498, 485)
+    for out in ('client', 'investor', 'investor_v3'):
+        with open(build.OUT[out], encoding='utf-8') as fh:
+            html = fh.read()
+        assert 'Prospect Farm' not in html and 'North Lincolnshire AD (DN38)' not in html, out
+        assert 'Export connection' in html, out
+
 def test_investor_committed_output_is_fresh():
     with open(build.OUT['investor'], encoding='utf-8') as fh:
         assert fh.read() == investor_build()['html'], 'investor_atlas_v2.html is stale: run python3 atlas/build.py'
@@ -196,7 +233,7 @@ def test_investor_committed_output_is_fresh():
 def test_investor_headlines_are_computed():
     html = build.norm_text(investor_build()['html'])
     for s in ['£221.9M of contract value across 105 priced AD peakers',
-              '£7.17bn indicative potential across 1,309 subsidised sites',
+              '£7.16bn indicative potential across 1,306 subsidised sites',
               '57 stranded hydro units worth £13.6M (£35.6M with treasury)']:
         assert s in html, s
     assert not re.search(r'\{\{[A-Za-z0-9_]+\}\}', html)
@@ -338,7 +375,7 @@ def test_investor_display_names_clean_with_status_tag():
     by = {r['key']: r for r in data['sam']}
     assert by['FY85RP']['op'] == 'R-Group of Companies Limited' and by['FY85RP']['dev'] == 'R-Group of Companies Limited'
     assert by['FY85RP']['opSt'] == 'in liquidation'
-    assert by['DN386EL']['dev'] == 'Castillium Ltd' and 'opSt' not in by['DN386EL']
+    assert by['DN386AE']['dev'] == 'Singleton Birch Ltd' and 'opSt' not in by['DN386AE']
     for s in ('verify owner', 'SPV TBC', 'Farmgen', '(developer;'):
         assert s not in html, s
     for field, val in (('op', 'X Ltd (verify)'), ('dev', 'Castillium Ltd (developer; SPV TBC)'), ('name', 'Farm (site=Y)'),

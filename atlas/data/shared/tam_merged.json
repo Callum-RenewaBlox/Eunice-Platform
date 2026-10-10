@@ -1,0 +1,8 @@
+{
+ "_doc": "Build-only (never shipped). TAM rows that duplicate another row's plant and are dropped at build time. tam.json keeps them so its row order stays the CRM's TAM card numbering (row n = TAM card #n).",
+ "into": {
+  "tnorth-lincolnshi-gcx": "tprospect-farm-bi-gcx",
+  "tnorth-lincolnshi-gcx-2": "tprospect-farm-bi-gcx",
+  "tnorth-lincolnshi-gcx-3": "tprospect-farm-bi-gcx"
+ }
+}

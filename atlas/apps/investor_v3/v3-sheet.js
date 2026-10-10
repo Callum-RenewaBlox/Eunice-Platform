@@ -82,7 +82,7 @@
   Sh.section('sam', 'commercials', { order: 15, render: function (r) {
     if (!r.pr) {
       return sec('Contract value', 'Year 5', '<div class="v3-await"><i class="v3-dot ring" aria-hidden="true"></i><b>' + U.esc(awaitingLabel()) + '</b></div>' +
-        '<p class="note-i">' + C.INFO + '<span>This site has no available-for-BM figure yet, so no contract value is modelled. It is drawn as a hollow ring.</span></p>',
+        '<p class="note-i">' + C.INFO + '<span>' + RBX.inv.awaitNote(r) + '</span></p>',
         'v3-com is-await');
     }
     return sec('Contract value', 'Year 5', heroRow(r) + split(r) + ledger([

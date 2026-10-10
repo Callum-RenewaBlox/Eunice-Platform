@@ -2726,14 +2726,14 @@
  },
  {
   "rank": 110,
-  "operator": "Castillium Ltd",
-  "site": "Prospect Farm, Bigby Rd, Barnetby le Wold",
-  "town": null,
-  "postcode": "DN38 6EL",
+  "operator": "Singleton Birch Ltd",
+  "site": "Melton Ross AD, Melton Ross Quarries, Brigg Road, Barnetby",
+  "town": "Barnetby",
+  "postcode": "DN38 6AE",
   "installed_kw": 1993,
   "commissioned": 2014,
   "gspc": "M Yorkshire",
-  "archetype": "Farm / owner-operator",
+  "archetype": "Corporate host (private wire likely)",
   "ppa_class": "Negotiated export PPA",
   "offtaker": null,
   "supplier_1": null,
@@ -2746,7 +2746,7 @@
   "yrs_subsidy_left": 8.6,
   "rego_status": "no REGO certs",
   "accred_ref": null,
-  "key": "DN386EL",
+  "key": "DN386AE",
   "offtaker_raw": null
  },
  {

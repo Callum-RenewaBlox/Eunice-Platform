@@ -31,7 +31,7 @@ streamlit run app_investor_atlas.py     # investor wrapper
 Every build fails on any of:
 
 * **canonical numbers** (spec appendix A) recomputed from `atlas/data` — e.g. SAM 129 sites / 143,571 kW,
-  TAM 1,309 / 3,611,922 kW, Hydro 57 / 15,153 kW stranded, investor Σtcv £221,933,920, TCV Potential £7.17bn;
+  TAM 1,306 / 3,609,942 kW, Hydro 57 / 15,153 kW stranded, investor Σtcv £221,933,920, TCV Potential £7.16bn;
 * the **MUST-preserve copy check** (spec 12) over the final HTML (PPA strings are checked whenever
   `core/js/ppa.js` is bundled);
 * the **client-safety scan** (spec 13): client data keys ⊆ the allowlist, a case-insensitive deny-list over the
@@ -47,11 +47,23 @@ which reads the frozen copies in `atlas/tools/v1/` (the live `client_atlas.html`
 build outputs now). To refresh: regenerate the JSON files (same shapes), run the build, fix any assert the new
 data trips (they are deliberately exact), commit data + outputs together.
 
+**CRM alignment.** The CRM (crm.renewablox.com) numbers its cards after these files: SAM card #n is the SAM row of
+`rank` n, and TAM card #n is row n of `data/shared/tam.json`. Never delete or reorder `tam.json` rows. A row found to
+duplicate another row's plant stays in place and is listed in `tam_merged.json`; `build.py load_tam()` drops it (and
+fails unless the merged rows' kW add up to the row they merge into). The optional SAM field `mec` is an export
+connection shared with on-site load (cards say so); Melton Ross AD (#110) is the only site with one.
+
+CRM corrections, 10 Oct 2026: SAM #110 "Prospect Farm" is Singleton Birch's Melton Ross AD (DN38 6AE; 1,993 kW,
+onsite demand ≈ all, available for BM 0 kW, 2,800 kW export connection shared with the lime works; still awaiting a
+BM figure, so no TCV), and its three FiT phases (TAM #1188, #1205, #1240) merge into TAM #110; TAM #479 Laynes
+Piggery is farm AD (Biogas, 498 kW installed, 485 kW export), not landfill gas.
+
 ```
 data/shared/tam.json           TAM rows (client-safe): key n f kw bm p bt ro units sam lat lon
 data/shared/ppa_prices.json    realised[{m,p}], fwd[{k,from,to,p}], kpi{base12,win26,cal28,fit,asOf}, spread{value,note}, fit, cpi
 data/shared/sam_kw_dno.json    build-only (never shipped): DNO-split installed kW where it differs (owner decision 1)
-data/client/sam.json           SAM map fields: key name site town la pc op t kw kwOn kwBm comm lat lon
+data/shared/tam_merged.json    build-only (never shipped): {into: {row key: key of the row it duplicates}}; dropped at build
+data/client/sam.json           SAM map fields: key name site town la pc op t kw kwOn kwBm [mec] comm lat lon
 data/client/ppa_register.json  SAM register fields: key ppa off self fitGen fitEnd yrsLeft rego ref
 data/client/hydro.json         key name exp conf kw inst mec lat lon
 data/investor/sam.json         client SAM fields + rank g dev inst av btc en tcv tcvT web (+ opSt where a note gave a company status)
@@ -198,7 +210,7 @@ stay `paper` / `night`). Map notes are kept but default to off.
 * Streamlit: the page runs at `about:srcdoc` with Streamlit's sandbox (`allow-downloads`, `allow-popups`,
   `clipboard-write` are granted), so CSV/PNG downloads and Copy link work inside the wrapper.
 * Investor checks: band defaults SAM `105 · 90.5 MW · 639 · £221.9M · £327.4M`, Hydro `57 · 15.2 MW · 177 · £13.6M ·
-  £35.6M`, TAM `1,309 · 3,612 MW · 3,337 MW · £7.17bn` (caveat `£4.08bn of it from 76 sites ≥ 10 MW`;
+  £35.6M`, TAM `1,306 · 3,610 MW · 3,335 MW · £7.16bn` (caveat `£4.08bn of it from 76 sites ≥ 10 MW`;
   `RBX.band.setScale('ad')` → `£3.09bn`), PPA `129 · 143.6 MW · 21 · 8.52p · 12.50p`; `atlas.present()` then
   `RBX.present.go(0…5)`; `RBX.present.exit()` restores view, filters, camera, theme and the open card.
 
@@ -248,7 +260,7 @@ Investor v2 is kept as it is.
   is gone; the headline stays for screen readers and the PNG title). The legend notes and the "In view" switch are
   also gone.
 * **The panel:**
-  * one teal hero per view (SAM £221.9M, TAM £7.17bn, Hydro £13.6M), with the treasury or ≥ 10 MW line;
+  * one teal hero per view (SAM £221.9M, TAM £7.16bn, Hydro £13.6M), with the treasury or ≥ 10 MW line;
   * a three-row ledger;
   * the disclaimer band ("Indicative; not investment advice." · model or registers stamp · Sources & method);
   * legend rows that show why each tier pays (an 8.0p wholesale stub plus the uplift in the tier colour);

@@ -1527,17 +1527,17 @@
  },
  {
   "key": "tprospect-farm-bi-gcx",
-  "n": "Prospect Farm, Bigby Rd, Barnetby le Wold",
+  "n": "Singleton Birch Melton Ross AD, Barnetby",
   "f": "Biogas (AD)",
   "kw": 1993,
-  "bm": 190,
+  "bm": 0,
   "p": 0,
   "bt": 4,
   "ro": null,
   "units": null,
-  "sam": "DN386EL",
-  "lat": 53.56397,
-  "lon": -0.39754
+  "sam": "DN386AE",
+  "lat": 53.58647,
+  "lon": -0.36446
  },
  {
   "key": "tclayton-hall-far-gcw",
@@ -6693,9 +6693,9 @@
  },
  {
   "key": "tlaynes-piggery-b-gcr",
-  "n": "Laynes Piggery Biogas",
-  "f": "Landfill gas",
-  "kw": 485,
+  "n": "Laynes Farm Piggery AD, Willoughton",
+  "f": "Biogas (AD)",
+  "kw": 498,
   "bm": 485,
   "p": 0,
   "bt": 3,
@@ -16619,17 +16619,17 @@
  },
  {
   "key": "tnorth-lincolnshi-gcx",
-  "n": "North Lincolnshire AD (DN38)",
+  "n": "Singleton Birch Melton Ross AD, Barnetby (498 kW FiT phase)",
   "f": "Biogas (AD)",
   "kw": 498,
   "bm": null,
-  "p": 1,
+  "p": 0,
   "bt": 4,
   "ro": null,
   "units": null,
   "sam": null,
-  "lat": 53.56092,
-  "lon": -0.39135
+  "lat": 53.58647,
+  "lon": -0.36446
  },
  {
   "key": "tnorth-norfolk-ad-u12",
@@ -16857,17 +16857,17 @@
  },
  {
   "key": "tnorth-lincolnshi-gcx-2",
-  "n": "North Lincolnshire AD (DN38)",
+  "n": "Singleton Birch Melton Ross AD, Barnetby (996 kW FiT phase)",
   "f": "Biogas (AD)",
   "kw": 996,
   "bm": null,
-  "p": 1,
+  "p": 0,
   "bt": 4,
   "ro": null,
   "units": null,
   "sam": null,
-  "lat": 53.55967,
-  "lon": -0.391
+  "lat": 53.58647,
+  "lon": -0.36446
  },
  {
   "key": "tnorthumberland-a-gcy-2",
@@ -17347,17 +17347,17 @@
  },
  {
   "key": "tnorth-lincolnshi-gcx-3",
-  "n": "North Lincolnshire AD (DN38)",
+  "n": "Singleton Birch Melton Ross AD, Barnetby (499 kW FiT phase)",
   "f": "Biogas (AD)",
   "kw": 499,
   "bm": null,
-  "p": 1,
+  "p": 0,
   "bt": 4,
   "ro": null,
   "units": null,
   "sam": null,
-  "lat": 53.56089,
-  "lon": -0.39107
+  "lat": 53.58647,
+  "lon": -0.36446
  },
  {
   "key": "trichmondshire-ad-gcw",

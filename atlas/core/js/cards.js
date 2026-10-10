@@ -111,7 +111,7 @@
         '<div class="capbar-l"><span>Onsite ' + Math.round(on / inst * 100) + '%</span>' + (rest ? '<span>Not yet split ' + Math.round(rest / inst * 100) + '%</span>' : '') + '<span>Available for BM ' + Math.round(bm / inst * 100) + '%</span></div>';
     } else bar = '<div class="note-i">' + INFO + '<span>Onsite demand is not yet split out for this site, so the capacity available for the Balancing Mechanism is unknown.</span></div>';
     return C.sec('Capacity', 'kW', '<div class="figs">' + C.fig('Installed', U.int(r.kw), 'kW') + C.fig('Onsite demand / Stranded', on == null ? null : U.int(on), 'kW') +
-      C.fig('Available for BM', bm == null ? null : U.int(bm), 'kW') + '</div>' + bar);
+      C.fig('Available for BM', bm == null ? null : U.int(bm), 'kW') + '</div>' + bar + (r.mec != null ? '<div class="note-i">' + INFO + '<span>Export connection ' + U.int(r.mec) + ' kW on the DNO register, shared with on-site demand.</span></div>' : ''));
   } });
   Sh.section('sam', 'route', { order: 40, render: function (r) {
     var cc = RBX.config.cards || {}, off;
