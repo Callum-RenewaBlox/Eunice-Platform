@@ -295,9 +295,10 @@
         'Onsite demand ' + Math.round(on / inst * 100) + '%, available for BM ' + Math.round(bm / inst * 100) + '%' + (rest ? ', not yet split ' + Math.round(rest / inst * 100) + '%' : ''));
     } else note = '<div class="note-i">' + C.INFO + '<span>Onsite demand is not yet split out for this site, so the capacity available for the Balancing Mechanism is unknown.</span></div>';
     var rows = [{ k: 'Installed', v: U.int(inst) + ' kW' },
-      { k: 'Onsite demand / Stranded', sw: true, swCls: 'sw-on', v: on == null ? null : U.int(on) + ' kW' + pct(on, inst) },
+      { k: r.mec != null && r.mec >= inst ? 'Onsite demand' : 'Onsite demand / Stranded', sw: true, swCls: 'sw-on', v: on == null ? null : U.int(on) + ' kW' + pct(on, inst) },
       { k: 'Available for BM', sw: col, v: bm == null ? null : U.int(bm) + ' kW' + pct(bm, inst) }];
     if (on != null && bm != null && inst && inst - on - bm > 0) rows.push({ k: 'Not yet split', sw: true, swCls: 'hatch', v: U.int(inst - on - bm) + ' kW' });
+    if (r.mec != null) note += '<div class="note-i">' + C.INFO + '<span>Export connection ' + U.int(r.mec) + ' kW on the DNO register, shared with on-site demand.</span></div>';
     return C.sec('Capacity', 'kW', '<div class="big"><b class="num">' + U.int(inst) + '</b><small>kW installed</small></div>' + bar + kvs(rows) + note);
   } });
   var samRev = find('sam', 'revenue');

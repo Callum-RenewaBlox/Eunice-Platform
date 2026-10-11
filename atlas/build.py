@@ -149,7 +149,7 @@ REGO_LABELS = {
 
 # client data allowlist (spec 13.1) — a closed set; any other key fails the build
 CLIENT_ALLOW = {
-    'sam': {'key', 'name', 'site', 'town', 'la', 'pc', 'op', 't', 'kw', 'kwOn', 'kwBm', 'comm', 'lat', 'lon',
+    'sam': {'key', 'name', 'site', 'town', 'la', 'pc', 'op', 't', 'kw', 'kwOn', 'kwBm', 'mec', 'comm', 'lat', 'lon',
             'ppa', 'off', 'self', 'fitGen', 'fitEnd', 'yrsLeft', 'rego', 'ref'},
     'hydro': {'key', 'name', 'exp', 'conf', 'kw', 'inst', 'mec', 'lat', 'lon'},
     'tam': {'key', 'n', 'f', 'kw', 'bm', 'p', 'bt', 'ro', 'units', 'sam', 'lat', 'lon'},
@@ -169,6 +169,31 @@ def apply_sam_kw_source(rows, source):
     return [dict(r, kw=dno[r['key']]) if r['key'] in dno else r for r in rows]
 
 
+def load_tam():
+    """TAM rows as shipped. tam.json keeps every register row in the CRM's order (row n = CRM TAM card #n), so a row
+    found to duplicate another row's plant is never deleted there: tam_merged.json names it, with the row it merges
+    into, and it is dropped here (e.g. the three FiT phases of the Melton Ross AD, already counted by its SAM row)."""
+    tam = load(DATA, 'shared', 'tam.json')
+    into = load(DATA, 'shared', 'tam_merged.json')['into']
+    by = {r['key']: r for r in tam}
+    for src, dst in sorted(into.items()):
+        if src not in by or dst not in by or dst in into:
+            fail('tam_merged.json: %s -> %s must name two TAM rows, and the target must stay' % (src, dst))
+    for dst in sorted(set(into.values())):
+        parts = sum(by[s]['kw'] or 0 for s in into if into[s] == dst)
+        if parts != by[dst]['kw']:
+            fail('tam_merged.json: the rows merged into %s add up to %s kW, not its %s kW' % (dst, parts, by[dst]['kw']))
+    return [r for r in tam if r['key'] not in into]
+
+
+def key_aliases():
+    """Retired site key -> current key, for links shared before a data correction (shipped as config.keyAliases)."""
+    al = load(DATA, 'shared', 'key_aliases.json')
+    out = dict(al.get('sam', {}))
+    out.update(load(DATA, 'shared', 'tam_merged.json')['into'])
+    return out
+
+
 def assemble_client(cfg):
     sw = cfg.get('switches', {})
     sam = apply_sam_kw_source(load(DATA, 'client', 'sam.json'), sw.get('sam_kw_source', 'fit_register'))
@@ -178,7 +203,7 @@ def assemble_client(cfg):
         x = dict(r)
         x.update({k: v for k, v in reg[r['key']].items() if k != 'key'})
         rows.append(x)
-    data = {'sam': rows, 'hydro': load(DATA, 'client', 'hydro.json'), 'tam': load(DATA, 'shared', 'tam.json'),
+    data = {'sam': rows, 'hydro': load(DATA, 'client', 'hydro.json'), 'tam': load_tam(),
             'ppa': load(DATA, 'shared', 'ppa_prices.json')}
     return data
 
@@ -199,7 +224,7 @@ def assemble_investor(cfg):
         rows.append(x)
     extra = load(DATA, 'investor', 'tam_extra.json')
     tam = []
-    for t in load(DATA, 'shared', 'tam.json'):
+    for t in load_tam():
         x = dict(t)
         ex = extra.get(t['key'], {})
         x['src'] = ex.get('src')
@@ -291,7 +316,7 @@ def assert_numbers(app, data, sw):
     chk('SAM largest kW', max(r['kw'] for r in sam), 5936)
     chk('SAM installed Σ kW', sum(r['kw'] for r in sam), 143571 if fit_reg else 142573)
     chk('SAM available-for-BM Σ kW', sum(r['kwBm'] or 0 for r in sam), 90465)
-    chk('SAM BM known', sum(1 for r in sam if r['kwBm'] is not None), 105)
+    chk('SAM BM known', sum(1 for r in sam if r['kwBm'] is not None), 106)        # 105 priced + Melton Ross (0 kW, CRM 10 Oct 2026)
     chk('SAM keys unique', len({r['key'] for r in sam}), 129)
     chk('Hydro sites', len(hyd), 57)
     chk('Hydro stranded Σ', sum(r['kw'] for r in hyd), 15153)
@@ -301,35 +326,35 @@ def assert_numbers(app, data, sw):
     chk('Hydro confidence', [sum(1 for r in hyd if r['conf'] == c) for c in ('High', 'Medium', 'Low', 'Unverified')], [37, 8, 4, 8])
     chk('Hydro export class', [sum(1 for r in hyd if r['exp'] == e) for e in ('Export', 'No export')], [48, 9])
     chk('Hydro keys unique', len({r['key'] for r in hyd}), 57)
-    chk('TAM sites', len(tam), 1309)
-    chk('TAM Σ kW', sum(r['kw'] or 0 for r in tam), 3611922)
-    chk('TAM RO / FiT', [sum(1 for r in tam if r['ro']), sum(1 for r in tam if not r['ro'])], [945, 364])
-    chk('TAM approx', sum(1 for r in tam if r['p']), 220)
+    chk('TAM sites', len(tam), 1306)                 # 1,309 register rows less 3 merged (tam_merged.json)
+    chk('TAM Σ kW', sum(r['kw'] or 0 for r in tam), 3609942)
+    chk('TAM RO / FiT', [sum(1 for r in tam if r['ro']), sum(1 for r in tam if not r['ro'])], [945, 361])
+    chk('TAM approx', sum(1 for r in tam if r['p']), 217)
     chk('TAM largest', max(r['kw'] or 0 for r in tam), 99800)
     chk('TAM in SAM', sum(1 for r in tam if r['sam']), 129)
-    chk('TAM BM tiers', [sum(1 for r in tam if r['bt'] == t) for t in (1, 2, 3, 4, 5, 0)], [78, 294, 342, 455, 57, 83])
+    chk('TAM BM tiers', [sum(1 for r in tam if r['bt'] == t) for t in (1, 2, 3, 4, 5, 0)], [78, 294, 341, 453, 57, 83])
     chk('TAM Scotland MW', round(sum(r['kw'] or 0 for r in tam if r['bt'] == 0) / 1000), 275)
     fuels = {}
     for r in tam:
         f = fuels.setdefault(r['f'], [0, 0])
         f[0] += 1
         f[1] += r['kw'] or 0
-    want = {'Landfill gas': (435, 961), 'Fuelled (biomass/AD/EfW)': (262, 877), 'Biomass': (81, 715),
-            'Waste / EfW': (81, 616), 'Biogas (AD)': (294, 234), 'Sewage gas': (138, 143), 'Advanced fuel': (4, 38),
+    want = {'Landfill gas': (434, 961), 'Fuelled (biomass/AD/EfW)': (262, 877), 'Biomass': (81, 715),
+            'Waste / EfW': (81, 616), 'Biogas (AD)': (292, 233), 'Sewage gas': (138, 143), 'Advanced fuel': (4, 38),
             'Biofuel - other': (11, 27), 'Biodiesel': (3, 1)}
     chk('TAM fuels', {k: (v[0], round(v[1] / 1000)) for k, v in fuels.items()}, want)
     stacks = Counter((r['lat'], r['lon']) for r in tam)
     chk('TAM stacks', sorted([c for c in stacks.values() if c > 1], reverse=True), [12, 3, 2, 2, 2, 2, 2])
     if app == 'client':
         chk('TAM bm known', sum(1 for r in tam if r['bm'] is not None), 727)
-        chk('TAM bm Σ MW', round(sum(r['bm'] or 0 for r in tam) / 1000, 1), 2489.0)
+        chk('TAM bm Σ MW', round(sum(r['bm'] or 0 for r in tam) / 1000, 1), 2488.8)
     chk('PPA kpi', ppa['kpi'], {'base12': 8.52, 'win26': 12.5, 'cal28': 7.74, 'fit': 7.64, 'asOf': '2026-08-11'})
     chk('PPA realised months', [len(ppa['realised']), ppa['realised'][0]['m'], ppa['realised'][-1]['m']], [24, '2024-08', '2026-07'])
     chk('PPA forward blocks', [f['p'] for f in ppa['fwd']], [12.601, 12.391, 8.605, 8.25, 7.744])
     chk('PPA forward keys', [f['k'] for f in ppa['fwd']], ['Q4-2026', 'Q1-2027', 'Q2-2027', 'H2-2027*', 'Cal-2028'])
     chk('PPA class', [sum(1 for r in sam if r['ppa'] == c) for c in ('neg', 'fit', 'btm', 'unk')], [108, 16, 4, 1])
     chk('PPA offtaker null', sum(1 for r in sam if r['off'] is None), 37)
-    chk('PPA rego', [sum(1 for r in sam if r['rego'] == c) for c in ('active', 'none', 'ceased', 'declining')], [64, 40, 14, 11])
+    chk('PPA rego', [sum(1 for r in sam if r['rego'] == c) for c in ('active', 'none', 'ceased', 'declining')], [64, 39, 15, 11])
     ext = {r['off'] for r in sam if r['off'] and r['off'] != 'Generator is sole holder'}
     chk('PPA counterparties (external)', len(ext), 21)
 
@@ -352,7 +377,7 @@ def assert_numbers(app, data, sw):
         chk('INV TCVRATE', [round(rate[t], 2) for t in range(1, 6)], [2671.41, 2544.82, 2438.84, 2329.91, 2271.03])
         avr = sum(r['av'] for r in pr) / sum(r['inst'] for r in pr)
         chk('INV AVRATIO', round(avr, 5), 0.73392)
-        chk('INV in BM tiers MW', round(sum(r['kw'] or 0 for r in tam if r['bt'] > 0) / 1000, 1), 3337.4)
+        chk('INV in BM tiers MW', round(sum(r['kw'] or 0 for r in tam if r['bt'] > 0) / 1000, 1), 3335.4)
 
         def bmkw(d):
             return d['bm'] if d.get('bm') is not None else (d['kw'] or 0) * avr
@@ -360,10 +385,10 @@ def assert_numbers(app, data, sw):
         pot = sum(bmkw(d) * rate[d['bt']] for d in tam if d['bt'] > 0)
         big = sum(bmkw(d) * rate[d['bt']] for d in tam if d['bt'] > 0 and (d['kw'] or 0) >= 10000)
         nbig = sum(1 for d in tam if d['bt'] > 0 and (d['kw'] or 0) >= 10000)
-        chk('INV TCV potential', round(pot), 7165922831, 2)
+        chk('INV TCV potential', round(pot), 7162019362, 2)       # CRM 10 Oct 2026: Melton Ross BM 0, Laynes tier 4
         chk('INV TCV potential ≥10MW', round(big), 4080456539, 2)
         chk('INV sites ≥10MW', nbig, 76)
-        chk('INV TCV potential abbr', abbr(pot), '£7.17bn')
+        chk('INV TCV potential abbr', abbr(pot), '£7.16bn')
     bad = [c for c in checks if not c[1]]
     if bad:
         fail('canonical-number asserts failed:\n' + '\n'.join('  %s: got %r, want %r' % (n, g, w) for n, _, g, w in bad))
@@ -384,6 +409,7 @@ def tokens_for(data):
         'highlands_n': str(sum(1 for r in hyd if r['lat'] >= 56.4 and r['lon'] <= -3.3)),
         'sam_bm_mw': mw_str(sum(r['kwBm'] or 0 for r in sam)),
         'sam_bm_n': str(sum(1 for r in sam if r['kwBm'] is not None)),
+        'tam_approx': gb(sum(1 for r in tam if r['p'])),
         'tam_ro': gb(sum(1 for r in tam if r['ro'])), 'tam_fit': gb(sum(1 for r in tam if not r['ro'])),
         'as_of': '11 Aug 2026',
     }
@@ -463,7 +489,7 @@ def bundle(app, manifest, warnings, aud=None):
 
 # ============================================================================ MUST-preserve copy check (spec 12)
 COPY_COMMON = [
-    'no Watt wasted', 'TAM · 1,309', 'SAM · 129', 'PPA Benchmark',
+    'no Watt wasted', 'TAM · 1,306', 'SAM · 129', 'PPA Benchmark',
     'Tier 1 · Highest', 'Tier 2 · Strong', 'Tier 3 · Moderate', 'Tier 4 · Modest', 'Tier 5 · Lower',
     'Scotland · no BM revenue', 'Landfill gas', 'Fuelled (biomass/AD/EfW)', 'Biomass', 'Waste / EfW',
     'Biogas (AD)', 'Sewage gas', 'Advanced fuel', 'Biofuel - other', 'Biodiesel',
@@ -472,7 +498,7 @@ COPY_COMMON = [
 COPY = {
     'client': COPY_COMMON + [
         'Peaker Model', 'Hydro · 57', 'RenewaBlox Client Atlas', '#0B2E2A', '#8FD14F',
-        '57 sites · 15.2 MW stranded', '129 sites · 144 MW', '1,309 sites · 3,612 MW',
+        '57 sites · 15.2 MW stranded', '129 sites · 144 MW', '1,306 sites · 3,610 MW',
         'BM Tier — projected p/kWh (next 12m)',
         '29.6p avg · 122p top 5%', '25.3p avg · 104p top 5%', '21.7p avg · 80p top 5%',
         '18.0p avg · 61p top 5%', '16.0p avg · 50p top 5%',
@@ -489,7 +515,7 @@ COPY = {
         'Peaker plants', 'RenewaBlox Investor Atlas', '#16323A', '#1F6F78',
         # subtitles (spec 12.2 item 10)
         'Total Contract Value · Year 5 · 129 AD-peaker sites in the GB Balancing Mechanism',
-        'Total addressable market · 1,309 subsidised biogas, biomass & EfW sites · 3,612 MW',
+        'Total addressable market · 1,306 subsidised biogas, biomass & EfW sites · 3,610 MW',
         'Total Contract Value · Year 5 · 57 stranded hydro units · 100% Bitcoin mining',
         'PPA & price benchmark · 129 SAM sites · applies across peakers and hydro',
         # KPI band labels + as-of stamps (spec 10.1)
@@ -515,8 +541,8 @@ COPY = {
         'RenewaBlox Investor Atlas · TAM — every subsidised biogas, biomass, EfW, landfill and sewage-gas CHP holding an '
         'RO or FiT accreditation. Sources: DNO Embedded Capacity Registers (NGED, NPG, SPEN, SSEN Jul-2026, UKPN) + Ofgem '
         'FiT, RO and REGO registers (Aug-2026). Co-located records are collapsed to one marker per site with capacity '
-        'capped at the DNO connection figure (194 MW of double-counting removed across 87 sites); 8 '
-        'transmission-connected thermal stations >100 MW are excluded. 220 sites are plotted at postcode-district '
+        'capped at the DNO connection figure (196 MW of double-counting removed across 88 sites); 8 '
+        'transmission-connected thermal stations >100 MW are excluded. 217 sites are plotted at postcode-district '
         'centroid (dashed). BM tier is indicative, modelled from the 129 verified SAM sites; Scotland sits outside the '
         'modelled tiers.',
         'RenewaBlox Investor Atlas · PPA & Price Benchmark — Elexon BMRS Market Index (APXMIDP) settlement data, '
@@ -536,7 +562,7 @@ COPY = {
 COPY['investor_v3'] = [s.replace('Jul-2026', 'Jul 2026').replace('(Aug-2026)', '(Aug 2026)') for s in COPY['investor'] if s not in (
     '#16323A', '#1F6F78', 'Balancing Mechanism Tiers', 'avg BM revenue vs 8.0p wholesale baseline', 'Stranded Hydro',
     'Total Contract Value · Year 5 · 129 AD-peaker sites in the GB Balancing Mechanism',
-    'Total addressable market · 1,309 subsidised biogas, biomass & EfW sites · 3,612 MW',
+    'Total addressable market · 1,306 subsidised biogas, biomass & EfW sites · 3,610 MW',
     'Total Contract Value · Year 5 · 57 stranded hydro units · 100% Bitcoin mining',
     'PPA & price benchmark · 129 SAM sites · applies across peakers and hydro',
     '+% = average BM revenue per tier vs a wholesale market baseline. TCV is per kW of available-for-BM; 24 sites '
@@ -753,13 +779,14 @@ def build_app(app, warnings):
         if os.path.exists(story):
             with open(story, encoding='utf-8') as fh:
                 cfg['story'] = json.load(fh)
+    cfg['keyAliases'] = key_aliases()
     cfg = strip_private(fill_tokens(cfg, tok))
     left_tok = re.findall(r'\{\{[A-Za-z0-9_]+\}\}', json.dumps(cfg, ensure_ascii=False))
     if left_tok:
         fail('unfilled copy tokens in %s config: %s' % (app, sorted(set(left_tok))))
     # verbatim Universe strings must equal the computed ones (spec 12.1 item 3)
     uni = {v: cfg['views'][v].get('universe') for v in ('sam', 'tam', 'hydro') if v in cfg.get('views', {})}
-    want = {'sam': '129 sites · 144 MW', 'tam': '1,309 sites · 3,612 MW', 'hydro': '57 sites · 15.2 MW stranded'}
+    want = {'sam': '129 sites · 144 MW', 'tam': '1,306 sites · 3,610 MW', 'hydro': '57 sites · 15.2 MW stranded'}
     if sw.get('sam_kw_source') == 'dno_split':
         want['sam'] = '129 sites · %s MW' % tok['sam_mw0']
     if aud == 'client':

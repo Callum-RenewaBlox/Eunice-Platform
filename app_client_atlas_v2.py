@@ -2,7 +2,7 @@
 
 A sales-facing MapLibre map for prospective clients and partners, in three modes:
 - **Peaker Model** — the serviceable market (SAM: 129 verified AD sites, coloured by Balancing
-  Mechanism tier, sized by installed capacity) and the total addressable market (TAM: 1,309
+  Mechanism tier, sized by installed capacity) and the total addressable market (TAM: 1,306
   subsidised generators; ring colour = fuel, shape = subsidy).
 - **Hydro** — 57 hydro schemes whose installed capacity exceeds the export capacity the network
   allows (circle area = stranded kW, colour = match confidence).
@@ -79,7 +79,7 @@ st.sidebar.markdown(
     "**Views** — switch with *Peaker · Hydro · PPA Benchmark* at the top left of the map "
     "(keys **1 2 3**):\n\n"
     "- **Peaker Model** — *SAM*: 129 verified anaerobic-digestion sites, coloured by projected "
-    "Balancing Mechanism tier and sized by installed capacity. *TAM*: 1,309 subsidised biogas, "
+    "Balancing Mechanism tier and sized by installed capacity. *TAM*: 1,306 subsidised biogas, "
     "biomass, energy-from-waste, landfill and sewage-gas generators. Switch SAM / TAM in the "
     "panel on the left (key **S**).\n"
     "- **Hydro** — 57 hydro schemes generating more than the grid will take (stranded kW).\n"

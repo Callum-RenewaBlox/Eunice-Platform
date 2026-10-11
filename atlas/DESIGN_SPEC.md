@@ -601,7 +601,7 @@ ACTIVE.hydro = ['all', inSet('c', confs), /* investor: */ inSet('exp', exportCla
 
 ```
 ┌─ header 56 (--header-bg) ───────────────────────────────────────────────────────────────────────┐
-│ ■■ RenewaBlox │ CLIENT ATLAS      Peaker Model [TAM · 1,309|SAM · 129]  Hydro · 57 ┆ PPA Benchmark   [⌕ Search sites, towns, postcodes…  /] [◐] [⋯] │
+│ ■■ RenewaBlox │ CLIENT ATLAS      Peaker Model [TAM · 1,306|SAM · 129]  Hydro · 57 ┆ PPA Benchmark   [⌕ Search sites, towns, postcodes…  /] [◐] [⋯] │
 │ ■■            │ no Watt wasted                                                       (investor: [▶ Present] before [◐])         │
 ├─ (investor) KPI band 64 ───────────────────────────────────────────────────────────────────────────┤
 ├─ map, full-bleed ───────────────────────────────────────────────────────────────────────────────────┤
@@ -639,7 +639,7 @@ Structure: `<header role="banner">`, then brand, `<nav>` with `role="tablist"`, 
 
 - Tab styling: 13 px Inter 500, `--header-ink-2`. The active tab is `--header-ink` at 600 with a 2 px `--lime` underline.
 - **PPA Benchmark** sits last, after a 1 px `--header-rule` vertical divider, so it is set apart.
-- **Scope segmented control:** `role="radiogroup"` with labels `TAM · 1,309` | `SAM · 129`.
+- **Scope segmented control:** `role="radiogroup"` with labels `TAM · 1,306` | `SAM · 129`.
   - It sits inline, immediately after the Peaker tab, and is **only rendered in Peaker mode**: collapse its width over `--dur-2`, and set `aria-hidden` when hidden.
   - Pill track `rgba(255,255,255,.08)`. The active option is `--lime` fill with `#0B2E2A` text 600, and the count is in tabular numerals.
   - The scope control is hidden outside Peaker mode. The `S` shortcut still works there: it switches to Peaker and toggles the scope (v1 investor behaviour: choosing a scope forces Peaker).
@@ -673,7 +673,7 @@ Client:
 | View | Kicker | Headline | Standfirst |
 |---|---|---|---|
 | SAM | `PEAKER MODEL · SERVICEABLE MARKET (SAM)` | "129 AD plants that can earn when the grid runs tight" | "Verified anaerobic-digestion sites, graded into five Balancing-Mechanism tiers by where they connect. *Circle area shows installed capacity.*" |
-| TAM | `PEAKER MODEL · ADDRESSABLE MARKET (TAM)` | "1,309 subsidised generators, 3.6 GW that could flex" | "Biogas, biomass, energy-from-waste, landfill and sewage-gas generators holding RO or FiT accreditation. *Colour is technology; shape is subsidy.*" |
+| TAM | `PEAKER MODEL · ADDRESSABLE MARKET (TAM)` | "1,306 subsidised generators, 3.6 GW that could flex" | "Biogas, biomass, energy-from-waste, landfill and sewage-gas generators holding RO or FiT accreditation. *Colour is technology; shape is subsidy.*" |
 | Hydro | `STRANDED HYDRO` | "57 hydro schemes generating more than the grid will take" | "Installed capacity exceeds the export capacity the network allows, so power is stranded behind the meter. *Circle area shows stranded kW.*" |
 
 Investor. The standfirst is the **verbatim v1 subtitle**, and the headlines are new:
@@ -681,7 +681,7 @@ Investor. The standfirst is the **verbatim v1 subtitle**, and the headlines are 
 | View | Headline | Standfirst (verbatim) |
 |---|---|---|
 | SAM | "£221.9M of contract value across 105 priced AD peakers" | "Total Contract Value · Year 5 · 129 AD-peaker sites in the GB Balancing Mechanism" |
-| TAM | "£7.17bn indicative potential across 1,309 subsidised sites" | "Total addressable market · 1,309 subsidised biogas, biomass & EfW sites · 3,612 MW" |
+| TAM | "£7.16bn indicative potential across 1,306 subsidised sites" | "Total addressable market · 1,306 subsidised biogas, biomass & EfW sites · 3,610 MW" |
 | Hydro | "57 stranded hydro units worth £13.6M (£35.6M with treasury)" | "Total Contract Value · Year 5 · 57 stranded hydro units · 100% Bitcoin mining" |
 
 **Every number in a headline is computed from data at build time.** Never hand-type them.
@@ -693,7 +693,7 @@ When `max-height ≤ 840px`, the headline drops to 23 px and the standfirst clam
 | View | Cell 1 | Cell 2 | Cell 3 |
 |---|---|---|---|
 | SAM | CAPACITY SHOWN `143.6 MW` "installed" | SITES SHOWN `129` "of 129" | AVAILABLE FOR BM `90.5 MW` "known for 105 sites" |
-| TAM | CAPACITY SHOWN `3,612 MW` "installed" | SITES SHOWN `1,309` "of 1,309" | AVAILABLE FOR BM `2,489 MW` "known for 727 sites" |
+| TAM | CAPACITY SHOWN `3,610 MW` "installed" | SITES SHOWN `1,306` "of 1,306" | AVAILABLE FOR BM `2,489 MW` "known for 727 sites" |
 | Hydro | STRANDED CAPACITY SHOWN `15.2 MW` "behind the meter" | SITES SHOWN `57` "of 57" | INSTALLED `36.2 MW` "FiT register" |
 
 - Number format is en-GB. MW values below 1,000 have 1 dp; at 1,000 MW and above there are 0 dp with a thousands separator. **"3611.9" must never appear again.**
@@ -726,7 +726,7 @@ Client legends. The copy is verbatim; the counts are faceted and live.
 | Hydro | `Confidence` | `High` 37 · `Medium` 8 · `Low` 4 · `Unverified` 8, each with stranded kW. Footnote: "How confidently each FiT installation was matched to its network export record." Above the legend sits the "Where the power goes" split bar (D1): installed 36.2 MW, can export 21.1 MW, stranded 15.2 MW. |
 
 The TAM legend has three groups:
-- `SUBSIDY · SHAPE`: two chip toggles, `△ RO accredited 945` and `○ FiT accredited 364`. A precision chip pair follows: `○ Exact location 1,089` and `◌ Postcode district 220`.
+- `SUBSIDY · SHAPE`: two chip toggles, `△ RO accredited 945` and `○ FiT accredited 361`. A precision chip pair follows: `○ Exact location 1,089` and `◌ Postcode district 217`.
 - `TECHNOLOGY · RING`:
   - The **9 verbatim rows in v1 order** (sorted by MW): `Landfill gas 435 sites · 961 MW`, `Fuelled (biomass/AD/EfW) 262 · 877`, `Biomass 81 · 715`, `Waste / EfW 81 · 616`, `Biogas (AD) 294 · 234`, `Sewage gas 138 · 143`, `Advanced fuel 4 · 38`, `Biofuel - other 11 · 27`, `Biodiesel 3 · 1`.
   - Each row's swatch uses its **family** colour.
@@ -911,7 +911,7 @@ A right-side drawer 480 px wide (full screen on mobile), `role="dialog"` `aria-m
 
 **Header**
 - Row 1 (52 px): mark, "RenewaBlox", the product label (10.5 caps), and on the right `⌕`, `◐`, investor `▶` and `⋯` (44 px targets).
-- Row 2 (44 px): `Peaker [TAM 1,309 | SAM 129]  Hydro 57  PPA`. Scope only appears in Peaker mode; labels are compact. It scrolls horizontally if needed; nothing may overlap.
+- Row 2 (44 px): `Peaker [TAM 1,306 | SAM 129]  Hydro 57  PPA`. Scope only appears in Peaker mode; labels are compact. It scrolls horizontally if needed; nothing may overlap.
 
 **Investor KPI band.** A horizontal scroll-snap strip, 52 px, with 2.5 cells visible so the next is peeking.
 
@@ -1126,7 +1126,7 @@ The raw names are kept in the investor data for audit.
 |---|---|---|
 | SAM | `SITES` (priced visible; sub "priced · of 129") · `AVAIL. FOR BM` (Σav, 1 dp MW) · `BTC MINED` (round Σbtc; sub "Year 5") · `TCV` (abbr Σtcv; sub "no treasury") · `TCV (TREASURY)` (abbr ΣtcvT) | **105 · 90.5 MW · 639 · £221.9M · £327.4M** |
 | Hydro | `SITES` · `STRANDED` · `BTC MINED` · `TCV` · `TCV (TREASURY)` | **57 · 15.2 MW · 177 · £13.6M · £35.6M** |
-| TAM | `SITES` · `CAPACITY` · `IN BM TIERS` · `TCV POTENTIAL` | **1,309 · 3,612 MW · 3,337 MW · £7.17bn** |
+| TAM | `SITES` · `CAPACITY` · `IN BM TIERS` · `TCV POTENTIAL` | **1,306 · 3,610 MW · 3,335 MW · £7.16bn** |
 | PPA | `SITES SHOWN` · `CAPACITY SHOWN` · `COUNTERPARTIES` · `REALISED 12M` · `WINTER-26 FWD` | **129 · 143.6 MW · 21 · 8.52p · 12.50p** |
 
 **TCV Potential caveat.** The caveat sits **inside the TCV Potential cell**, directly under the value: "£4.08bn of it from 76 sites ≥ 10 MW ⓘ". The ⓘ opens a method popover with the TCVRATE table, AVRATIO, the formula and the "727 sites" basis. The rail's Scale chip `AD-scale only (<10 MW)` recomputes the value, giving £3.09bn by default.
@@ -1164,7 +1164,7 @@ The build asserts these reproduce the literals (appendix A).
 
 | # | Title | View and camera | Stats |
 |---|---|---|---|
-| 1 | "The market: *1,309* fuelled generators" | TAM, fit GB | 1,309 sites · 3,612 MW · £7.17bn potential. The caveat "£4.08bn from 76 sites ≥ 10 MW" is shown in the body |
+| 1 | "The market: *1,306* fuelled generators" | TAM, fit GB | 1,306 sites · 3,610 MW · £7.16bn potential. The caveat "£4.08bn from 76 sites ≥ 10 MW" is shown in the body |
 | 2 | "The verified pipeline" | SAM, fit | 105 priced of 129 · 90.5 MW available for BM · £221.9M TCV (£327.4M treasury) |
 | 3 | "Where flexibility *pays most*" | SAM filtered to T1 + T2; camera `[0.35, 51.75]` z 7.4 (pitch 30 in P1) | 29.6p avg · 122p top 5% · ~2× offer frequency |
 | 4 | "Stranded hydro in *the Highlands*" | Hydro; camera `[-4.6, 57.1]` z 6.9 (P1: 3D terrain, pitch 58, bearing −12) | 57 sites · 15.2 MW stranded · £13.6M (£35.6M treasury) |
@@ -1255,9 +1255,9 @@ The build's `copy_check` greps the output HTML for every quoted string below, af
 
 1. A single self-contained page, with three modes.
    - Tab labels: `Peaker Model` (default, scope SAM), `Hydro · 57`, `PPA Benchmark`. PPA is visually set apart at the end of the tab group.
-   - Scope labels: `TAM · 1,309` and `SAM · 129`, shown only in Peaker mode. SAM is the default.
+   - Scope labels: `TAM · 1,306` and `SAM · 129`, shown only in Peaker mode. SAM is the default.
 2. Brand: header `#0B2E2A`, lime `#8FD14F`, tagline `no Watt wasted` (capital W, never uppercased).
-3. The Capacity shown KPI is a live sum. The Universe strings are verbatim: `57 sites · 15.2 MW stranded`, `129 sites · 144 MW`, `1,309 sites · 3,612 MW`.
+3. The Capacity shown KPI is a live sum. The Universe strings are verbatim: `57 sites · 15.2 MW stranded`, `129 sites · 144 MW`, `1,306 sites · 3,610 MW`.
 4. SAM:
    - colour = BM tier 1–5 (the new validated ramp); size = installed capacity, with proportional-by-capacity semantics;
    - legend title `BM Tier — projected p/kWh (next 12m)`;
@@ -1306,7 +1306,7 @@ The build's `copy_check` greps the output HTML for every quoted string below, af
 ### 12.2 Investor Atlas
 
 1. Title `RenewaBlox Investor Atlas`; deep-teal header gradient `#16323A → #1F6F78`; `st.iframe` height 820; caption `RenewaBlox · Investor Atlas · contact callum@renewablox.com`.
-2. Modes `Peaker plants` (TAM/SAM scope, SAM default, scope only in Peaker mode), `Hydro`, `PPA Benchmark`. Scope labels `TAM · 1,309` / `SAM · 129`.
+2. Modes `Peaker plants` (TAM/SAM scope, SAM default, scope only in Peaker mode), `Hydro`, `PPA Benchmark`. Scope labels `TAM · 1,306` / `SAM · 129`.
 3. The KPI labels, values and formulas in section 10.1, the `abbr` / `gbp0` semantics, and the tier names and uplifts `+270% +216% +171% +125% +100%` with counts `4 / 41 / 41 / 37 / 6`.
 4. 24 unpriced SAM sites shown distinctly, with `Awaiting BM figure`.
 5. Size ∝ √TCV for SAM and Hydro; ∝ capacity (banded) for TAM. The TAM encodings are as for the client. Scotland = no BM revenue.
@@ -1660,10 +1660,14 @@ The Felt *design language* (calm floating panels, command palette) is already ab
 
 ## Appendix A: canonical numbers (`build.py` asserts; recomputed from the v1 extracts)
 
+Updated for the CRM corrections of 10 Oct 2026 (atlas/README.md "CRM alignment"): SAM #110 is the Melton Ross AD
+(available for BM 0 kW, still unpriced), its three FiT phase rows merge into TAM #110, and Laynes Piggery is farm AD in
+Tier 4. Values before the correction are in brackets.
+
 ### SAM
 - 129 sites. Tiers T1–T5: 4 / 41 / 41 / 37 / 6. Largest site 5,936 kW.
 - **Canonical installed:** Σ 143,571 kW = **143.6 MW** (the 998 kW default; PKD's Σ is 142,573).
-- Available for BM: Σ 90,465 kW, known for 105 sites.
+- Available for BM: Σ 90,465 kW, known for 106 sites [105].
 - The PKD vs PEAKER differences are only ranks 53 (Rotherdale) and 74 (Scrivelsby).
 
 ### Hydro
@@ -1672,17 +1676,17 @@ The Felt *design language* (calm floating panels, command palette) is already ab
 - Confidence: High 37 / Medium 8 / Low 4 / Unverified 8. Export class: Export 48 / No export 9.
 
 ### TAM
-- 1,309 sites. kW Σ 3,611,922 ("3,612 MW"). RO 945 / FiT 364. Approximate 220. `bm` known for 727 sites (Σ 2,489.0 MW). `sam` = 129. Largest 99,800 kW.
-- BM tier: 1: 78 · 2: 294 · 3: 342 · 4: 455 · 5: 57 · Scotland (0): 83. Scotland is 275 MW.
+- 1,306 sites [1,309; `tam.json` keeps all 1,309 rows, 3 are merged at build]. kW Σ 3,609,942 ("3,610 MW") [3,611,922]. RO 945 / FiT 361 [364]. Approximate 217 [220]. `bm` known for 727 sites (Σ 2,488.8 MW) [2,489.0]. `sam` = 129. Largest 99,800 kW.
+- BM tier: 1: 78 · 2: 294 · 3: 341 [342] · 4: 453 [455] · 5: 57 · Scotland (0): 83. Scotland is 275 MW.
 - Stacks (co-located sites): 12, 3, 2, 2, 2, 2, 2.
 
 | Fuel | Sites | MW |
 |---|---|---|
-| Landfill gas | 435 | 961 |
+| Landfill gas | 434 [435] | 961 |
 | Fuelled (biomass/AD/EfW) | 262 | 877 |
 | Biomass | 81 | 715 |
 | Waste / EfW | 81 | 616 |
-| Biogas (AD) | 294 | 234 |
+| Biogas (AD) | 292 [294] | 233 [234] |
 | Sewage gas | 138 | 143 |
 | Advanced fuel | 4 | 38 |
 | Biofuel - other | 11 | 27 |
@@ -1694,7 +1698,7 @@ The Felt *design language* (calm floating panels, command palette) is already ab
 - Forward blocks: 12.601 / 12.391 / 8.605 / 8.25 / 7.744.
 - `ppa_class`: 108 / 16 / 4 / 1.
 - Offtaker null: 37.
-- `rego_status`: active 64 · no REGO certs 40 · likely ceased 14 · lagging/winding down 11.
+- `rego_status`: active 64 · no REGO certs 39 [40] · likely ceased 15 [14] · lagging/winding down 11.
 
 ### Investor
 
@@ -1712,10 +1716,10 @@ The Felt *design language* (calm floating panels, command palette) is already ab
 | Hydro ΣtcvT | £35,624,972 |
 | TCVRATE (T1–T5) | 2,671.41 / 2,544.82 / 2,438.84 / 2,329.91 / 2,271.03 |
 | AVRATIO | 0.73392 |
-| In BM tiers | 3,337.4 MW |
-| TCV Potential | £7,165,922,831 ("£7.17bn") |
+| In BM tiers | 3,335.4 MW [3,337.4] |
+| TCV Potential | £7,162,019,362 ("£7.16bn") [£7,165,922,831, "£7.17bn"] |
 | from 76 sites ≥ 10 MW | £4,080,456,539 ("£4.08bn") |
-| AD-scale (< 10 MW) | £3,085,466,292 ("£3.09bn") |
+| AD-scale (< 10 MW) | £3,081,562,822 ("£3.08bn") [£3,085,466,292, "£3.09bn"] |
 
 ## Appendix B: evidence reviewed
 
