@@ -2744,8 +2744,8 @@
   "gen_tariff_p_kwh_2026_27": 16.6,
   "fit_end_date": "2035-03-27",
   "yrs_subsidy_left": 8.6,
-  "rego_status": "no REGO certs",
-  "accred_ref": null,
+  "rego_status": "likely ceased",
+  "accred_ref": "G01537BWEN",
   "key": "DN386AE",
   "offtaker_raw": null
  },

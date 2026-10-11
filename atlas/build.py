@@ -186,6 +186,14 @@ def load_tam():
     return [r for r in tam if r['key'] not in into]
 
 
+def key_aliases():
+    """Retired site key -> current key, for links shared before a data correction (shipped as config.keyAliases)."""
+    al = load(DATA, 'shared', 'key_aliases.json')
+    out = dict(al.get('sam', {}))
+    out.update(load(DATA, 'shared', 'tam_merged.json')['into'])
+    return out
+
+
 def assemble_client(cfg):
     sw = cfg.get('switches', {})
     sam = apply_sam_kw_source(load(DATA, 'client', 'sam.json'), sw.get('sam_kw_source', 'fit_register'))
@@ -324,7 +332,7 @@ def assert_numbers(app, data, sw):
     chk('TAM approx', sum(1 for r in tam if r['p']), 217)
     chk('TAM largest', max(r['kw'] or 0 for r in tam), 99800)
     chk('TAM in SAM', sum(1 for r in tam if r['sam']), 129)
-    chk('TAM BM tiers', [sum(1 for r in tam if r['bt'] == t) for t in (1, 2, 3, 4, 5, 0)], [78, 294, 342, 452, 57, 83])
+    chk('TAM BM tiers', [sum(1 for r in tam if r['bt'] == t) for t in (1, 2, 3, 4, 5, 0)], [78, 294, 341, 453, 57, 83])
     chk('TAM Scotland MW', round(sum(r['kw'] or 0 for r in tam if r['bt'] == 0) / 1000), 275)
     fuels = {}
     for r in tam:
@@ -346,7 +354,7 @@ def assert_numbers(app, data, sw):
     chk('PPA forward keys', [f['k'] for f in ppa['fwd']], ['Q4-2026', 'Q1-2027', 'Q2-2027', 'H2-2027*', 'Cal-2028'])
     chk('PPA class', [sum(1 for r in sam if r['ppa'] == c) for c in ('neg', 'fit', 'btm', 'unk')], [108, 16, 4, 1])
     chk('PPA offtaker null', sum(1 for r in sam if r['off'] is None), 37)
-    chk('PPA rego', [sum(1 for r in sam if r['rego'] == c) for c in ('active', 'none', 'ceased', 'declining')], [64, 40, 14, 11])
+    chk('PPA rego', [sum(1 for r in sam if r['rego'] == c) for c in ('active', 'none', 'ceased', 'declining')], [64, 39, 15, 11])
     ext = {r['off'] for r in sam if r['off'] and r['off'] != 'Generator is sole holder'}
     chk('PPA counterparties (external)', len(ext), 21)
 
@@ -377,7 +385,7 @@ def assert_numbers(app, data, sw):
         pot = sum(bmkw(d) * rate[d['bt']] for d in tam if d['bt'] > 0)
         big = sum(bmkw(d) * rate[d['bt']] for d in tam if d['bt'] > 0 and (d['kw'] or 0) >= 10000)
         nbig = sum(1 for d in tam if d['bt'] > 0 and (d['kw'] or 0) >= 10000)
-        chk('INV TCV potential', round(pot), 7162072192, 2)       # Melton Ross available-for-BM 0 (CRM 10 Oct 2026)
+        chk('INV TCV potential', round(pot), 7162019362, 2)       # CRM 10 Oct 2026: Melton Ross BM 0, Laynes tier 4
         chk('INV TCV potential ≥10MW', round(big), 4080456539, 2)
         chk('INV sites ≥10MW', nbig, 76)
         chk('INV TCV potential abbr', abbr(pot), '£7.16bn')
@@ -401,6 +409,7 @@ def tokens_for(data):
         'highlands_n': str(sum(1 for r in hyd if r['lat'] >= 56.4 and r['lon'] <= -3.3)),
         'sam_bm_mw': mw_str(sum(r['kwBm'] or 0 for r in sam)),
         'sam_bm_n': str(sum(1 for r in sam if r['kwBm'] is not None)),
+        'tam_approx': gb(sum(1 for r in tam if r['p'])),
         'tam_ro': gb(sum(1 for r in tam if r['ro'])), 'tam_fit': gb(sum(1 for r in tam if not r['ro'])),
         'as_of': '11 Aug 2026',
     }
@@ -532,8 +541,8 @@ COPY = {
         'RenewaBlox Investor Atlas · TAM — every subsidised biogas, biomass, EfW, landfill and sewage-gas CHP holding an '
         'RO or FiT accreditation. Sources: DNO Embedded Capacity Registers (NGED, NPG, SPEN, SSEN Jul-2026, UKPN) + Ofgem '
         'FiT, RO and REGO registers (Aug-2026). Co-located records are collapsed to one marker per site with capacity '
-        'capped at the DNO connection figure (194 MW of double-counting removed across 87 sites); 8 '
-        'transmission-connected thermal stations >100 MW are excluded. 220 sites are plotted at postcode-district '
+        'capped at the DNO connection figure (196 MW of double-counting removed across 88 sites); 8 '
+        'transmission-connected thermal stations >100 MW are excluded. 217 sites are plotted at postcode-district '
         'centroid (dashed). BM tier is indicative, modelled from the 129 verified SAM sites; Scotland sits outside the '
         'modelled tiers.',
         'RenewaBlox Investor Atlas · PPA & Price Benchmark — Elexon BMRS Market Index (APXMIDP) settlement data, '
@@ -770,6 +779,7 @@ def build_app(app, warnings):
         if os.path.exists(story):
             with open(story, encoding='utf-8') as fh:
                 cfg['story'] = json.load(fh)
+    cfg['keyAliases'] = key_aliases()
     cfg = strip_private(fill_tokens(cfg, tok))
     left_tok = re.findall(r'\{\{[A-Za-z0-9_]+\}\}', json.dumps(cfg, ensure_ascii=False))
     if left_tok:

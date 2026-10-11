@@ -55,14 +55,17 @@ connection shared with on-site load (cards say so); Melton Ross AD (#110) is the
 
 CRM corrections, 10 Oct 2026: SAM #110 "Prospect Farm" is Singleton Birch's Melton Ross AD (DN38 6AE; 1,993 kW,
 onsite demand ≈ all, available for BM 0 kW, 2,800 kW export connection shared with the lime works; still awaiting a
-BM figure, so no TCV), and its three FiT phases (TAM #1188, #1205, #1240) merge into TAM #110; TAM #479 Laynes
-Piggery is farm AD (Biogas, 498 kW installed, 485 kW export), not landfill gas.
+BM figure, so no TCV; REGO accreditation G01537BWEN, certificates only to Jun 2025), and its three FiT phases (TAM
+#1188, #1205, #1240) merge into TAM #110 (key `tmelton-ross-ad-gcx`); TAM #479 Laynes Piggery is farm AD (Biogas,
+498 kW installed, 485 kW export, Tier 4 on Northern Powergrid Yorkshire), not landfill gas. Retired keys (DN386EL and
+the merged rows) resolve through `data/shared/key_aliases.json` → `config.keyAliases`, so old links still open the card.
 
 ```
 data/shared/tam.json           TAM rows (client-safe): key n f kw bm p bt ro units sam lat lon
 data/shared/ppa_prices.json    realised[{m,p}], fwd[{k,from,to,p}], kpi{base12,win26,cal28,fit,asOf}, spread{value,note}, fit, cpi
 data/shared/sam_kw_dno.json    build-only (never shipped): DNO-split installed kW where it differs (owner decision 1)
 data/shared/tam_merged.json    build-only (never shipped): {into: {row key: key of the row it duplicates}}; dropped at build
+data/shared/key_aliases.json   build-only: {sam: {retired key: current key}}; shipped with the merges as config.keyAliases
 data/client/sam.json           SAM map fields: key name site town la pc op t kw kwOn kwBm [mec] comm lat lon
 data/client/ppa_register.json  SAM register fields: key ppa off self fitGen fitEnd yrsLeft rego ref
 data/client/hydro.json         key name exp conf kw inst mec lat lon
@@ -211,7 +214,7 @@ stay `paper` / `night`). Map notes are kept but default to off.
   `clipboard-write` are granted), so CSV/PNG downloads and Copy link work inside the wrapper.
 * Investor checks: band defaults SAM `105 · 90.5 MW · 639 · £221.9M · £327.4M`, Hydro `57 · 15.2 MW · 177 · £13.6M ·
   £35.6M`, TAM `1,306 · 3,610 MW · 3,335 MW · £7.16bn` (caveat `£4.08bn of it from 76 sites ≥ 10 MW`;
-  `RBX.band.setScale('ad')` → `£3.09bn`), PPA `129 · 143.6 MW · 21 · 8.52p · 12.50p`; `atlas.present()` then
+  `RBX.band.setScale('ad')` → `£3.08bn`), PPA `129 · 143.6 MW · 21 · 8.52p · 12.50p`; `atlas.present()` then
   `RBX.present.go(0…5)`; `RBX.present.exit()` restores view, filters, camera, theme and the open card.
 
 ---

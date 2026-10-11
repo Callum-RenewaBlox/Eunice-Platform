@@ -1,0 +1,6 @@
+{
+ "_doc": "Build-only source of config.keyAliases: retired site keys mapped to the current key, so links shared before a correction still open the right card (data.js find). Rows merged by tam_merged.json are added at build.",
+ "sam": {
+  "DN386EL": "DN386AE"
+ }
+}

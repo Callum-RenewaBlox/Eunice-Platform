@@ -1526,7 +1526,7 @@
   "lon": -0.95052
  },
  {
-  "key": "tprospect-farm-bi-gcx",
+  "key": "tmelton-ross-ad-gcx",
   "n": "Singleton Birch Melton Ross AD, Barnetby",
   "f": "Biogas (AD)",
   "kw": 1993,
@@ -6698,7 +6698,7 @@
   "kw": 498,
   "bm": 485,
   "p": 0,
-  "bt": 3,
+  "bt": 4,
   "ro": null,
   "units": null,
   "sam": null,

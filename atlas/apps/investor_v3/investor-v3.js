@@ -18,7 +18,7 @@
   var INFO = '<svg class="i" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v5M10 6.2v.1"/></svg>';
 
   // ------------------------------------------------------------------ shared helpers (also used by v3-sheet/present/map.js)
-  /** Money in the v3 grammar: full-size £ on the baseline, small magnitude letter (£221.9M, £7.17bn, £595k). */
+  /** Money in the v3 grammar: full-size £ on the baseline, small magnitude letter (£221.9M, £7.16bn, £595k). */
   V3.money = function (v) {
     var s = typeof v === 'number' ? U.abbr(v) : String(v == null ? '' : v);
     var m = /^(-?£?[\d.,]+)\s*(k|M|bn)?$/.exec(s);

@@ -195,14 +195,14 @@ def test_tam_merged_rows_keep_crm_order_and_drop_at_build():
     raw = build.load(build.DATA, 'shared', 'tam.json')
     into = build.load(build.DATA, 'shared', 'tam_merged.json')['into']
     assert len(raw) == 1309
-    assert [raw[n - 1]['key'] for n in (110, 1188, 1205, 1240)] == ['tprospect-farm-bi-gcx', 'tnorth-lincolnshi-gcx',
+    assert [raw[n - 1]['key'] for n in (110, 1188, 1205, 1240)] == ['tmelton-ross-ad-gcx', 'tnorth-lincolnshi-gcx',
                                                                   'tnorth-lincolnshi-gcx-2', 'tnorth-lincolnshi-gcx-3']
     assert sorted(into) == ['tnorth-lincolnshi-gcx', 'tnorth-lincolnshi-gcx-2', 'tnorth-lincolnshi-gcx-3']
     assert sum(r['kw'] for r in raw if r['key'] in into) == raw[109]['kw'] == 1993
     for data in (build.assemble_client({'switches': {}}), build.assemble_investor({'switches': {}})):
         keys = [r['key'] for r in data['tam']]
         assert len(keys) == 1306 and not set(into) & set(keys)
-        t = next(r for r in data['tam'] if r['key'] == 'tprospect-farm-bi-gcx')
+        t = next(r for r in data['tam'] if r['key'] == 'tmelton-ross-ad-gcx')
         assert t['sam'] == 'DN386AE' and t['bm'] == 0 and t['p'] == 0
 
 
@@ -218,12 +218,27 @@ def test_melton_ross_record_matches_crm():
         if aud == 'investor':
             assert r['tcv'] is None and r['rank'] == 110            # stays "awaiting a BM figure"
     lay = next(r for r in build.load_tam() if r['key'] == 'tlaynes-piggery-b-gcr')
-    assert (lay['f'], lay['kw'], lay['bm']) == ('Biogas (AD)', 498, 485)
+    assert (lay['f'], lay['kw'], lay['bm'], lay['bt']) == ('Biogas (AD)', 498, 485, 4)   # NPG Yorkshire (MPAN 23…)
+    reg = next(r for r in build.load(build.DATA, 'investor', 'ppa_register.json') if r['key'] == 'DN386AE')
+    assert (reg['accred_ref'], reg['rego_status']) == ('G01537BWEN', 'likely ceased')
     for out in ('client', 'investor', 'investor_v3'):
         with open(build.OUT[out], encoding='utf-8') as fh:
             html = fh.read()
-        assert 'Prospect Farm' not in html and 'North Lincolnshire AD (DN38)' not in html, out
-        assert 'Export connection' in html, out
+        low = html.lower()
+        assert 'prospect farm' not in low and 'prospect-farm' not in low and 'castillium' not in low, out
+        assert 'North Lincolnshire AD (DN38)' not in html and 'Export connection' in html, out
+        assert '"keyAliases":{"DN386EL":"DN386AE"' in html, out          # links shared before the correction still open it
+        assert '217 sites are plotted' in html or out == 'client', out
+
+
+def test_streamlit_wrappers_quote_the_built_tam_count():
+    """The wrapper sidebars sit beside the map: their TAM count must be the one the pages show."""
+    n = build.tokens_for(build.assemble_client({'switches': {}}))['tam_n']
+    for app in ('app_client_atlas_v2.py', 'app_investor_atlas_v2.py', 'app_investor_atlas_v3.py'):
+        with open(os.path.join(build.REPO, app), encoding='utf-8') as fh:
+            src = fh.read()
+        counts = set(re.findall(r'TAM\*?:\s*([\d,]+)', src))
+        assert counts == {n}, (app, counts, n)
 
 def test_investor_committed_output_is_fresh():
     with open(build.OUT['investor'], encoding='utf-8') as fh:

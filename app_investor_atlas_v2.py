@@ -3,7 +3,7 @@
 A presentation-oriented MapLibre map of the GB flexibility opportunity for investor meetings, in three modes:
 - **Peaker plants** — the serviceable market (SAM: 129 AD peakers, coloured by Balancing Mechanism tier and
   sized by Year-5 Total Contract Value; the 24 sites awaiting a BM figure are hollow rings) and the total
-  addressable market (TAM: 1,309 subsidised generators with an indicative TCV Potential and its caveat).
+  addressable market (TAM: 1,306 subsidised generators with an indicative TCV Potential and its caveat).
 - **Hydro** — 57 stranded hydro units (stranded capacity, Bitcoin mined, TCV).
 - **PPA Benchmark** — realised and forward GB power prices against the FiT export tariff, the certificate
   counterparties and the full site register.
@@ -80,7 +80,7 @@ st.sidebar.divider()
 st.sidebar.markdown(
     "**Views** — switch with the tabs in the map header:\n\n"
     "- **Peaker plants** — *SAM*: 129 AD peakers sized by Year-5 Total Contract Value (hollow rings await a "
-    "BM figure). *TAM*: 1,309 subsidised generators with an indicative TCV Potential — its caveat and method "
+    "BM figure). *TAM*: 1,306 subsidised generators with an indicative TCV Potential — its caveat and method "
     "sit next to the number.\n"
     "- **Hydro** — 57 stranded hydro units: stranded capacity, Bitcoin mined and contract value.\n"
     "- **PPA Benchmark** — realised and forward GB power prices against the FiT export tariff, with each "

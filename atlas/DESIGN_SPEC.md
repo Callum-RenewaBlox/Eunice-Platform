@@ -1660,10 +1660,14 @@ The Felt *design language* (calm floating panels, command palette) is already ab
 
 ## Appendix A: canonical numbers (`build.py` asserts; recomputed from the v1 extracts)
 
+Updated for the CRM corrections of 10 Oct 2026 (atlas/README.md "CRM alignment"): SAM #110 is the Melton Ross AD
+(available for BM 0 kW, still unpriced), its three FiT phase rows merge into TAM #110, and Laynes Piggery is farm AD in
+Tier 4. Values before the correction are in brackets.
+
 ### SAM
 - 129 sites. Tiers T1–T5: 4 / 41 / 41 / 37 / 6. Largest site 5,936 kW.
 - **Canonical installed:** Σ 143,571 kW = **143.6 MW** (the 998 kW default; PKD's Σ is 142,573).
-- Available for BM: Σ 90,465 kW, known for 105 sites.
+- Available for BM: Σ 90,465 kW, known for 106 sites [105].
 - The PKD vs PEAKER differences are only ranks 53 (Rotherdale) and 74 (Scrivelsby).
 
 ### Hydro
@@ -1672,17 +1676,17 @@ The Felt *design language* (calm floating panels, command palette) is already ab
 - Confidence: High 37 / Medium 8 / Low 4 / Unverified 8. Export class: Export 48 / No export 9.
 
 ### TAM
-- 1,309 sites. kW Σ 3,611,922 ("3,612 MW"). RO 945 / FiT 364. Approximate 220. `bm` known for 727 sites (Σ 2,489.0 MW). `sam` = 129. Largest 99,800 kW.
-- BM tier: 1: 78 · 2: 294 · 3: 342 · 4: 455 · 5: 57 · Scotland (0): 83. Scotland is 275 MW.
+- 1,306 sites [1,309; `tam.json` keeps all 1,309 rows, 3 are merged at build]. kW Σ 3,609,942 ("3,610 MW") [3,611,922]. RO 945 / FiT 361 [364]. Approximate 217 [220]. `bm` known for 727 sites (Σ 2,488.8 MW) [2,489.0]. `sam` = 129. Largest 99,800 kW.
+- BM tier: 1: 78 · 2: 294 · 3: 341 [342] · 4: 453 [455] · 5: 57 · Scotland (0): 83. Scotland is 275 MW.
 - Stacks (co-located sites): 12, 3, 2, 2, 2, 2, 2.
 
 | Fuel | Sites | MW |
 |---|---|---|
-| Landfill gas | 435 | 961 |
+| Landfill gas | 434 [435] | 961 |
 | Fuelled (biomass/AD/EfW) | 262 | 877 |
 | Biomass | 81 | 715 |
 | Waste / EfW | 81 | 616 |
-| Biogas (AD) | 294 | 234 |
+| Biogas (AD) | 292 [294] | 233 [234] |
 | Sewage gas | 138 | 143 |
 | Advanced fuel | 4 | 38 |
 | Biofuel - other | 11 | 27 |
@@ -1694,7 +1698,7 @@ The Felt *design language* (calm floating panels, command palette) is already ab
 - Forward blocks: 12.601 / 12.391 / 8.605 / 8.25 / 7.744.
 - `ppa_class`: 108 / 16 / 4 / 1.
 - Offtaker null: 37.
-- `rego_status`: active 64 · no REGO certs 40 · likely ceased 14 · lagging/winding down 11.
+- `rego_status`: active 64 · no REGO certs 39 [40] · likely ceased 15 [14] · lagging/winding down 11.
 
 ### Investor
 
@@ -1712,10 +1716,10 @@ The Felt *design language* (calm floating panels, command palette) is already ab
 | Hydro ΣtcvT | £35,624,972 |
 | TCVRATE (T1–T5) | 2,671.41 / 2,544.82 / 2,438.84 / 2,329.91 / 2,271.03 |
 | AVRATIO | 0.73392 |
-| In BM tiers | 3,337.4 MW |
-| TCV Potential | £7,165,922,831 ("£7.17bn") |
+| In BM tiers | 3,335.4 MW [3,337.4] |
+| TCV Potential | £7,162,019,362 ("£7.16bn") [£7,165,922,831, "£7.17bn"] |
 | from 76 sites ≥ 10 MW | £4,080,456,539 ("£4.08bn") |
-| AD-scale (< 10 MW) | £3,085,466,292 ("£3.09bn") |
+| AD-scale (< 10 MW) | £3,081,562,822 ("£3.08bn") [£3,085,466,292, "£3.09bn"] |
 
 ## Appendix B: evidence reviewed
 

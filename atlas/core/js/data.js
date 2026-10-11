@@ -103,6 +103,8 @@
   D.find = function (key, prefer) {
     var order = [prefer, 'sam', 'hydro', 'tam'];
     if (typeof key !== 'string' || !key) return null;
+    var al = (RBX.config && RBX.config.keyAliases) || {};           // a key retired by a data correction
+    if (Object.prototype.hasOwnProperty.call(al, key)) key = al[key];
     for (var i = 0; i < order.length; i++) {
       var k = order[i];
       if (k && D.byKey[k] && Object.prototype.hasOwnProperty.call(D.byKey[k], key)) return D.byKey[k][key];
