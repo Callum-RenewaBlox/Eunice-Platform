@@ -1,0 +1,77 @@
+name: Eunice page
+
+# The explainer page docs/eunice-web/eunice.html is built from src/ and data/ by
+# docs/eunice-web/tools/build_page.py. This workflow rebuilds it and fails if the committed
+# file differs, so the page can't drift from its sources. It then opens the built page in
+# Chromium and checks it against docs/eunice-web/HANDOVER.md (tools/check_page.py): the
+# regression numbers, all six scenarios to the penny, no console errors, no horizontal scroll
+# at 390 px. Screenshots are kept as a run artifact.
+
+on:
+  push:
+    paths:
+      - "docs/eunice-web/**"
+      - ".github/workflows/eunice-page.yml"
+  pull_request:
+    paths:
+      - "docs/eunice-web/**"
+      - ".github/workflows/eunice-page.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: eunice-page-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout (no LFS; the page needs none)
+        uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Rebuild eunice.html from src/ and data/
+        run: python docs/eunice-web/tools/build_page.py
+
+      - name: Fail if the committed eunice.html is out of date
+        run: |
+          if ! git diff --quiet -- docs/eunice-web/eunice.html; then
+            echo "::error file=docs/eunice-web/eunice.html::eunice.html is out of date with src/ and data/. Run 'python docs/eunice-web/tools/build_page.py' and commit the result."
+            git diff --stat -- docs/eunice-web/eunice.html
+            exit 1
+          fi
+
+      - name: Cache the Playwright browser
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-1.63.0-chromium-${{ runner.os }}
+
+      - name: Install Playwright and Chromium
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright==1.63.0
+          python -m playwright install --with-deps chromium
+
+      - name: Check the page against HANDOVER.md
+        run: python docs/eunice-web/tools/check_page.py --shots shots
+
+      - name: Keep the screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eunice-page-screenshots
+          path: shots/
+          if-no-files-found: ignore
+          retention-days: 14
