@@ -97,6 +97,39 @@ def no_hscroll(page, c, what):
     c.ok(sw <= cw, f"no horizontal scroll at 390 px ({what}): scrollWidth {sw} > clientWidth {cw}")
 
 
+CHARTS = ["flowChart", "sliceChart", "ladderScale", "weekChart", "blkRev", "blkCyc", "shareChart", "infoChart"]
+
+# For each chart: is it drawn at the width of its box (one SVG unit = one CSS pixel), and is every label at
+# least 11 px and inside the chart?
+CHART_JS = """ids => ids.map(id => {
+  const svg = document.getElementById(id), r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
+  const scale = r.width / vb.width, bad = [];
+  svg.querySelectorAll('text').forEach(t => {
+    if (!t.textContent.trim()) return;
+    const px = parseFloat(getComputedStyle(t).fontSize) * scale, b = t.getBBox();
+    if (px < 10.95) bad.push(`${JSON.stringify(t.textContent)} at ${px.toFixed(1)} px`);
+    if (b.x < -0.5 || b.x + b.width > vb.width + 0.5) bad.push(`${JSON.stringify(t.textContent)} outside the chart`);
+  });
+  return {id, width: r.width, vbw: vb.width, bad};
+})"""
+
+
+def check_charts(page, c, tag):
+    for ch in page.evaluate(CHART_JS, CHARTS):
+        c.ok(abs(ch["width"] - ch["vbw"]) <= 1.01, f"{tag}: #{ch['id']} drawn at its box width ({ch['vbw']} vs {ch['width']:.0f} px)")
+        c.ok(not ch["bad"], f"{tag}: #{ch['id']} labels legible and inside the chart: {ch['bad'][:4]}")
+
+
+def table_rows(page):
+    return page.locator("#weekTable tbody tr").count(), page.locator("#weekTable tbody tr.win").count()
+
+
+def open_table(page):
+    """Open "Show the numbers" under the week chart; the table is drawn on the details' toggle event."""
+    page.locator("#weekDetails summary").click()
+    page.wait_for_function("document.getElementById('weekDetails').open && document.querySelector('#weekTable tbody tr')")
+
+
 def check_scenario_open(page, c, s, how):
     tag = f"scenario {s['n']} ({how})"
     c.eq((pressed(page, "hp"), pressed(page, "bs"), pressed(page, "strat")), (s["hp"], s["bs"], "partial"), f"{tag} settings")
@@ -136,6 +169,20 @@ def run(path, shots):
         page.locator('#states .seg[data-bind="hp"] button[data-v="34"]').click()
         c.eq(chart(page), ("0-335", "", 0), "whole week shown by default")
         c.ok(page.locator("#scenCard").is_hidden(), "no caption card on the whole week")
+        check_charts(page, c, "1280 px")
+        c.eq(page.locator("#flowChart").get_attribute("data-layout"), "horizontal", "flow diagram is horizontal at 1280 px")
+        c.ok(page.locator("#dayPick").is_hidden(), "no day picker at 1280 px")
+
+        # --- the week chart's table view follows the chart
+        open_table(page)
+        c.eq(table_rows(page), (336, 0), "table view lists all 336 half-hours of the week")
+        c.eq(page.locator("#weekTable tfoot").count(), 0, "no total row for the whole week (the week value is the optimiser's)")
+        page.locator('#scenChips .chip[data-k="3"]').click()
+        c.eq(table_rows(page), (36, 18), "table view follows scenario 3's zoom and highlights its window")
+        c.eq(text(page, "#weekTable [data-total]"), "£479.86", "table view total over scenario 3's zoom (independently computed)")
+        c.ok("Wed 12 22:00" in text(page, "#weekTable tbody tr.win"), "table view's first window row is Wed 12 22:00")
+        page.locator("#scenAll").click()
+        page.locator("#weekDetails summary").click()
 
         # --- each scenario from its deep link (a fresh load, as from a shared link)
         for s in SCENARIOS:
@@ -192,6 +239,23 @@ def run(path, shots):
         page = new_page(390, 844)
         page.goto(url)
         no_hscroll(page, c, "whole week")
+        check_charts(page, c, "390 px")
+        c.eq(page.locator("#flowChart").get_attribute("data-layout"), "vertical", "flow diagram is vertical at 390 px")
+        c.eq((page.locator("#weekChart").get_attribute("data-layout"), chart(page)[0]), ("day", "0-47"),
+             "week chart shows one day at a time at 390 px, Monday first")
+        c.ok(page.locator("#dayPick").is_visible(), "day picker shown at 390 px")
+        page.locator('#dayPick .dayb[data-day="3"]').click()
+        c.eq(chart(page)[0], "144-191", "day picker shows Thursday")
+        open_table(page)
+        c.eq(table_rows(page), (48, 0), "table view follows the day shown")
+        no_hscroll(page, c, "week table open")
+        page.locator("#weekDetails summary").click()
+        page.set_viewport_size({"width": 1280, "height": 900})
+        page.wait_for_function("document.getElementById('weekChart').dataset.layout === 'week'")
+        c.eq(chart(page)[0], "0-335", "widening the window redraws the whole week")
+        page.set_viewport_size({"width": 390, "height": 844})
+        page.wait_for_function("document.getElementById('weekChart').dataset.layout === 'day'")
+        check_charts(page, c, "390 px after a resize")
         page.evaluate("document.querySelectorAll('details').forEach(d => d.open = true)")
         no_hscroll(page, c, "every 'Show the numbers' open")
         if shots:
@@ -201,6 +265,8 @@ def run(path, shots):
             page.goto(f"{url}#scenario-{s['n']}")
             check_scenario_open(page, c, s, "deep link, 390 px")
             no_hscroll(page, c, f"scenario {s['n']}")
+            check_charts(page, c, f"scenario {s['n']}, 390 px")
+            c.ok(page.locator("#dayPick").is_hidden(), f"scenario {s['n']}: no day picker while a scenario is open")
             if shots:
                 page.locator("#week").screenshot(path=str(Path(shots) / f"scenario-{s['n']}-390.png"))
         page.close()

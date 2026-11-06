@@ -117,6 +117,23 @@ details summary{cursor:pointer;color:var(--teal);font-size:14px;margin-top:10px}
 .scen-figs .lead b{color:var(--ink-1)}
 .scen-note{margin:10px 0 0!important;font-size:14px}
 .linkbtn{border:0;background:none;padding:0;font:inherit;color:var(--teal);text-decoration:underline;cursor:pointer}
+/* one day at a time on narrow screens */
+.daypick{display:flex;gap:4px;margin:8px 0 6px}
+.daypick[hidden]{display:none}
+.dayb{flex:1 1 0;min-width:0;display:grid;justify-items:center;border:1px solid var(--rule-2);background:#fff;font:inherit;font-size:12px;line-height:1.2;color:var(--ink-2);padding:4px 0;border-radius:8px;cursor:pointer}
+.dayb b{font-size:14px;color:var(--ink-1);font-variant-numeric:tabular-nums}
+.dayb[aria-pressed="true"]{border-color:var(--teal);background:var(--mist);color:var(--ink-1)}
+.dayb:focus-visible,.tablebox:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+/* week-chart table view */
+.tablebox{max-height:440px;overflow:auto;margin-top:8px;border:1px solid var(--rule);border-radius:10px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.tablebox table.data{display:table;min-width:660px}
+.tablebox table.data>tbody{display:table-row-group;min-width:0}
+.tablebox table.data th{position:sticky;top:0;z-index:1;background:var(--card)}
+.tablebox tr.win td{background:rgba(21,96,130,.09)}
+.tablebox tr.win td:first-child{box-shadow:inset 3px 0 0 var(--ink-1)}
+.tablebox tfoot td{font-weight:700;border-top:1px solid var(--rule-2);border-bottom:0}
+.flow text{pointer-events:none}
+svg.chart text.lbl{pointer-events:none}
 @media (max-width:600px){
   .chip span{display:none}
   .chip{padding:3px}
@@ -167,11 +184,7 @@ details summary{cursor:pointer;color:var(--teal);font-size:14px;margin-top:10px}
   <h2>Prices in, a power setting out</h2>
   <p class="sub">Each afternoon the day-ahead auction sets tomorrow's half-hourly prices. Eunice adds the network credit (gDUoS) and compares that export value with what the miners would earn. It then plans all 48 half-hours and sends Foreman one power setting per change.</p>
   <div class="card">
-    <svg class="chart flow" viewBox="0 0 1000 300" role="img" aria-label="Flow: day-ahead prices, gDUoS, hashprice and surplus feed Eunice, which plans the day and sends power settings to Foreman, which sets the 44 miners; the rest of the surplus is exported under an SSP spill contract.">
-      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#5F7282"/></marker></defs>
-      <g id="flowInputs"></g>
-      <g id="flowMain"></g>
-    </svg>
+    <svg class="chart flow" id="flowChart" viewBox="0 0 1000 300" role="img" aria-label="Flow: day-ahead prices, gDUoS, hashprice and surplus feed Eunice, which plans the day and sends power settings to Foreman, which sets the 44 miners; the rest of the surplus is exported under an SSP spill contract."></svg>
   </div>
   <div class="takeaways">
     <div><b>Planned the day before.</b> Decisions follow the day-ahead price, which is known by about 16:00 on the previous day.</div>
@@ -249,9 +262,15 @@ details summary{cursor:pointer;color:var(--teal);font-size:14px;margin-top:10px}
       <p class="small muted" id="scenHint" style="margin:0">Pick a scenario to zoom in on a moment worth talking through. With the chart focused, the left and right arrow keys step through them.</p>
     </div>
     <div class="legend"><span><i style="background:var(--c-full)"></i>Miners — full</span><span><i style="background:var(--c-eff)"></i>Miners — efficient</span><span><i style="background:var(--c-export)"></i>Exported</span><span><i style="background:rgba(192,57,43,.14)"></i>Red band (16:00–19:00 weekdays)</span><span id="scenLegend" hidden><i style="background:transparent;outline:2px solid var(--ink-1);outline-offset:-2px"></i>Scenario window</span></div>
+    <div class="daypick" id="dayPick" role="group" aria-label="Day shown" hidden></div>
     <svg class="chart" id="weekChart" viewBox="0 0 1000 390" role="img" tabindex="0" aria-label="Export value and the split between miners and export for each half-hour of the week"></svg>
+    <p class="small muted" id="swipeHint" hidden style="margin:2px 0 0">One day at a time on a narrow screen: pick a day above or swipe the chart.</p>
     <div class="scen-card" id="scenCard" hidden aria-live="polite"></div>
     <div class="statline" id="weekStats"></div>
+    <details id="weekDetails"><summary>Show the numbers</summary>
+      <p class="small muted" id="weekTableNote" style="margin:8px 0 0"></p>
+      <div class="tablebox" id="weekTable" tabindex="0" role="region" aria-labelledby="weekTableNote"></div>
+    </details>
   </div>
 </section>
 
@@ -380,25 +399,85 @@ function clear(svg){while(svg.firstChild)svg.removeChild(svg.firstChild);}
 const tip=document.getElementById('tip');
 function showTip(ev,html){tip.innerHTML=html;tip.style.opacity=1;const x=Math.min(ev.clientX+14,innerWidth-tip.offsetWidth-8),y=Math.min(ev.clientY+14,innerHeight-tip.offsetHeight-8);tip.style.left=x+'px';tip.style.top=y+'px';}
 function hideTip(){tip.style.opacity=0;}
+// Tooltip on a mark: follows the mouse, and shows on a tap with a finger or pen.
+function tipOn(node,html){const h=typeof html==='function'?html:()=>html;
+  node.addEventListener('pointermove',ev=>showTip(ev,h(ev)));
+  node.addEventListener('pointerdown',ev=>{if(ev.pointerType!=='mouse')showTip(ev,h(ev));});
+  node.addEventListener('pointerleave',ev=>{if(ev.pointerType==='mouse')hideTip();});}
+document.addEventListener('pointerdown',ev=>{if(ev.pointerType!=='mouse'&&!ev.target.closest('svg.chart'))hideTip();});
+addEventListener('scroll',hideTip,{passive:true});
+/* Charts are drawn at the width of their box (one SVG unit = one CSS pixel), so text keeps its size on a phone.
+   A ResizeObserver redraws a chart when its width changes (see the end of the script). */
+const lastW={};
+function widthOf(svg){const w=Math.round(svg.getBoundingClientRect().width||svg.parentNode.clientWidth||1000);lastW[svg.id]=w;return Math.max(240,w);}
+function size(svg,W,H){svg.setAttribute('viewBox',`0 0 ${W} ${Math.ceil(H)}`);}
+function textW(t){try{return t.getComputedTextLength();}catch(e){return 0;}}
+// Write s in lines no wider than maxW; returns the number of lines.
+function wrap(parent,x,y,s,maxW,attrs={},lh=16){
+  let line='',n=0,t=txt(parent,x,y,'',attrs);
+  for(const w of s.split(' ')){const next=line?line+' '+w:w;t.textContent=next;
+    if(textW(t)>maxW&&line){t.textContent=line;n++;t=txt(parent,x,y+n*lh,w,attrs);line=w;}else line=next;}
+  t.textContent=line;return n+1;}
+// Place labels [{x,s,anchor}] in rows so that none overlaps the one before it; returns the rows used.
+function placeLabels(parent,labels,y,attrs,rowH=15){
+  const ends=[];let rows=1;
+  labels.forEach(l=>{const t=txt(parent,l.x,y,l.s,Object.assign({'text-anchor':l.anchor||'middle'},attrs));const w=textW(t);
+    const x0=l.anchor==='end'?l.x-w:(l.anchor==='start'?l.x:l.x-w/2);let r=0;
+    while(ends[r]!==undefined&&ends[r]>x0-6)r++;ends[r]=x0+w;t.setAttribute('y',y+r*rowH);rows=Math.max(rows,r+1);});
+  return rows;}
 function modeOf(P,m){ if(P<=0) return 'stop'; if(P>=m.pmax-0.5) return 'full'; if(P<=m.pmin+0.5) return 'efficient'; return 'trim'; }
 const MODE = {full:{label:'Full mining', c:'--c-full'}, trim:{label:'Trimming toward efficient', c:'--c-eff'}, efficient:{label:'Efficient mining + export', c:'--c-eff'}, stop:{label:'Stop & export everything', c:'--c-export'}};
 
 /* ---------------------------------------------------------------- 1 flow diagram */
 function drawFlow(){
-  const gi=document.getElementById('flowInputs'), gm=document.getElementById('flowMain');
-  const box=(g,x,y,w,h,title,sub,fill='#fff',stroke='rgba(11,53,73,.18)')=>{el('rect',{x,y,width:w,height:h,rx:10,fill,stroke},g);txt(g,x+12,y+22,title,{class:'t'});if(sub)sub.split('|').forEach((s,i)=>txt(g,x+12,y+40+i*16,s,{class:'s'}));};
-  const ins=[['Day-ahead prices','EPEX half-hourly, D-1 ~16:00'],['gDUoS credit','red / amber / green band'],['Hashprice','miner earnings per TH'],['Expected surplus','~371 kW while engine runs']];
-  ins.forEach((d,i)=>{box(gi,10,12+i*70,200,58,d[0],d[1]); el('path',{d:`M210,${41+i*70} C245,${41+i*70} 250,150 286,150`,fill:'none',stroke:'#5F7282','stroke-width':1.4,'marker-end':'url(#ah)'},gi);});
-  box(gm,290,95,200,110,'Eunice','plans 48 half-hours|8-period minimum run|sets miner power','#EAF3F8','#156082');
-  el('path',{d:'M490,150 L560,150',stroke:'#5F7282','stroke-width':1.4,'marker-end':'url(#ah)'},gm);
-  txt(gm,525,140,'setpoint',{class:'s','text-anchor':'middle'});
-  box(gm,566,110,150,80,'Foreman','moves the miners','#fff');
-  el('path',{d:'M716,150 L776,150',stroke:'#5F7282','stroke-width':1.4,'marker-end':'url(#ah)'},gm);
-  box(gm,782,40,206,92,'44 miners','6.2 kW efficient …|7.8 kW full surplus','#FBF1EA',css('--c-full'));
-  box(gm,782,168,206,92,'Grid export','SSP spill contract|SSP + gDUoS − fee','#EAF2F8',css('--c-export'));
-  el('path',{d:'M716,165 C750,175 750,214 778,214',fill:'none',stroke:'#5F7282','stroke-width':1.4,'marker-end':'url(#ah)'},gm);
-  txt(gm,566,232,'Edge agent on site keeps the plan',{class:'s'});
-  txt(gm,566,248,'if the cloud link drops',{class:'s'});
+  const svg=document.getElementById('flowChart'); clear(svg); const W=widthOf(svg), wide=W>=900;
+  svg.dataset.layout=wide?'horizontal':'vertical';
+  size(svg,W,wide?300:900);                           // provisional height while the text is measured
+  const defs=el('defs',{},svg), mk=el('marker',{id:'ah',viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);
+  el('path',{d:'M0,0L10,5L0,10z',fill:'#5F7282'},mk);
+  const g=el('g',{},svg);
+  const arrow=d=>el('path',{d,fill:'none',stroke:'#5F7282','stroke-width':1.4,'marker-end':'url(#ah)'},g);
+  // A box with a bold title and wrapped sub-lines; returns its rect (height set to fit, at least minH).
+  function box(x,y,w,title,subs,fill='#fff',stroke='rgba(11,53,73,.18)',minH=0){
+    const r=el('rect',{x,y,width:w,height:10,rx:10,fill,stroke},g); txt(g,x+12,y+22,title,{class:'t'});
+    let n=0; subs.forEach(s=>{n+=wrap(g,x+12,y+40+n*16,s,w-24,{class:'s'});});
+    r.setAttribute('height',Math.max(minH,n?40+(n-1)*16+14:36)); return r;}
+  const hOf=r=>+r.getAttribute('height');
+  const ins=[['Day-ahead prices',['EPEX half-hourly, D-1 ~16:00']],['gDUoS credit',['red / amber / green band']],['Hashprice',['miner earnings per TH']],['Expected surplus',['~371 kW while engine runs']]];
+  const EU=['Eunice',['plans 48 half-hours','8-period minimum run','sets miner power'],'#EAF3F8','#156082'];
+  const MI=['44 miners',['6.2 kW efficient …','7.8 kW full surplus'],'#FBF1EA',css('--c-full')];
+  const GX=['Grid export',['SSP spill contract','SSP + gDUoS − fee'],'#EAF2F8',css('--c-export')];
+  if(wide){
+    const xo=W-12-206, gap=(xo-210-350)/3, xe=210+gap, xf=xe+200+gap;
+    ins.forEach((d,i)=>{box(10,12+i*70,200,d[0],d[1],undefined,undefined,58);
+      arrow(`M210,${41+i*70} C${210+gap/2},${41+i*70} ${xe-gap/2},150 ${xe-4},150`);});
+    box(xe,95,200,...EU,110);
+    arrow(`M${xe+200},150 L${xf-4},150`); txt(g,(xe+200+xf)/2,140,'setpoint',{class:'s','text-anchor':'middle'});
+    box(xf,110,150,'Foreman',['moves the miners'],'#fff',undefined,80);
+    box(xo,40,206,...MI,92); box(xo,168,206,...GX,92);
+    arrow(`M${xf+150},140 C${xf+150+gap/2},140 ${xo-gap/2},86 ${xo-4},86`);
+    arrow(`M${xf+150},160 C${xf+150+gap/2},160 ${xo-gap/2},214 ${xo-4},214`);
+    txt(g,xf,232,'Edge agent on site keeps the plan',{class:'s'}); txt(g,xf,248,'if the cloud link drops',{class:'s'});
+    size(svg,W,300); return;
+  }
+  // vertical: inputs in a 2×2 grid, then Eunice → Foreman → miners and export side by side
+  const pad=10, gx=10, cw=(W-2*pad-gx)/2, cx=W/2; let y=pad+6;
+  const frame=el('rect',{x:pad-4,y:y-6,width:W-2*pad+8,height:10,rx:12,fill:'rgba(11,53,73,.035)'},g);
+  for(let row=0;row<2;row++){
+    const a=box(pad,y,cw,...ins[row*2],'#fff',undefined,58), b=box(pad+cw+gx,y,cw,...ins[row*2+1],'#fff',undefined,58);
+    const h=Math.max(hOf(a),hOf(b)); a.setAttribute('height',h); b.setAttribute('height',h); y+=h+8;}
+  frame.setAttribute('height',y-frame.getAttribute('y')-2);
+  arrow(`M${cx},${y} L${cx},${y+26}`); y+=30;
+  const eu=box(pad,y,W-2*pad,...EU); y+=hOf(eu);
+  arrow(`M${cx},${y} L${cx},${y+30}`); txt(g,cx+10,y+20,'setpoint',{class:'s'}); y+=34;
+  const fw=Math.min(W-2*pad,260), fm=box(cx-fw/2,y,fw,'Foreman',['moves the miners']); y+=hOf(fm);
+  const lx=pad+cw/2, rx=pad+cw+gx+cw/2;
+  arrow(`M${cx-12},${y} C${cx-12},${y+18} ${lx},${y+12} ${lx},${y+30}`);
+  arrow(`M${cx+12},${y} C${cx+12},${y+18} ${rx},${y+12} ${rx},${y+30}`); y+=34;
+  const mi=box(pad,y,cw,...MI), gxb=box(pad+cw+gx,y,cw,...GX), h=Math.max(hOf(mi),hOf(gxb));
+  mi.setAttribute('height',h); gxb.setAttribute('height',h); y+=h+22;
+  y+=16*(wrap(g,pad,y,'Edge agent on site keeps the plan if the cloud link drops.',W-2*pad,{class:'s'})-1);
+  size(svg,W,y+10);
 }
 
 /* ---------------------------------------------------------------- 2 state cards + slice bar */
@@ -413,20 +492,6 @@ function drawStates(){
     {c:'--c-eff',name:'Efficient mining + export',big:`${fmt(effKw,1)} kW`,unit:'per miner',rows:[['Miners draw',`${fmt(m.pmin,1)} kW`],['vs installed (7.2 kW)',`−${fmt((1-effKw/F.instKw)*100)}%`],['Efficiency',`${fmt(jth(effKw),2)} J/TH`],['Earns',`${gbp(m.avg(m.pmin),2)}/MWh`],['Exported',`${fmt(exportAtEff)} kW`]],when:'When export beats the top slice but not efficient mining.'},
     {c:'--c-export',name:'Stop & export everything',big:`${fmt(F.S)} kW`,unit:'exported',rows:[['Miners draw','0 kW'],['Cooling & controls','off'],['Earns','export value'],['Start/stop','counts as a cycle'],['Minimum run','8 half-hours']],when:'When export beats even efficient mining.'}];
   wrap.innerHTML=cards.map(k=>`<div class="card state"><div class="sw" style="background:var(${k.c})"></div><h3>${k.name}</h3><div class="big">${k.big}</div><div class="muted small">${k.unit}</div><dl>${k.rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}</dl><p class="small muted" style="margin:10px 0 0">${k.when}</p></div>`).join('');
-  // slice bar
-  const svg=document.getElementById('sliceChart'); clear(svg);
-  const W=1000,x0=10,x1=990,y=34,h=40, sc=v=>x0+(x1-x0)*v/F.S;
-  const instP=F.N*F.instKw;
-  const absorbed=P=>P+m.par(P);
-  const slices=[
-    {a:0,b:absorbed(m.pmin),c:css('--c-eff'),label:`Efficient base ${fmt(absorbed(m.pmin))} kW`,v:m.avg(m.pmin)},
-    {a:absorbed(m.pmin),b:absorbed(instP),c:css('--c-full'),label:'up to installed',v:(m.rev(instP)-m.rev(m.pmin))/(absorbed(instP)-absorbed(m.pmin))*1000,op:.75},
-    {a:absorbed(instP),b:absorbed(m.pmax),c:css('--c-full'),label:'overclock',v:(m.rev(m.pmax)-m.rev(instP))/(absorbed(m.pmax)-absorbed(instP))*1000},
-  ];
-  slices.forEach((s,i)=>{const r=el('rect',{x:sc(s.a)+(i?1:0),y,width:Math.max(0,sc(s.b)-sc(s.a)-(i?1:0)),height:h,rx:4,fill:s.c,'fill-opacity':s.op||1},svg);
-    r.addEventListener('mousemove',ev=>showTip(ev,`<b>${s.label}</b><br>${fmt(s.b-s.a)} kW · <b>${gbp(s.v,2)}/MWh</b>`));r.addEventListener('mouseleave',hideTip);
-    const cx=(sc(s.a)+sc(s.b))/2; txt(svg,cx,y-10,gbp(s.v,0)+'/MWh',{'text-anchor':'middle','font-size':14,'font-weight':700,fill:css('--ink-1')});
-    txt(svg,cx,y+h+20,s.label,{'text-anchor':'middle','font-size':12,fill:css('--ink-3')});});
   // operating points table
   const ops=[['Efficient','MicroBT Low-mode floor',F.minKw,'Yes — when export value is close to mining'],
              ['Installed','MicroBT Normal mode',F.instKw,'Passed through while trimming'],
@@ -434,7 +499,33 @@ function drawStates(){
              ['Max overclock','MicroBT Aggressive',F.maxKw,`No — needs ${fmt(F.N*F.maxKw+m.par(F.N*F.maxKw))} kW, we have ${F.S} kW`]];
   document.getElementById('opsTable').innerHTML='<tr><th>Setting</th><th class="n">kW / miner</th><th class="n">Total draw</th><th class="n">J/TH</th><th class="n">£/MWh</th><th>Do we use it?</th></tr>'+
     ops.map(([n,s,kw,use])=>{const P=F.N*kw;return `<tr${n==='Full surplus'||n==='Efficient'?' class="hl"':''}><td><b>${n}</b><br><span class="small muted">${s}</span></td><td class="n">${fmt(kw,kw===F.instKw?3:(kw===F.maxKw?3:2))}</td><td class="n">${fmt(P+m.par(P))} kW</td><td class="n">${fmt(jth(kw),2)}</td><td class="n">${gbp(m.avg(P),2)}</td><td>${use}</td></tr>`;}).join('');
-  txt(svg,x0,y+h+44,`Average for the whole fleet at full surplus: ${gbp(m.avg(m.pmax),2)}/MWh. The top ${fmt(absorbed(m.pmax)-absorbed(m.pmin))} kW earns only about ${gbp(slices[2].v,0)}–${gbp(slices[1].v,0)}/MWh.`,{'font-size':13,fill:css('--ink-2')});
+  drawSlice();
+}
+function drawSlice(){
+  const m=model(state.hp), svg=document.getElementById('sliceChart'); clear(svg);
+  const W=widthOf(svg), x0=10, x1=W-10, y=34, h=40, sc=v=>x0+(x1-x0)*v/F.S;
+  size(svg,W,200);
+  const instP=F.N*F.instKw, absorbed=P=>P+m.par(P);
+  const slices=[
+    {a:0,b:absorbed(m.pmin),c:css('--c-eff'),name:'Efficient base',label:`Efficient base ${fmt(absorbed(m.pmin))} kW`,v:m.avg(m.pmin)},
+    {a:absorbed(m.pmin),b:absorbed(instP),c:css('--c-full'),name:'Up to installed',label:'up to installed',v:(m.rev(instP)-m.rev(m.pmin))/(absorbed(instP)-absorbed(m.pmin))*1000,op:.75},
+    {a:absorbed(instP),b:absorbed(m.pmax),c:css('--c-full'),name:'Overclock',label:'overclock',v:(m.rev(m.pmax)-m.rev(instP))/(absorbed(m.pmax)-absorbed(instP))*1000},
+  ];
+  slices.forEach((s,i)=>{const r=el('rect',{x:sc(s.a)+(i?1:0),y,width:Math.max(0,sc(s.b)-sc(s.a)-(i?1:0)),height:h,rx:4,fill:s.c,'fill-opacity':s.op||1},svg);
+    tipOn(r,`<b>${s.label}</b><br>${fmt(s.b-s.a)} kW · <b>${gbp(s.v,2)}/MWh</b>`);});
+  // labels on the bar where every one fits its slice; otherwise a key under the bar
+  const lab=el('g',{},svg), fits=slices.every(s=>{const w=sc(s.b)-sc(s.a), cx=(sc(s.a)+sc(s.b))/2;
+    const a=txt(lab,cx,y-10,gbp(s.v,0)+'/MWh',{class:'lbl','text-anchor':'middle','font-size':14,'font-weight':700,fill:css('--ink-1')});
+    const b=txt(lab,cx,y+h+20,s.label,{class:'lbl','text-anchor':'middle','font-size':12,fill:css('--ink-3')});
+    return Math.max(textW(a),textW(b))<=w-6;});
+  let yy=y+h+44;
+  if(!fits){ lab.remove(); yy=y+h+24;
+    slices.forEach(s=>{el('rect',{x:x0,y:yy-10,width:11,height:11,rx:2,fill:s.c,'fill-opacity':s.op||1},svg);
+      yy+=16*wrap(svg,x0+18,yy,`${s.name} · ${fmt(s.b-s.a)} kW · ${gbp(s.v,0)}/MWh`,x1-x0-18,{class:'lbl','font-size':13,fill:css('--ink-2')})+4;});
+    yy+=10;}
+  const n=wrap(svg,x0,yy,`Average for the whole fleet at full surplus: ${gbp(m.avg(m.pmax),2)}/MWh. The top ${fmt(absorbed(m.pmax)-absorbed(m.pmin))} kW earns only about ${gbp(slices[2].v,0)}–${gbp(slices[1].v,0)}/MWh.`,x1-x0,{class:'lbl','font-size':13,fill:css('--ink-2')},18);
+  size(svg,W,yy+(n-1)*18+10);
+  svg.dataset.layout=fits?'labels':'key';
 }
 
 /* ---------------------------------------------------------------- 3 ladder */
@@ -452,12 +543,15 @@ function drawLadder(){
   document.getElementById('ladderTh').innerHTML=`At $${state.hp}/PH/day: full mining until <b>${gbp(th.tFull,2)}</b> · efficient floor from <b>${gbp(th.tFloor,2)}</b> · stop &amp; export above <b>${gbp(th.tStop,2)}</b> per MWh.`;
   // scale strip
   const svg=document.getElementById('ladderScale'); clear(svg);
-  const sx=v=>10+980*v/140, y=14;
+  const W=widthOf(svg), sx=v=>10+(W-20)*v/140, y=14; size(svg,W,64);
   const segs=[[0,th.tFull,'--c-full','Full'],[th.tFull,th.tFloor,'--c-eff','Trim'],[th.tFloor,th.tStop,'--c-eff','Efficient + export'],[th.tStop,140,'--c-export','Stop & export']];
-  segs.forEach(([a,b,c,l],i)=>{el('rect',{x:sx(a)+(i?1:0),y,width:Math.max(0,sx(b)-sx(a)-(i?1:0)),height:12,rx:3,fill:css(c),'fill-opacity':i===1?.55:1},svg);
-    if(sx(b)-sx(a)>70) txt(svg,(sx(a)+sx(b))/2,y+30,l,{'text-anchor':'middle','font-size':12,fill:css('--ink-2')});});
+  segs.forEach(([a,b,c,l],i)=>{const r=el('rect',{x:sx(a)+(i?1:0),y,width:Math.max(0,sx(b)-sx(a)-(i?1:0)),height:12,rx:3,fill:css(c),'fill-opacity':i===1?.55:1},svg);
+    tipOn(r,`<b>${l}</b><br>export value ${gbp(a,2)}–${gbp(b,2)} per MWh`);
+    const t=txt(svg,(sx(a)+sx(b))/2,y+30,l,{class:'lbl','text-anchor':'middle','font-size':12,fill:css('--ink-2')});
+    if(textW(t)>sx(b)-sx(a)-8) t.remove();});
   const labs = (sx(th.tFloor)-sx(th.tFull) < 90) ? [[(th.tFull+th.tFloor)/2, gbp(th.tFull,2)+'–'+gbp(th.tFloor,2).slice(1)],[th.tStop,gbp(th.tStop,2)]] : [[th.tFull,gbp(th.tFull,2)],[th.tFloor,gbp(th.tFloor,2)],[th.tStop,gbp(th.tStop,2)]];
-  labs.forEach(([v,s])=>txt(svg,sx(v),y+46,s,{'text-anchor':'middle','font-size':12,'font-weight':700,fill:css('--ink-1')}));
+  const lrows=placeLabels(svg,labs.map(([v,s])=>({x:Math.max(10,Math.min(W-10,sx(v))),s,anchor:sx(v)<40?'start':(sx(v)>W-40?'end':'middle')})),y+46,{class:'lbl','font-size':12,'font-weight':700,fill:css('--ink-1')});
+  size(svg,W,y+46+(lrows-1)*15+6);
   el('path',{d:`M${sx(e)},${y-6} l-6,-8 h12 z`,fill:css('--ink-1')},svg);
   // outcome
   const b=m.best(e), mode=modeOf(b.P,m), P=b.P, par=m.par(P), exp=Math.max(0,F.S-P-par);
@@ -511,45 +605,54 @@ const SCENARIOS=[
   {head:'Hashprice rises to $40', hp:40, bs:8, strat:'partial', win:[288,304], zoom:[288,335],
    story:'Efficient mining is now worth up to £77/MWh. The same Sunday morning that exported at $34 runs the miners at 6.2 kW and still exports 75 kW.'},
 ];
-const view = {scen:0};                // 0 = whole week, 1–6 = scenario open
+const view = {scen:0, day:0, narrow:false};   // scen: 0 = whole week, 1–6 = scenario open; day: the day shown on a narrow screen
 const scenOf = () => view.scen ? SCENARIOS[view.scen-1] : null;
-function viewRange(){ const s=scenOf(); return s ? s.zoom : [0,HH-1]; }
+function viewRange(){ const s=scenOf(); if(s) return s.zoom; return view.narrow ? [view.day*48, view.day*48+47] : [0,HH-1]; }
 
 function drawWeek(){
   const svg=document.getElementById('weekChart'); clear(svg);
+  const W=widthOf(svg); view.narrow=W<640;
   const v=WEEK.variants[variantKey(state.strat)], m=model(state.hp), sc=scenOf();
-  const [a,b]=viewRange(), n=b-a+1, hourly=n<=96;
-  const W=1000, L=46, R=W-12, top=22, h1=120, gap=34, top2=top+h1+gap, h2=170, H=top2+h2+(hourly?42:28);
-  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
-  svg.dataset.range=`${a}-${b}`; svg.dataset.window=sc?`${sc.win[0]}-${sc.win[1]}`:'';
+  const [a,b]=viewRange(), n=b-a+1, hourly=n<=96, nar=view.narrow;
+  const L=nar?38:46, R=W-(nar?8:12), top=22, h1=nar?104:120, gap=nar?30:34, top2=top+h1+gap, h2=nar?140:170, axisY=top2+h2;
+  const H=axisY+(hourly?42:28);
+  size(svg,W,H);
+  svg.dataset.range=`${a}-${b}`; svg.dataset.window=sc?`${sc.win[0]}-${sc.win[1]}`:''; svg.dataset.layout=nar?'day':'week';
   const xs=i=>L+(R-L)*(i-a)/n, bw=(R-L)/n;
   const eMax=Math.max(140,Math.ceil(Math.max(...WEEK.export_value)/20)*20), eMin=Math.min(0,Math.floor(Math.min(...WEEK.export_value)/20)*20);
   const ye=val=>top+h1*(1-(val-eMin)/(eMax-eMin)), yk=val=>top2+h2*(1-val/F.S);
+  const small={'font-size':11,fill:css('--ink-3')};
   // red band: shaded through the price panel and the gap (the columns below are opaque)
   for(let i=a;i<=b;i++) if(WEEK.band[i]==='r') el('rect',{x:xs(i),y:top,width:bw+0.5,height:top2-top,fill:'rgba(192,57,43,.10)'},svg);
   // grid
-  for(let g=eMin; g<=eMax; g+=40){el('line',{x1:L,x2:R,y1:ye(g),y2:ye(g),stroke:css('--rule')},svg);txt(svg,L-6,ye(g)+4,'£'+g,{'text-anchor':'end','font-size':11,fill:css('--ink-3')});}
-  [0,100,200,300].forEach(g=>{el('line',{x1:L,x2:R,y1:yk(g),y2:yk(g),stroke:css('--rule')},svg);txt(svg,L-6,yk(g)+4,g,{'text-anchor':'end','font-size':11,fill:css('--ink-3')});});
-  txt(svg,L,top-6,'Export value (£/MWh)',{'font-size':12,fill:css('--ink-2')});
-  txt(svg,L,top2-6,'Surplus split (kW)',{'font-size':12,fill:css('--ink-2')});
+  for(let g=eMin; g<=eMax; g+=40){el('line',{x1:L,x2:R,y1:ye(g),y2:ye(g),stroke:css('--rule')},svg);txt(svg,L-6,ye(g)+4,'£'+g,Object.assign({'text-anchor':'end'},small));}
+  [0,100,200,300].forEach(g=>{el('line',{x1:L,x2:R,y1:yk(g),y2:yk(g),stroke:css('--rule')},svg);txt(svg,L-6,yk(g)+4,g,Object.assign({'text-anchor':'end'},small));});
+  const halo={stroke:'#fff','stroke-width':3,'stroke-linejoin':'round','paint-order':'stroke'};
+  const titles=[txt(svg,L,top-6,'Export value (£/MWh)',Object.assign({'font-size':12,fill:css('--ink-2')},halo)),
+                txt(svg,L,top2-6,'Surplus split (kW)',Object.assign({'font-size':12,fill:css('--ink-2')},halo))];
   // stacked columns
   const fullC=css('--c-full'), effC=css('--c-eff'), expC=css('--c-export');
   el('rect',{x:L,y:yk(F.S),width:R-L,height:yk(0)-yk(F.S),fill:expC},svg);
   const cols=el('g',{'shape-rendering':'crispEdges'},svg);
   for(let i=a;i<=b;i++){const P=v.miner_kw[i], used=Math.min(F.S,P+m.par(P));
     if(P>0) el('rect',{x:xs(i),y:yk(used),width:bw+(hourly?0:0.6),height:yk(0)-yk(used),fill:v.mode[i]==='M'?fullC:effC},cols);}
-  // time axis
-  const axisY=top2+h2;
+  // time axis: hourly ticks labelled every 3 hours when zoomed in, day ticks for the whole week
   if(hourly){
+    const slot=(R-L)*6/n, fs=slot>=40?12:11, every=slot>=29?6:12;   // px per 3 hours → label size and spacing
+    // a label centred on its tick, kept inside the chart; dropped if it would overlap the previous one (returns its right edge)
+    const fitLabel=(x,y,s,attrs,prevR)=>{const t=txt(svg,x,y,s,Object.assign({'text-anchor':'middle'},attrs)), w=textW(t);
+      const cx=Math.min(Math.max(x,w/2+1),W-1-w/2); t.setAttribute('x',cx);
+      if(cx-w/2<prevR+5){t.remove();return null;} return cx+w/2;};
+    let lastR=-1e9, lastDayR=-1e9;
+    if(a%48){const t=txt(svg,xs(a),axisY+35,`${dayName(Math.floor(a/48))} ${dayDate(Math.floor(a/48)).getUTCDate()}`,{'font-size':12,'font-weight':700,fill:css('--ink-1')}); lastDayR=xs(a)+textW(t);}
     for(let i=a;i<=b+1;i++){ if(i%2) continue; const x=xs(i), sp=i%48, major=sp%6===0;
       el('line',{x1:x,x2:x,y1:axisY,y2:axisY+(major?6:3),stroke:css('--ink-4')},svg);
       if(!major) continue;
       el('line',Object.assign({x1:x,x2:x,y1:top,y2:axisY,stroke:sp===0?css('--rule-2'):css('--rule')},sp===0?{}:{'stroke-dasharray':'2 3'}),svg);
-      const anchor = x>R-18?'end':(x<L+18?'start':'middle');
-      txt(svg,x,axisY+19,hhTime(i),{'text-anchor':anchor,'font-size':12,fill:css('--ink-2')});
-      if(sp===0 && i<HH) txt(svg,x,axisY+35,`${dayName(i/48)} ${dayDate(i/48).getUTCDate()}`,{'text-anchor':anchor,'font-size':12,'font-weight':700,fill:css('--ink-1')});
+      if(sp%every) continue;
+      const r1=fitLabel(x,axisY+19,hhTime(i),{'font-size':fs,fill:css('--ink-2')},lastR); if(r1===null) continue; lastR=r1;
+      if(sp===0 && i<HH){const r2=fitLabel(x,axisY+35,`${dayName(i/48)} ${dayDate(i/48).getUTCDate()}`,{'font-size':12,'font-weight':700,fill:css('--ink-1')},lastDayR); if(r2!==null) lastDayR=r2;}
     }
-    if(a%48) txt(svg,xs(a),axisY+35,`${dayName(Math.floor(a/48))} ${dayDate(Math.floor(a/48)).getUTCDate()}`,{'font-size':12,'font-weight':700,fill:css('--ink-1')});
   } else {
     WEEK.days.forEach((ds,k)=>{const x=xs(k*48);el('line',{x1:x,x2:x,y1:top,y2:axisY,stroke:css('--rule-2')},svg);
       txt(svg,x+4,axisY+18,dayDate(k).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',timeZone:'UTC'}),{'font-size':12,fill:css('--ink-2')});});
@@ -560,18 +663,36 @@ function drawWeek(){
   // scenario window, outlined across both panels
   if(sc){const x0=xs(Math.max(a,sc.win[0])), x1=xs(Math.min(b,sc.win[1])+1);
     el('rect',{x:x0,y:top-3,width:x1-x0,height:axisY-top+6,rx:4,fill:'none',stroke:css('--ink-1'),'stroke-width':2.5,'data-role':'window','pointer-events':'none'},svg);}
-  // hover crosshair + tooltip
+  titles.forEach(t=>svg.appendChild(t));       // panel titles above the outline
+  // crosshair + tooltip: follows the mouse; a tap or a sideways drag with a finger
   const hl=el('line',{x1:0,x2:0,y1:top,y2:axisY,stroke:css('--ink-1'),'stroke-width':1,opacity:0,'pointer-events':'none'},svg);
   const hit=el('rect',{x:L,y:top,width:R-L,height:axisY-top,fill:'transparent'},svg);
-  hit.addEventListener('mousemove',ev=>{const r=svg.getBoundingClientRect();const x=(ev.clientX-r.left)*W/r.width;const i=a+Math.max(0,Math.min(n-1,Math.floor((x-L)/bw)));
+  const show=ev=>{const r=svg.getBoundingClientRect();const x=(ev.clientX-r.left)*W/r.width;const i=a+Math.max(0,Math.min(n-1,Math.floor((x-L)/bw)));
     hl.setAttribute('x1',xs(i)+bw/2);hl.setAttribute('x2',xs(i)+bw/2);hl.setAttribute('opacity',.5);
-    const P=v.miner_kw[i],exp=Math.max(0,F.S-P-m.par(P)), d=Math.floor(i/48);
+    const P=v.miner_kw[i],exp=Math.max(0,F.S-P-m.par(P)), dd=Math.floor(i/48);
     const md=v.mode[i]==='E'?'Stop & export':(v.mode[i]==='M'?'Full mining':'Efficient mining + export');
-    showTip(ev,`<b>${dayDate(d).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',timeZone:'UTC'})} ${hhTime(i)}</b><br>Day-ahead £${fmt(WEEK.price[i],2)} · export value <b>£${fmt(WEEK.export_value[i],2)}</b>${WEEK.band[i]==='r'?' (red band)':''}<br>${md}<br>Miners <b>${fmt(P,1)}</b> kW · exported <b>${fmt(exp)}</b> kW<br>This half-hour <b>${gbp(hhValue(i,P,m),2)}</b>`);});
-  hit.addEventListener('mouseleave',()=>{hideTip();hl.setAttribute('opacity',0);});
+    showTip(ev,`<b>${dayDate(dd).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',timeZone:'UTC'})} ${hhTime(i)}</b><br>Day-ahead £${fmt(WEEK.price[i],2)} · export value <b>£${fmt(WEEK.export_value[i],2)}</b>${WEEK.band[i]==='r'?' (red band)':''}<br>${md}<br>Miners <b>${fmt(P,1)}</b> kW · exported <b>${fmt(exp)}</b> kW<br>This half-hour <b>${gbp(hhValue(i,P,m),2)}</b>`);};
+  const hide=()=>{hideTip();hl.setAttribute('opacity',0);};
+  const swipeDays=nar&&!sc; let start=null;
+  hit.addEventListener('pointerdown',ev=>{if(ev.pointerType==='mouse')return; start={x:ev.clientX,y:ev.clientY,swipe:false}; show(ev);});
+  hit.addEventListener('pointermove',ev=>{
+    if(ev.pointerType==='mouse'){show(ev);return;}
+    if(!start) return;
+    if(swipeDays){ if(Math.abs(ev.clientX-start.x)>12){start.swipe=true;hide();} } else show(ev);});
+  hit.addEventListener('pointerup',ev=>{if(!start)return; const dx=ev.clientX-start.x, dy=ev.clientY-start.y;
+    if(swipeDays&&start.swipe&&Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)) pickDay(view.day+(dx<0?1:-1));
+    start=null;});
+  hit.addEventListener('pointercancel',()=>{start=null;hide();});
+  hit.addEventListener('pointerleave',ev=>{if(ev.pointerType==='mouse')hide();});
+  // day picker (narrow screens, no scenario open)
+  const pick=document.getElementById('dayPick'), showPick=nar&&!sc;
+  pick.hidden=!showPick; document.getElementById('swipeHint').hidden=!showPick;
+  if(showPick){ if(!pick.childElementCount) pick.innerHTML=WEEK.days.map((ds,k)=>`<button type="button" class="dayb" data-day="${k}" aria-pressed="false" aria-label="${dayDate(k).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'})}">${dayName(k)}<b>${dayDate(k).getUTCDate()}</b></button>`).join('');
+    pick.querySelectorAll('.dayb').forEach(bt=>bt.setAttribute('aria-pressed',String(+bt.dataset.day===view.day)));}
   svg.setAttribute('aria-label', sc
     ? `Week chart zoomed to ${rangeLabel(a,b)} for scenario ${view.scen}, ${sc.head}. The scenario window, ${rangeLabel(sc.win[0],sc.win[1])}, is outlined. Left and right arrow keys step through the scenarios; Escape shows the whole week.`
-    : 'Export value and the split between miners and export for each half-hour of the week. Left and right arrow keys step through the scenarios.');
+    : (nar ? `Export value and the split between miners and export for each half-hour of ${dayDate(view.day).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'})}. Left and right arrow keys step through the scenarios.`
+           : 'Export value and the split between miners and export for each half-hour of the week. Left and right arrow keys step through the scenarios.'));
   // stats (whole week, from the optimiser's own totals)
   const other=WEEK.variants[variantKey(state.strat==='partial'?'binary':'partial')];
   const cnt=c=>[...v.mode].filter(x=>x===c).length;
@@ -580,6 +701,27 @@ function drawWeek(){
     `<span>Week value <b>${gbp(v.value_gbp,2)}</b></span><span>Full starts <b>${v.starts}</b></span>`+
     `<span>Half-hours: full <b>${cnt('M')}</b> · efficient <b>${cnt('P')}</b> · stopped <b>${cnt('E')}</b></span>`+
     `<span>Eunice vs mine-or-export this week <b>${diff>=0?'+':''}${gbp(diff,2)}</b></span>`;
+  drawWeekTable();
+}
+function pickDay(k){ k=Math.max(0,Math.min(WEEK.days.length-1,k)); if(k===view.day) return; view.day=k; drawWeek(); }
+
+/* "Show the numbers": the half-hours the chart is showing, as a table. */
+function drawWeekTable(){
+  const det=document.getElementById('weekDetails'), box=document.getElementById('weekTable'), note=document.getElementById('weekTableNote');
+  const [a,b]=viewRange(), sc=scenOf(), m=model(state.hp), v=WEEK.variants[variantKey(state.strat)];
+  const strat=state.strat==='partial'?'Eunice (3 states)':'mine or export only';
+  const what = sc ? `scenario ${view.scen}'s zoom, ${rangeLabel(a,b)}; the scenario window is highlighted` : (b-a+1===HH ? 'the whole week' : rangeLabel(a,b));
+  note.textContent=`Every half-hour on the chart (${what}) at $${state.hp}/PH/day, ${state.bs}-period minimum, ${strat}. £ = export value × exported MWh + mining revenue, for the half-hour.`;
+  if(!det.open){ box.innerHTML=''; box.dataset.range=''; return; }
+  const BAND={r:'Red',a:'Amber',g:'Green'}, ST={E:'Stop & export',M:'Full mining',P:'Efficient + export'};
+  let rows='', tot=0;
+  for(let i=a;i<=b;i++){const P=v.miner_kw[i], exp=F.S-P-m.par(P), val=hhValue(i,P,m); tot+=val;
+    const inWin=sc&&i>=sc.win[0]&&i<=sc.win[1];
+    rows+=`<tr${inWin?' class="win"':''} data-i="${i}"><td>${dayName(Math.floor(i/48))} ${dayDate(Math.floor(i/48)).getUTCDate()} ${hhTime(i)}</td><td>${BAND[WEEK.band[i]]}</td><td class="n">${fmt(WEEK.price[i],2)}</td><td class="n">${fmt(WEEK.export_value[i],2)}</td><td>${ST[v.mode[i]]}</td><td class="n">${fmt(P,1)}</td><td class="n">${fmt(Math.max(0,exp),1)}</td><td class="n">${gbp(val,2)}</td></tr>`;}
+  // A total for a part of the week; the whole week's value is the optimiser's own (stat line above).
+  const foot = (b-a+1===HH) ? '' : `<tfoot><tr><td colspan="7">Total, ${rangeLabel(a,b)}</td><td class="n" data-total>${gbp(tot,2)}</td></tr></tfoot>`;
+  box.innerHTML=`<table class="data"><thead><tr><th>Time (UK)</th><th>Band</th><th class="n">Day-ahead £/MWh</th><th class="n">Export value £/MWh</th><th>State</th><th class="n">Miners kW</th><th class="n">Exported kW</th><th class="n">£ this half-hour</th></tr></thead><tbody>${rows}</tbody>${foot}</table>`;
+  box.dataset.range=`${a}-${b}`;
 }
 
 function drawScenario(){
@@ -627,6 +769,8 @@ function initScenarios(){
     else if(ev.key==='Escape' && view.scen) openScenario(0); else return;
     ev.preventDefault();});
   addEventListener('hashchange',()=>scenarioFromHash(true));
+  document.getElementById('dayPick').addEventListener('click',ev=>{const bt=ev.target.closest('.dayb'); if(bt) pickDay(+bt.dataset.day);});
+  document.getElementById('weekDetails').addEventListener('toggle',drawWeekTable);
 }
 function scenarioFromHash(scroll){
   const mm=/^#scenario-([1-6])$/.exec(location.hash);
@@ -637,36 +781,51 @@ function scenarioFromHash(scroll){
 /* ---------------------------------------------------------------- 5 blocks */
 function groupedBars(svgId, getter, opts){
   const svg=document.getElementById(svgId); clear(svg);
-  const Y=YEAR[state.hp], blocks=['4','8','12'], L=58,R=470,T=14,B=220;
+  const W=widthOf(svg), H=262; size(svg,W,H);
+  const Y=YEAR[state.hp], blocks=['4','8','12'], L=60, R=W-10, T=18, B=220;
   const vals=blocks.flatMap(b=>[getter(Y[b],'partial'),getter(Y[b],'binary')]);
   let lo=Math.min(0,...vals), hi=Math.max(0,...vals); const pad=(hi-lo)*0.12||1; lo=lo<0?lo-pad:0; hi=hi+pad;
   const yv=v=>T+(B-T)*(1-(v-lo)/(hi-lo)), step=opts.step;
-  for(let g=Math.ceil(lo/step)*step; g<=hi; g+=step){el('line',{x1:L,x2:R,y1:yv(g),y2:yv(g),stroke:g===0?css('--rule-2'):css('--rule')},svg);txt(svg,L-6,yv(g)+4,opts.fmt(g),{'text-anchor':'end','font-size':11,fill:css('--ink-3')});}
-  const gw=(R-L)/3, bw=Math.min(46,gw*0.3);
-  blocks.forEach((b,k)=>{const cx=L+gw*(k+.5);
+  for(let g=Math.ceil(lo/step)*step; g<=hi; g+=step){el('line',{x1:L,x2:R,y1:yv(g),y2:yv(g),stroke:g===0?css('--rule-2'):css('--rule')},svg);txt(svg,L-6,yv(g)+4,opts.fmt(g),{'text-anchor':'end','font-size':12,fill:css('--ink-3')});}
+  const gw=(R-L)/3, bw=Math.min(46,gw*(W<400?0.42:0.3)), labels=el('g',{},svg);
+  blocks.forEach((b,k)=>{const cx=L+gw*(k+.5), placed=[];
     [['partial',css('--teal'),-1],['binary',css('--c-muted'),1]].forEach(([s,c,side])=>{
       const v=getter(Y[b],s), x=cx+side*(bw/2+1)-bw/2, y0=yv(0), y1=yv(v);
       const r=el('rect',{x,y:Math.min(y0,y1),width:bw,height:Math.max(1,Math.abs(y1-y0)),rx:3,fill:c},svg);
-      r.addEventListener('mousemove',ev=>showTip(ev,`<b>${b}-period minimum</b><br>${s==='partial'?'Eunice (3 states)':'Mine or export only'}: <b>${opts.fmt(v)}</b>`));r.addEventListener('mouseleave',hideTip);
-      txt(svg,x+bw/2,(v>=0?y1-6:y1+14),opts.fmt(v),{'text-anchor':'middle','font-size':11,'font-weight':s==='partial'?700:400,fill:css(s==='partial'?'--ink-1':'--ink-3')});
+      tipOn(r,`<b>${b}-period minimum</b><br>${s==='partial'?'Eunice (3 states)':'Mine or export only'}: <b>${opts.fmt(v)}</b>`);
+      // value label above (or below) its bar; nudged away from the zero line if it would overlap its neighbour
+      const t=txt(labels,x+bw/2,(v>=0?y1-6:y1+15),opts.fmt(v),{class:'lbl','text-anchor':'middle','font-size':12,'font-weight':s==='partial'?700:400,fill:css(s==='partial'?'--ink-1':'--ink-3'),stroke:'#fff','stroke-width':3,'stroke-linejoin':'round','paint-order':'stroke'});
+      const w=textW(t), box={x0:x+bw/2-w/2,x1:x+bw/2+w/2,y:+t.getAttribute('y')};
+      placed.forEach(p=>{ if(box.x0<p.x1+3&&box.x1>p.x0-3&&Math.abs(box.y-p.y)<14){ box.y=v>=0?Math.min(box.y,p.y)-14:Math.max(box.y,p.y)+14; t.setAttribute('y',box.y);} });
+      placed.push(box);
     });
     txt(svg,cx,B+20,`${b} periods`,{'text-anchor':'middle','font-size':12,fill:css('--ink-2')});
-    txt(svg,cx,B+35,`${b/2} h`,{'text-anchor':'middle','font-size':11,fill:css('--ink-3')});
+    txt(svg,cx,B+36,`${b/2} h`,{'text-anchor':'middle','font-size':12,fill:css('--ink-3')});
   });
+  svg.appendChild(labels);
 }
-function drawBlocks(){
-  groupedBars('blkRev',(r,s)=>s==='partial'?r.partial_vs_base:r.binary_vs_base,{step:1000,fmt:v=>(v>0?'+':'')+gbp(v)});
-  groupedBars('blkCyc',(r,s)=>s==='partial'?r.cycles_partial:r.cycles_binary,{step:100,fmt:v=>fmt(v)});
-  // share chart: two tall segmented bars
-  const svg=document.getElementById('shareChart'); clear(svg); const Y=YEAR[state.hp]['8'];
+function drawBlkRev(){ groupedBars('blkRev',(r,s)=>s==='partial'?r.partial_vs_base:r.binary_vs_base,{step:1000,fmt:v=>(v>0?'+':'')+gbp(v)}); }
+function drawBlkCyc(){ groupedBars('blkCyc',(r,s)=>s==='partial'?r.cycles_partial:r.cycles_binary,{step:100,fmt:v=>fmt(v)}); }
+// share chart: two segmented bars; the row labels sit beside the bars on a wide screen, above them on a narrow one
+function drawShare(){
+  const svg=document.getElementById('shareChart'); clear(svg); const W=widthOf(svg), Y=YEAR[state.hp]['8'];
+  size(svg,W,200);
+  const side=W>=560, x0=side?190:10, bwid=W-10-x0, rowH=side?54:62;
   const rows=[['Eunice (3 states)',[['full',Y.share_partial.full],['efficient',Y.share_partial.efficient+Y.share_partial.between],['stop',Y.share_partial.stop]]],
               ['Mine or export only',[['full',Y.share_binary.full],['stop',Y.share_binary.stop]]]];
   const C={full:css('--c-full'),efficient:css('--c-eff'),stop:css('--c-export')}, NAME={full:'Full mining',efficient:'Efficient + export',stop:'Stopped, all exported'};
-  rows.forEach(([lab,parts],k)=>{const y=12+k*54; txt(svg,10,y+19,lab,{'font-size':13,fill:css('--ink-2')}); let x=190;
-    parts.forEach(([p,s],j)=>{const w=790*s; const r=el('rect',{x:x+(j?1:0),y,width:Math.max(0,w-(j?1:0)),height:28,rx:3,fill:C[p]},svg);
-      r.addEventListener('mousemove',ev=>showTip(ev,`<b>${NAME[p]}</b><br>${fmt(s*100,1)}% of engine-running hours`));r.addEventListener('mouseleave',hideTip);
-      if(w>70) txt(svg,x+w/2,y+19,`${fmt(s*100)}%`,{'text-anchor':'middle','font-size':12,'font-weight':700,fill:'#fff'}); x+=w;});});
-  txt(svg,190,116,'Orange = full mining · purple = efficient mining + export · blue = miners stopped, all exported',{'font-size':12,fill:css('--ink-3')});
+  let yEnd=0;
+  rows.forEach(([lab,parts],k)=>{const y=(side?12:30)+k*rowH; txt(svg,10,side?y+19:y-8,lab,{class:'lbl','font-size':13,fill:css('--ink-2')}); let x=x0;
+    parts.forEach(([p,s],j)=>{const w=bwid*s; const r=el('rect',{x:x+(j?1:0),y,width:Math.max(0,w-(j?1:0)),height:28,rx:3,fill:C[p]},svg);
+      tipOn(r,`<b>${NAME[p]}</b><br>${fmt(s*100,1)}% of engine-running hours`);
+      const t=txt(svg,x+w/2,y+19,`${fmt(s*100)}%`,{class:'lbl','text-anchor':'middle','font-size':12,'font-weight':700,fill:'#fff'});
+      if(textW(t)>w-8) t.remove(); x+=w;});
+    yEnd=y+28;});
+  const n=wrap(svg,side?x0:10,yEnd+22,'Orange = full mining · purple = efficient mining + export · blue = miners stopped, all exported',W-10-(side?x0:10),{class:'lbl','font-size':12,fill:css('--ink-3')});
+  size(svg,W,yEnd+22+(n-1)*16+8);
+}
+function drawBlocks(){
+  drawBlkRev(); drawBlkCyc(); drawShare();
   // callout + table
   const y4=YEAR[state.hp]['4'], y8=YEAR[state.hp]['8'], y12=YEAR[state.hp]['12'];
   document.getElementById('blockCallout').innerHTML=`<b>Recommendation: 8-period minimum with Eunice's three states.</b> At $${state.hp}/PH/day it earns <b>${gbp(y8.partial_minus_binary)}/yr</b> more than mine-or-export on the same 8-period rule, with about <b>${y8.cycles_partial}</b> full start/stop cycles a year (4-period: ${y4.cycles_partial}, 12-period: ${y12.cycles_partial}). That is ${y8.cycles_partial-y8.cycles_binary} more than mine-or-export, because efficient mode makes some shorter runs worth starting; moving between efficient and full is a power change, not a cycle. Efficient mining covers <b>${fmt((y8.share_partial.efficient+y8.share_partial.between)*100)}%</b> of engine-running hours.`;
@@ -683,11 +842,20 @@ function drawPaid(){
            ['npower Business Solutions','N2EX PPA','Daily average day-ahead price','Avoid — a peaker loses its peak value','https://npowerbusinesssolutions.com/corporate/generation']];
   document.getElementById('providerTable').innerHTML='<tr><th>Provider</th><th>Product</th><th>Index</th><th>Fit for us</th></tr>'+P.map(p=>`<tr${p[3]==='Strong'?' class="hl"':''}><td>${p[0]}</td><td><a href="${p[4]}" target="_blank" rel="noopener">${p[1]}</a></td><td>${p[2]}</td><td>${p[3]}</td></tr>`).join('')+
     '<tr><td colspan="4" class="small muted">Later, for a portfolio: SmartestEnergy ETSA or TotalEnergies Fully Flexible (day-ahead position, deviations at SSP). Same value as spill in the backtest, more work.</td></tr>';
-  const svg=document.getElementById('infoChart'); clear(svg);
+  drawInfo();
+}
+// what real-time SSP calls could add: labels beside the bars on a wide box, above them on a narrow one
+function drawInfo(){
+  const svg=document.getElementById('infoChart'); clear(svg); const W=widthOf(svg); size(svg,W,220);
   const D=[['Last SSP, 2 periods back (simple)',3019],['Last SSP, 1 period back',5495],['Grid short/long this period',8961],['Exact SSP (ceiling)',13754]];
-  const L=200,R=470,max=14000; D.forEach(([l,v],i)=>{const y=12+i*42; txt(svg,L-8,y+17,l,{'text-anchor':'end','font-size':12,fill:css('--ink-2')});
-    const w=(R-L-60)*v/max; el('rect',{x:L,y,width:w,height:24,rx:3,fill:i===3?css('--c-muted'):css('--teal')},svg);
-    txt(svg,L+w+6,y+17,'+'+gbp(v),{'font-size':12,'font-weight':700,fill:css('--ink-1')});});
+  const side=W>=440, L=side?200:10, R=W-10, max=14000, rowH=side?42:50;
+  D.forEach(([l,v],i)=>{const y=(side?12:24)+i*rowH;
+    if(side) txt(svg,L-8,y+17,l,{class:'lbl','text-anchor':'end','font-size':12,fill:css('--ink-2')});
+    else txt(svg,L,y-6,l,{class:'lbl','font-size':12,fill:css('--ink-2')});
+    const w=(R-L-62)*v/max, r=el('rect',{x:L,y,width:w,height:24,rx:3,fill:i===3?css('--c-muted'):css('--teal')},svg);
+    tipOn(r,`<b>${l}</b><br><b>+${gbp(v)}</b> a year over day-ahead dispatch`);
+    txt(svg,L+w+6,y+17,'+'+gbp(v),{class:'lbl','font-size':12,'font-weight':700,fill:css('--ink-1')});});
+  size(svg,W,(side?12:24)+3*rowH+24+10);
 }
 
 /* ---------------------------------------------------------------- controls */
@@ -700,6 +868,12 @@ const links=[...document.querySelectorAll('nav.toc a')];
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));}),{rootMargin:'-45% 0px -50% 0px'});
 document.querySelectorAll('main section').forEach(s=>io.observe(s));
 drawFlow(); drawPaid(); initScenarios(); syncSegs(); if(!scenarioFromHash(true)) renderAll();
+// Redraw a chart when the width of its box changes (window resized, phone turned).
+const REDRAW={flowChart:drawFlow, sliceChart:drawSlice, ladderScale:drawLadder, weekChart:drawWeek, blkRev:drawBlkRev, blkCyc:drawBlkCyc, shareChart:drawShare, infoChart:drawInfo};
+const pendingIds=new Set(); let raf=0;
+const ro=new ResizeObserver(es=>{es.forEach(e=>{const id=e.target.id, w=Math.round(e.target.getBoundingClientRect().width); if(w&&w!==lastW[id]) pendingIds.add(id);});
+  if(pendingIds.size&&!raf) raf=requestAnimationFrame(()=>{raf=0; const ids=[...pendingIds]; pendingIds.clear(); ids.forEach(id=>REDRAW[id]());});});
+Object.keys(REDRAW).forEach(id=>ro.observe(document.getElementById(id)));
 </script>
 </body>
 </html>
