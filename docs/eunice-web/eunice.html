@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eunice · Dispatch — RenewaBlox</title>
+<style>
+:root{
+  --teal:#156082; --navy:#0B3549; --sea:#218099; --sky:#83CBEB; --mist:#E7F1F7;
+  --ink-1:#0B3549; --ink-2:#44596A; --ink-3:#5F7282; --ink-4:#A6B3BD;
+  --surface:#FCFCFB; --card:#FFFFFF; --rule:rgba(11,53,73,.10); --rule-2:rgba(11,53,73,.16);
+  /* chart palette — validated (dataviz validate_palette.js, light + dark): */
+  --c-export:#0F78B0; --c-full:#D06A1F; --c-eff:#9A4A9E; --c-muted:#A6B3BD; --c-red:#C0392B;
+  --font:"Leelawadee UI","Open Sans","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --r:14px; --sh:0 0 0 .5px rgba(8,37,51,.06),0 1px 2px rgba(8,37,51,.05),0 8px 24px -8px rgba(8,37,51,.14);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--surface);color:var(--ink-1);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--teal)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+header.hero{background:linear-gradient(128deg,#1B6E94 0%,#156082 46%,#0B3549 100%);color:#fff;padding:26px 0 40px}
+.brandrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brandrow img{height:22px;background:#fff;border-radius:6px;padding:5px 9px}
+.pill{font-size:12px;letter-spacing:.02em;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:3px 10px;color:#E7F1F7}
+.hero h1{font-size:clamp(28px,4.4vw,44px);line-height:1.12;margin:26px 0 10px;font-weight:700;letter-spacing:-.01em}
+.hero p.lead{font-size:clamp(16px,2vw,19px);max-width:760px;color:#E7F1F7;margin:0}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:26px}
+.kpi{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:12px 14px}
+.kpi b{display:block;font-size:24px;line-height:1.2;font-variant-numeric:tabular-nums}
+.kpi span{font-size:13px;color:#CFE3EE}
+nav.toc{position:sticky;top:0;z-index:20;background:rgba(252,252,251,.92);backdrop-filter:saturate(1.6) blur(14px);border-bottom:1px solid var(--rule)}
+nav.toc .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.toc a{white-space:nowrap;text-decoration:none;color:var(--ink-2);font-size:14px;padding:12px 10px;border-bottom:2px solid transparent}
+nav.toc a:hover,nav.toc a.on{color:var(--teal);border-bottom-color:var(--teal)}
+section{padding:46px 0 10px;scroll-margin-top:50px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--sea);font-weight:700}
+h2{font-size:clamp(22px,3vw,30px);line-height:1.2;margin:6px 0 8px;letter-spacing:-.005em}
+h3{font-size:17px;margin:0 0 6px}
+p.sub{color:var(--ink-2);max-width:760px;margin:0 0 18px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:18px 20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.grid2>*,.grid3>*,.ladder-out>*{min-width:0}
+.muted{color:var(--ink-3)} .small{font-size:13px}
+.num{font-variant-numeric:tabular-nums}
+.takeaways{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+.takeaways div{border-left:3px solid var(--sky);padding:2px 0 2px 12px;color:var(--ink-2);font-size:15px}
+.takeaways b{color:var(--ink-1)}
+/* state cards */
+.state{position:relative;padding-top:22px}
+.state .sw{position:absolute;top:0;left:0;right:0;height:6px;border-radius:var(--r) var(--r) 0 0}
+.state .big{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.state dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:12px 0 0;font-size:14px}
+.state dt{color:var(--ink-3)} .state dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:0 0 14px}
+.seg{display:inline-flex;background:rgba(11,53,73,.06);border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;font:inherit;font-size:14px;color:var(--ink-2);padding:5px 12px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--ink-1);box-shadow:0 1px 3px rgba(8,37,51,.14)}
+.seg button:focus-visible,input[type=range]:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.ctl-label{font-size:13px;color:var(--ink-3);margin-right:6px}
+input[type=range]{width:100%;accent-color:var(--teal)}
+/* ladder */
+.ladder-out{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;align-items:start}
+.badge{display:inline-block;border-radius:999px;padding:3px 11px;font-size:13px;font-weight:700;color:#fff}
+.split{height:30px;border-radius:8px;overflow:hidden;display:flex;background:rgba(11,53,73,.06);margin:10px 0 6px}
+.split div{height:100%;transition:width .25s var(--e,ease)}
+.compare{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+.compare td{padding:7px 4px;border-top:1px solid var(--rule)}
+.compare td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.compare tr.best td{font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink-2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+svg text{font-family:var(--font)}
+.chart{width:100%;height:auto;display:block;touch-action:pan-y}
+.tip{position:fixed;pointer-events:none;z-index:50;background:rgba(8,38,54,.95);color:#fff;font-size:13px;line-height:1.4;padding:8px 10px;border-radius:8px;max-width:260px;opacity:0;transition:opacity .12s}
+.tip b{font-variant-numeric:tabular-nums}
+.statline{display:flex;flex-wrap:wrap;gap:8px 22px;margin:10px 0 0;font-size:14px}
+.statline b{font-variant-numeric:tabular-nums}
+table.data{width:100%;border-collapse:collapse;font-size:14px}
+table.data th{text-align:left;font-weight:600;color:var(--ink-3);font-size:12px;letter-spacing:.04em;text-transform:uppercase;padding:8px 6px;border-bottom:1px solid var(--rule-2)}
+table.data td{padding:9px 6px;border-bottom:1px solid var(--rule);vertical-align:top}
+table.data th.n{text-align:right}
+table.data td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+table.data tr.hl td{background:rgba(21,96,130,.06)}
+.callout{background:var(--mist);border-radius:12px;padding:14px 16px;color:var(--ink-1);font-size:15px}
+.flow text{font-size:13px;fill:var(--ink-1)}
+.flow .t{font-weight:700}
+.flow .s{fill:var(--ink-3);font-size:12px}
+.tag{display:inline-block;font-size:12px;border-radius:6px;padding:1px 7px;background:rgba(11,53,73,.07);color:var(--ink-2)}
+.open li{margin:0 0 8px}
+footer{margin-top:50px;padding:26px 0 40px;border-top:1px solid var(--rule);color:var(--ink-3);font-size:13px}
+details summary{cursor:pointer;color:var(--teal);font-size:14px;margin-top:10px}
+@media (max-width:860px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .grid3,.grid2,.takeaways,.ladder-out{grid-template-columns:1fr}
+  table.data{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table.data>tbody{display:table;width:100%;min-width:560px}
+  .card{padding:16px 14px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="brandrow">
+      <img src="data:image/png;base64,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" alt="RenewaBlox">
+      <span class="pill">Eunice · Dispatch</span>
+      <span class="pill">Prototype · backtest on Mar 2025 – Mar 2026 data</span>
+    </div>
+    <h1>Every half-hour, export or mine?</h1>
+    <p class="lead">Eunice decides how much of Scrivelsby's CHP surplus the 44 miners should take and how much to sell to the grid, then tells Foreman to set the miners' power. This page explains how, in five pictures.</p>
+    <div class="kpis">
+      <div class="kpi"><b>371 kW</b><span>average surplus while the engine runs</span></div>
+      <div class="kpi"><b>3 states</b><span>full mining · efficient mining + export · stop &amp; export</span></div>
+      <div class="kpi"><b>8 periods</b><span>minimum run (4 hours) before a full start or stop</span></div>
+      <div class="kpi"><b>SSP spill</b><span>preferred export contract — paid the system price</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Sections"><div class="wrap">
+  <a href="#how">1 · How it works</a><a href="#states">2 · Three states</a><a href="#ladder">3 · Decision ladder</a>
+  <a href="#week">4 · A week of decisions</a><a href="#blocks">5 · Trading blocks</a><a href="#paid">6 · Getting paid</a><a href="#next">7 · Next steps</a>
+</div></nav>
+
+<main class="wrap">
+
+<!-- 1 HOW IT WORKS -->
+<section id="how">
+  <div class="eyebrow">1 · How it works</div>
+  <h2>Prices in, a power setting out</h2>
+  <p class="sub">Each afternoon the day-ahead auction sets tomorrow's half-hourly prices. Eunice adds the network credit (gDUoS) and compares that export value with what the miners would earn. It then plans all 48 half-hours and sends Foreman one power setting per change.</p>
+  <div class="card">
+    <svg class="chart flow" viewBox="0 0 1000 300" role="img" aria-label="Flow: day-ahead prices, gDUoS, hashprice and surplus feed Eunice, which plans the day and sends power settings to Foreman, which sets the 44 miners; the rest of the surplus is exported under an SSP spill contract.">
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#5F7282"/></marker></defs>
+      <g id="flowInputs"></g>
+      <g id="flowMain"></g>
+    </svg>
+  </div>
+  <div class="takeaways">
+    <div><b>Planned the day before.</b> Decisions follow the day-ahead price, which is known by about 16:00 on the previous day.</div>
+    <div><b>Runs are commitments.</b> A full start or stop has to last at least 8 half-hours, so Eunice only starts a run that pays over its whole length.</div>
+    <div><b>Safety is local.</b> A hardwired trip drops the miners if the engine stops. Eunice sets the economics, not the protection.</div>
+  </div>
+</section>
+
+<!-- 2 STATES -->
+<section id="states">
+  <div class="eyebrow">2 · Three states, not two</div>
+  <h2>Slowing the miners down beats switching them off</h2>
+  <p class="sub">Miners are most efficient at lower power. The last few kW of overclock earn the least, so in many half-hours the best move is to drop to efficient mode and export what that frees up.</p>
+  <div class="controls"><span class="ctl-label">Hashprice</span><div class="seg" data-bind="hp"><button data-v="34" aria-pressed="true">$34 /PH/day</button><button data-v="40" aria-pressed="false">$40 /PH/day</button></div></div>
+  <div class="grid3" id="stateCards"></div>
+  <div class="card" style="margin-top:14px">
+    <h3>What each slice of the miners' power earns</h3>
+    <p class="muted small" style="margin:0 0 8px">Fleet of 44 M63S++ (hydro). Bar = the 371 kW surplus. Slices show the value of the energy in that slice once cooling is counted.</p>
+    <svg class="chart" id="sliceChart" viewBox="0 0 1000 122" role="img" aria-label="Value of each slice of miner power"></svg>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>Efficient vs installed vs overclock: four settings for 44 miners</h3>
+    <table class="data" id="opsTable"></table>
+    <p class="small muted" style="margin:8px 0 0">Total draw = miners + dry cooler + controls. £/MWh is the average value of every MWh the fleet absorbs at that setting.</p>
+  </div>
+</section>
+
+<!-- 3 LADDER -->
+<section id="ladder">
+  <div class="eyebrow">3 · The decision ladder</div>
+  <h2>Move the export value, watch the decision</h2>
+  <p class="sub">Export value = day-ahead price + gDUoS credit for that half-hour. Drag it and see where Eunice sets the miners, and what that earns against all-or-nothing.</p>
+  <div class="card">
+    <div class="controls">
+      <span class="ctl-label">Hashprice</span><div class="seg" data-bind="hp"><button data-v="34" aria-pressed="true">$34</button><button data-v="40" aria-pressed="false">$40</button></div>
+    </div>
+    <label class="ctl-label" for="eSlider">Export value: <b id="eVal" class="num" style="color:var(--ink-1)"></b> /MWh</label>
+    <input id="eSlider" type="range" min="0" max="140" step="1" value="60">
+    <svg class="chart" id="ladderScale" viewBox="0 0 1000 64" aria-hidden="true"></svg>
+    <div class="ladder-out" style="margin-top:12px">
+      <div>
+        <span id="modeBadge" class="badge"></span>
+        <div class="split" id="splitBar" role="img"></div>
+        <div class="legend"><span><i style="background:var(--c-full)"></i>Miners (full)</span><span><i style="background:var(--c-eff)"></i>Miners (efficient)</span><span><i style="background:#7FA9BF"></i>Cooling &amp; controls</span><span><i style="background:var(--c-export)"></i>Exported</span></div>
+        <p class="small muted" id="splitText" style="margin:8px 0 0"></p>
+      </div>
+      <div>
+        <h3 style="font-size:15px">This half-hour earns</h3>
+        <table class="compare" id="cmpTable"></table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 WEEK -->
+<section id="week">
+  <div class="eyebrow">4 · A week of decisions</div>
+  <h2>What Eunice would have done, 10–16 November 2025</h2>
+  <p class="sub">Real day-ahead prices for one week, run through Eunice's optimiser. Switch the trading block and compare against simple mine-or-export.</p>
+  <div class="card">
+    <div class="controls">
+      <span class="ctl-label">Strategy</span><div class="seg" data-bind="strat"><button data-v="partial" aria-pressed="true">Eunice (3 states)</button><button data-v="binary" aria-pressed="false">Mine or export only</button></div>
+      <span class="ctl-label">Minimum run</span><div class="seg" data-bind="bs"><button data-v="4" aria-pressed="false">4</button><button data-v="8" aria-pressed="true">8</button><button data-v="12" aria-pressed="false">12</button></div>
+      <span class="ctl-label">Hashprice</span><div class="seg" data-bind="hp"><button data-v="34" aria-pressed="true">$34</button><button data-v="40" aria-pressed="false">$40</button></div>
+    </div>
+    <div class="legend"><span><i style="background:var(--c-full)"></i>Miners — full</span><span><i style="background:var(--c-eff)"></i>Miners — efficient</span><span><i style="background:var(--c-export)"></i>Exported</span><span><i style="background:rgba(192,57,43,.14)"></i>Red band (16:00–19:00 weekdays)</span></div>
+    <svg class="chart" id="weekChart" viewBox="0 0 1000 380" role="img" aria-label="Export value and the split between miners and export for each half-hour of the week"></svg>
+    <div class="statline" id="weekStats"></div>
+  </div>
+</section>
+
+<!-- 5 BLOCKS -->
+<section id="blocks">
+  <div class="eyebrow">5 · Trading blocks</div>
+  <h2>4, 8 or 12 half-hours: revenue against wear</h2>
+  <p class="sub">A longer minimum run means fewer full starts and stops but less freedom to follow prices. Full year Mar 2025 – Mar 2026, 44 miners, against mine-or-export with no minimum.</p>
+  <div class="controls"><span class="ctl-label">Hashprice</span><div class="seg" data-bind="hp"><button data-v="34" aria-pressed="true">$34</button><button data-v="40" aria-pressed="false">$40</button></div></div>
+  <div class="grid2">
+    <div class="card"><h3>Revenue vs no-minimum baseline (£/yr)</h3><div class="legend"><span><i style="background:var(--teal)"></i>Eunice (3 states)</span><span><i style="background:var(--c-muted)"></i>Mine or export only</span></div><svg class="chart" id="blkRev" viewBox="0 0 480 260" role="img" aria-label="Revenue by minimum run length"></svg><p class="small muted" style="margin:4px 0 0">Below zero = what the minimum-run rule costs. Eunice's three states win back part or all of it.</p></div>
+    <div class="card"><h3>Full start/stop cycles per year</h3><div class="legend"><span><i style="background:var(--teal)"></i>Eunice (3 states)</span><span><i style="background:var(--c-muted)"></i>Mine or export only</span></div><svg class="chart" id="blkCyc" viewBox="0 0 480 260" role="img" aria-label="Cycles by minimum run length"></svg><p class="small muted" style="margin:4px 0 0">A cycle = miners fully off then on again. Trimming between efficient and full doesn't count.</p></div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>How the engine-running hours were spent (8-period minimum)</h3>
+    <svg class="chart" id="shareChart" viewBox="0 0 1000 120" role="img" aria-label="Share of running hours in each state"></svg>
+  </div>
+  <div class="callout" style="margin-top:14px" id="blockCallout"></div>
+  <details><summary>Show the numbers</summary><div id="blockTable" style="margin-top:10px"></div></details>
+</section>
+
+<!-- 6 PAID -->
+<section id="paid">
+  <div class="eyebrow">6 · Getting paid</div>
+  <h2>SSP spill: paid the system price for every half-hour we export</h2>
+  <p class="sub">Sites under 1 MW can't be their own Balancing Mechanism unit. Instead of an aggregator taking 25–30%, the export meter goes to a supplier who pays the System Sell Price (SSP) for each half-hour's metered export, plus gDUoS, less a small fee.</p>
+  <div class="grid3">
+    <div class="card"><h3>What we're paid</h3><p style="margin:0 0 8px"><b>SSP × exported MWh</b><br>+ gDUoS credit (band rate)<br>− offtaker fee (target ≈ £1–1.50/MWh)</p><p class="small muted" style="margin:0">SSP is set after each half-hour from NESO's balancing actions. No volume to nominate, no penalty for over- or under-delivery.</p></div>
+    <div class="card"><h3>Imbalance risk</h3><p style="margin:0 0 8px">With no contracted volume there's no imbalance, only <b>price risk</b>: exporting into a half-hour that turns out cheaper than mining.</p><p class="small muted" style="margin:0">Backtest: engine trips under a day-ahead-plus-SSP hybrid cost about £8–24 a year. The miners absorb every other swing.</p></div>
+    <div class="card"><h3>Fees decide the winner</h3><p style="margin:0 0 8px">At ~2,500 MWh a year, each <b>£1/MWh of fee ≈ £2,500/yr</b>.</p><p class="small muted" style="margin:0">Ask for a fixed £/MWh, not a % of SSP (a % takes more exactly when we export into high prices). gDUoS at 100%.</p></div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>Contracts on the shortlist</h3>
+    <table class="data" id="providerTable"></table>
+  </div>
+  <div class="grid2" style="margin-top:14px">
+    <div class="card">
+      <h3>Estimated cost of an SSP spill contract</h3>
+      <table class="data">
+        <tr><th>Terms</th><th>Fee basis</th><th class="n">£/yr</th><th class="n">£/MWh</th></tr>
+        <tr class="hl"><td>Good</td><td>98.5% of SSP or ~£1.00 fixed; 100% gDUoS</td><td class="n">£2.5–3.2k</td><td class="n">£1.00–1.30</td></tr>
+        <tr><td>Typical</td><td>97% of SSP; 95% gDUoS; ~£500 admin</td><td class="n">£7.7k</td><td class="n">£3.10</td></tr>
+        <tr><td>Poor</td><td>95% of SSP; 90% gDUoS; ~£1k admin</td><td class="n">£13.2k</td><td class="n">£5.30</td></tr>
+      </table>
+      <p class="small muted" style="margin:8px 0 0">Estimates, not quotes. None of these providers publishes fees.</p>
+    </div>
+    <div class="card">
+      <h3>What real-time SSP calls could add (phase 2)</h3>
+      <p class="small muted" style="margin:0 0 6px">£/yr over day-ahead dispatch, by what Eunice knows when it decides. Earlier backtest at a £70/MWh mining value, no minimum run.</p>
+      <svg class="chart" id="infoChart" viewBox="0 0 480 190" role="img" aria-label="Value of better real-time information"></svg>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>gDUoS export credits — HV generation, NGED East Midlands (p/kWh)</h3>
+    <table class="data">
+      <tr><th>Charging year</th><th class="n">Red 16:00–19:00</th><th class="n">Amber 07:30–16:00, 19:00–21:00</th><th class="n">Green other times &amp; weekends</th></tr>
+      <tr><td>2025/26 (invoices)</td><td class="n">3.414</td><td class="n">0.580</td><td class="n">0.039</td></tr>
+      <tr class="hl"><td>2026/27 (current)</td><td class="n">3.958</td><td class="n">0.431</td><td class="n">0.021</td></tr>
+      <tr><td>2027/28</td><td class="n">4.189</td><td class="n">0.398</td><td class="n">0.025</td></tr>
+    </table>
+    <p class="small muted" style="margin:8px 0 0">Bands apply Monday–Friday including bank holidays. A red-band half-hour adds ~£40/MWh to the export value, so Eunice exports through almost every one.</p>
+  </div>
+</section>
+
+<!-- 7 NEXT -->
+<section id="next">
+  <div class="eyebrow">7 · Next steps</div>
+  <h2>What has to happen before Eunice goes live</h2>
+  <div class="grid2">
+    <div class="card"><h3>Decisions and tests</h3><ol class="open">
+      <li><b>Fast trim.</b> Who holds the site at zero import second by second? Foreman settles in minutes, so this needs a local controller on the boundary meter.</li>
+      <li><b>Power-step test.</b> One miner, 100% → 50% of installed in 5% steps, 30 minutes each: wall power, TH/s, temperatures. Confirms the 6.2 kW floor and whether lower is possible.</li>
+      <li><b>Cost per start.</b> A wear figure from the CTO lets Eunice price every start/stop.</li>
+    </ol></div>
+    <div class="card"><h3>Access and contracts</h3><ol class="open" start="4">
+      <li><b>Foreman Enterprise API</b> key and docs. Confirm it uses MicroBT power adjustment (normal mode), not a preset mode switch.</li>
+      <li><b>Modo API key</b> for the GB EPEX half-hourly day-ahead feed.</li>
+      <li><b>RFQ</b> to npower, TotalEnergies, SmartestEnergy, Statkraft and F&amp;S Energy for SSP spill on export MPAN 1170000388200.</li>
+    </ol></div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>Phase 2: this page goes live</h3>
+    <p style="margin:0 0 8px">The same page will show today's plan and the current decision from Eunice's dispatch API:</p>
+    <p class="small" style="margin:0"><span class="tag">GET /v1/sites/scrivelsby/decision/current</span> <span class="tag">GET /v1/sites/scrivelsby/schedule?date=…</span> <span class="tag">GET /v1/sites/scrivelsby/status</span></p>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <p><b>Basis.</b> Surplus = Scrivelsby export MPAN 1170000388200, Mar 2025 – Mar 2026 (Sep 2025 and Jan 2026 missing; results annualised), average 371 kW while running. Prices: EPEX GB half-hourly day-ahead, Elexon system prices (via Modo Energy). 44 × MicroBT M63S++ hydro, hashrate ∝ power<sup>0.70</sup> through installed (7,208 W, 464 TH/s) and Aggressive (9,911 W, 580 TH/s), consistent with MicroBT's published Low/High mode ratios. Efficient floor 6.2 kW per miner (bottom of MicroBT Low mode). Cooling: 5 kW fixed + dry cooler 25 kW at 381.6 kW of miner draw. GBP/USD 1.3413. No offtaker fee in the dispatch figures.</p>
+  <p><b>Method.</b> The week uses Eunice's optimiser (whole-day plan, minimum run on full starts and stops). Year-long trading-block figures use fixed aligned blocks, a simpler and slightly harsher approximation; the optimiser cycles less. Backtests, not forecasts.</p>
+  <p>RenewaBlox · no Watt wasted</p>
+</div></footer>
+
+<div class="tip" id="tip" role="tooltip"></div>
+
+<script>
+const WEEK = {"days":["2025-11-10","2025-11-11","2025-11-12","2025-11-13","2025-11-14","2025-11-15","2025-11-16"],"price":[70.98,74.0,72.0,70.34,69.6,66.01,67.24,64.23,68.44,65.78,71.08,65.74,77.4,76.0,77.0,82.43,79.0,78.7,78.5,77.8,74.3,74.0,78.45,79.0,78.6,78.82,80.7,81.9,82.5,83.5,78.37,89.41,85.4,104.0,92.0,104.72,100.0,94.0,85.28,80.3,78.82,75.0,80.0,74.0,71.0,71.0,75.43,77.16,70.68,73.0,69.0,65.0,66.0,62.77,65.73,64.27,65.56,63.15,68.62,69.26,76.61,84.0,84.0,91.0,86.65,87.07,84.2,78.0,76.21,73.7,71.26,69.48,71.0,70.0,77.0,75.97,81.0,81.0,76.36,84.28,89.9,100.37,93.72,93.39,85.26,81.51,76.0,81.28,79.6,76.25,75.36,64.64,65.15,54.32,77.7,71.26,46.58,52.77,44.0,41.95,40.0,38.82,40.24,40.36,41.6,39.0,35.0,40.6,64.92,72.0,65.0,75.0,63.0,65.28,69.0,71.0,73.0,74.04,75.0,72.46,75.71,75.71,77.0,75.46,78.4,78.51,79.98,84.0,87.5,97.0,88.0,90.21,82.2,75.0,75.3,70.0,73.56,72.94,75.0,74.0,64.0,56.0,55.0,45.15,16.0,20.0,17.58,14.0,15.86,9.1,10.0,2.0,14.83,19.0,25.24,33.8,44.0,60.0,73.11,77.0,75.61,69.8,72.0,70.0,71.1,73.0,73.0,71.51,76.0,78.21,74.75,75.01,73.5,74.0,76.0,84.0,94.99,107.0,99.0,100.0,103.64,94.41,83.2,80.0,82.0,78.0,78.11,75.01,76.7,73.69,39.2,17.5,74.8,75.88,70.0,62.5,62.6,53.09,57.66,56.42,56.8,55.04,52.6,55.76,67.8,72.0,79.8,85.0,83.0,83.84,84.9,83.07,83.51,83.0,82.0,82.0,80.92,79.68,78.26,75.99,76.9,73.11,66.4,73.2,68.6,78.0,75.4,75.58,75.99,69.0,72.03,73.2,67.0,58.3,62.08,53.48,53.89,48.0,73.21,72.0,44.2,50.0,51.5,43.01,46.08,41.92,42.0,39.0,34.5,37.35,38.79,34.0,45.41,70.0,56.53,67.77,72.49,80.9,78.0,81.76,76.58,74.0,71.0,75.7,76.21,77.84,79.55,73.0,77.86,77.64,81.51,88.8,94.52,109.0,96.97,91.9,96.0,92.0,93.3,85.0,90.0,84.0,86.6,81.27,90.0,80.1,54.1,39.0,79.64,85.0,84.19,77.28,76.54,72.82,73.9,68.95,71.47,71.31,70.6,70.0,70.15,72.54,73.44,75.81,74.93,77.0,78.0,86.0,83.72,83.72,83.4,88.25,83.5,86.22,83.0,76.0,82.0,83.3,85.0,96.24,97.9,101.19,100.0,100.0,102.32,91.01,88.9,84.0,87.16,80.35,80.0,75.1,73.26,65.5,77.0,76.27],"export_value":[71.37,74.39,72.39,70.73,69.99,66.4,67.63,64.62,68.83,66.17,71.47,66.13,77.79,76.39,77.39,88.23,84.8,84.5,84.3,83.6,80.1,79.8,84.25,84.8,84.4,84.62,86.5,87.7,88.3,89.3,84.17,95.21,119.54,138.14,126.14,138.86,134.14,128.14,91.08,86.1,84.62,80.8,80.39,74.39,71.39,71.39,75.82,77.55,71.07,73.39,69.39,65.39,66.39,63.16,66.12,64.66,65.95,63.54,69.01,69.65,77.0,84.39,84.39,96.8,92.45,92.87,90.0,83.8,82.01,79.5,77.06,75.28,76.8,75.8,82.8,81.77,86.8,86.8,82.16,90.08,124.04,134.51,127.86,127.53,119.4,115.65,81.8,87.08,85.4,82.05,75.75,65.03,65.54,54.71,78.09,71.65,46.97,53.16,44.39,42.34,40.39,39.21,40.63,40.75,41.99,39.39,35.39,40.99,65.31,72.39,65.39,80.8,68.8,71.08,74.8,76.8,78.8,79.84,80.8,78.26,81.51,81.51,82.8,81.26,84.2,84.31,85.78,89.8,121.64,131.14,122.14,124.35,116.34,109.14,81.1,75.8,79.36,78.74,75.39,74.39,64.39,56.39,55.39,45.54,16.39,20.39,17.97,14.39,16.25,9.49,10.39,2.39,15.22,19.39,25.63,34.19,44.39,60.39,73.5,82.8,81.41,75.6,77.8,75.8,76.9,78.8,78.8,77.31,81.8,84.01,80.55,80.81,79.3,79.8,81.8,89.8,129.13,141.14,133.14,134.14,137.78,128.55,89.0,85.8,87.8,83.8,78.5,75.4,77.09,74.08,39.59,17.89,75.19,76.27,70.39,62.89,62.99,53.48,58.05,56.81,57.19,55.43,52.99,56.15,68.19,72.39,80.19,90.8,88.8,89.64,90.7,88.87,89.31,88.8,87.8,87.8,86.72,85.48,84.06,81.79,82.7,78.91,72.2,79.0,102.74,112.14,109.54,109.72,110.13,103.14,77.83,79.0,72.8,64.1,62.47,53.87,54.28,48.39,73.6,72.39,44.59,50.39,51.89,43.4,46.47,42.31,42.39,39.39,34.89,37.74,39.18,34.39,45.8,70.39,56.92,68.16,72.88,81.29,78.39,82.15,76.97,74.39,71.39,76.09,76.6,78.23,79.94,73.39,78.25,78.03,81.9,89.19,94.91,109.39,97.36,92.29,96.39,92.39,93.69,85.39,90.39,84.39,86.99,81.66,90.39,80.49,54.49,39.39,80.03,85.39,84.58,77.67,76.93,73.21,74.29,69.34,71.86,71.7,70.99,70.39,70.54,72.93,73.83,76.2,75.32,77.39,78.39,86.39,84.11,84.11,83.79,88.64,83.89,86.61,83.39,76.39,82.39,83.69,85.39,96.63,98.29,101.58,100.39,100.39,102.71,91.4,89.29,84.39,87.55,80.74,80.39,75.49,73.65,65.89,77.39,76.66],"band":["g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","r","r","r","r","r","r","a","a","a","a","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","r","r","r","r","r","r","a","a","a","a","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","r","r","r","r","r","r","a","a","a","a","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","r","r","r","r","r","r","a","a","a","a","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","r","r","r","r","r","r","a","a","a","a","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g"],"variants":{"hp34_b4_partial":{"miner_kw":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,323.79,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,297.33,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,323.79,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,343.5,343.5,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8,272.8,272.8,318.97,272.8,272.8,343.5,277.95,343.5,343.5,343.5,343.5,343.5,343.5,343.5,291.74,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,343.5,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"mode":"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPMMMMMMMMMPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPMMMMMMMMMMMMPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPMMEEEEPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPPPPPPPMPMMMMMMMPPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPMPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE","value_gbp":5016.07,"starts":7},"hp34_b4_binary":{"miner_kw":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"mode":"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMEEEEMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE","value_gbp":5002.06,"starts":5},"hp34_b8_partial":{"miner_kw":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,323.79,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,297.33,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,323.79,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8,272.8,272.8,318.97,272.8,272.8,343.5,277.95,343.5,343.5,343.5,343.5,343.5,343.5,343.5,291.74,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"mode":"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPMMMMMMMMMPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPMMMMMMMMMMMMPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPPPPPPPMPMMMMMMMPPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE","value_gbp":5013.73,"starts":5},"hp34_b8_binary":{"miner_kw":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"mode":"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE","value_gbp":4999.45,"starts":4},"hp34_b12_partial":{"miner_kw":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,323.79,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,297.33,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,323.79,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8,272.8,272.8,318.97,272.8,272.8,343.5,277.95,343.5,343.5,343.5,343.5,343.5,343.5,343.5,291.74,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"mode":"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPMMMMMMMMMPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPMMMMMMMMMMMMPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPPPPPPPMPMMMMMMMPPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE","value_gbp":5013.61,"starts":4},"hp34_b12_binary":{"miner_kw":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"mode":"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE","value_gbp":4999.45,"starts":4},"hp40_b4_partial":{"miner_kw":[272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,277.29,272.8,272.8,343.5,305.16,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,343.5,343.5,272.8,272.8,272.8,272.8,272.8,299.12,272.8,272.8,272.8,272.8,308.44,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,291.96,284.68,343.5,272.8,272.8,343.5,343.5,330.78,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,281.04,343.5,272.8,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8],"mode":"PPPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPPPPPPPPPPPPPPPEEEEEEEEEPPPPEEEEEEEEEEEEEEEEPPPPPPMPMMMMMMMMMMPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEPPPPPMMMMMMMMMMMMMMPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPMMPPPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPPMPPMMPMMMMMMMMMMPPPPEEEEPPPPPPPEEEEEEEEEEEEEEEEEPPMPEEEEPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPP","value_gbp":5214.48,"starts":10},"hp40_b4_binary":{"miner_kw":[0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"mode":"EEEMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMEEEEEEMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE","value_gbp":5165.68,"starts":8},"hp40_b8_partial":{"miner_kw":[272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,277.29,272.8,272.8,343.5,305.16,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,343.5,343.5,272.8,272.8,272.8,272.8,272.8,299.12,272.8,272.8,272.8,272.8,308.44,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,291.96,284.68,343.5,272.8,272.8,343.5,343.5,330.78,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,281.04,343.5,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8],"mode":"PPPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPPPPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPPPMPMMMMMMMMMMPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEPPPPPMMMMMMMMMMMMMMPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPMMPPPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPPMPPMMPMMMMMMMMMMPPPPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEPMPPPPPPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPP","value_gbp":5210.59,"starts":7},"hp40_b8_binary":{"miner_kw":[0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"mode":"EEEMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE","value_gbp":5160.1,"starts":7},"hp40_b12_partial":{"miner_kw":[272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,277.29,272.8,272.8,343.5,305.16,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,343.5,343.5,272.8,272.8,272.8,272.8,272.8,299.12,272.8,272.8,272.8,272.8,308.44,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,291.96,284.68,343.5,272.8,272.8,343.5,343.5,330.78,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,281.04,343.5,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,272.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,272.8,272.8,272.8,272.8,272.8],"mode":"PPPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPPPPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPPPMPMMMMMMMMMMPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEPPPPPMMMMMMMMMMMMMMPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPMMPPPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPPMPPMMPMMMMMMMMMMPPPPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEPMPPPPPPPPPPPPPPPPPEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPP","value_gbp":5210.59,"starts":7},"hp40_b12_binary":{"miner_kw":[343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,343.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"mode":"MMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE","value_gbp":5159.87,"starts":6}}};
+const YEAR = {"34":{"1":{"partial_vs_base":476,"binary_vs_base":0,"partial_minus_binary":476,"cycles_partial":374,"cycles_binary":272,"share_partial":{"stop":0.825,"efficient":0.077,"between":0.005,"full":0.093},"share_binary":{"stop":0.85,"full":0.15}},"4":{"partial_vs_base":103,"binary_vs_base":-448,"partial_minus_binary":551,"cycles_partial":197,"cycles_binary":169,"share_partial":{"stop":0.826,"efficient":0.076,"between":0.005,"full":0.093},"share_binary":{"stop":0.85,"full":0.15}},"8":{"partial_vs_base":-700,"binary_vs_base":-1377,"partial_minus_binary":677,"cycles_partial":161,"cycles_binary":142,"share_partial":{"stop":0.831,"efficient":0.073,"between":0.005,"full":0.091},"share_binary":{"stop":0.853,"full":0.147}},"12":{"partial_vs_base":-1590,"binary_vs_base":-2394,"partial_minus_binary":804,"cycles_partial":131,"cycles_binary":115,"share_partial":{"stop":0.835,"efficient":0.071,"between":0.004,"full":0.089},"share_binary":{"stop":0.859,"full":0.141}}},"40":{"1":{"partial_vs_base":2051,"binary_vs_base":0,"partial_minus_binary":2051,"cycles_partial":876,"cycles_binary":641,"share_partial":{"stop":0.617,"efficient":0.263,"between":0.009,"full":0.111},"share_binary":{"stop":0.739,"full":0.261}},"4":{"partial_vs_base":1424,"binary_vs_base":-595,"partial_minus_binary":2019,"cycles_partial":448,"cycles_binary":324,"share_partial":{"stop":0.63,"efficient":0.251,"between":0.009,"full":0.111},"share_binary":{"stop":0.745,"full":0.255}},"8":{"partial_vs_base":340,"binary_vs_base":-1733,"partial_minus_binary":2074,"cycles_partial":351,"cycles_binary":244,"share_partial":{"stop":0.642,"efficient":0.239,"between":0.009,"full":0.11},"share_binary":{"stop":0.755,"full":0.245}},"12":{"partial_vs_base":-839,"binary_vs_base":-2968,"partial_minus_binary":2130,"cycles_partial":260,"cycles_binary":180,"share_partial":{"stop":0.666,"efficient":0.217,"between":0.009,"full":0.109},"share_binary":{"stop":0.768,"full":0.232}}}};
+
+/* ---------------------------------------------------------------- physics (mirrors dispatch/engine.py) */
+const F = {N:44, instKw:7.208, ths:464, alpha:0.70, minKw:6.2, maxKw:9.911, fixed:5, cooler:25/381.6, S:371, gbpusd:1.3413};
+function model(hp){
+  const K = F.N*F.ths*Math.pow(1/(F.N*F.instKw),F.alpha)/1000*hp/24/F.gbpusd;
+  const par = P => P>0 ? F.fixed + F.cooler*P : 0;
+  const pmin = F.N*F.minKw, pmax = Math.min(F.N*F.maxKw, (F.S-F.fixed)/(1+F.cooler));
+  const rev = P => P>0 ? K*Math.pow(P,F.alpha) : 0;               // £/h
+  const avg = P => rev(P)/(P+par(P))*1000;                          // £/MWh absorbed
+  function best(e){                                                 // e = export value £/MWh
+    let P = e<=0 ? pmax : Math.min(pmax, Math.max(pmin, Math.pow(K*F.alpha*1000/(e*(1+F.cooler)), 1/(1-F.alpha))));
+    const on = e*(F.S-P-par(P))/1000 + rev(P), off = e*F.S/1000;
+    if (off > on) return {P:0, val:off};
+    return {P, val:on};
+  }
+  return {K,par,pmin,pmax,rev,avg,best};
+}
+const state = {hp:34, strat:'partial', bs:8};
+const fmt = (v,d=0)=>v.toLocaleString('en-GB',{minimumFractionDigits:d,maximumFractionDigits:d});
+const gbp = (v,d=0)=>(v<0?'−':'')+'£'+fmt(Math.abs(v),d);
+const css = n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const NS='http://www.w3.org/2000/svg';
+function el(tag, attrs={}, parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function txt(parent,x,y,s,attrs={}){const t=el('text',Object.assign({x,y},attrs),parent);t.textContent=s;return t;}
+function clear(svg){while(svg.firstChild)svg.removeChild(svg.firstChild);}
+const tip=document.getElementById('tip');
+function showTip(ev,html){tip.innerHTML=html;tip.style.opacity=1;const x=Math.min(ev.clientX+14,innerWidth-tip.offsetWidth-8),y=Math.min(ev.clientY+14,innerHeight-tip.offsetHeight-8);tip.style.left=x+'px';tip.style.top=y+'px';}
+function hideTip(){tip.style.opacity=0;}
+function modeOf(P,m){ if(P<=0) return 'stop'; if(P>=m.pmax-0.5) return 'full'; if(P<=m.pmin+0.5) return 'efficient'; return 'trim'; }
+const MODE = {full:{label:'Full mining', c:'--c-full'}, trim:{label:'Trimming toward efficient', c:'--c-eff'}, efficient:{label:'Efficient mining + export', c:'--c-eff'}, stop:{label:'Stop & export everything', c:'--c-export'}};
+
+/* ---------------------------------------------------------------- 1 flow diagram */
+function drawFlow(){
+  const gi=document.getElementById('flowInputs'), gm=document.getElementById('flowMain');
+  const box=(g,x,y,w,h,title,sub,fill='#fff',stroke='rgba(11,53,73,.18)')=>{el('rect',{x,y,width:w,height:h,rx:10,fill,stroke},g);txt(g,x+12,y+22,title,{class:'t'});if(sub)sub.split('|').forEach((s,i)=>txt(g,x+12,y+40+i*16,s,{class:'s'}));};
+  const ins=[['Day-ahead prices','EPEX half-hourly, D-1 ~16:00'],['gDUoS credit','red / amber / green band'],['Hashprice','miner earnings per TH'],['Expected surplus','~371 kW while engine runs']];
+  ins.forEach((d,i)=>{box(gi,10,12+i*70,200,58,d[0],d[1]); el('path',{d:`M210,${41+i*70} C245,${41+i*70} 250,150 286,150`,fill:'none',stroke:'#5F7282','stroke-width':1.4,'marker-end':'url(#ah)'},gi);});
+  box(gm,290,95,200,110,'Eunice','plans 48 half-hours|8-period minimum run|sets miner power','#EAF3F8','#156082');
+  el('path',{d:'M490,150 L560,150',stroke:'#5F7282','stroke-width':1.4,'marker-end':'url(#ah)'},gm);
+  txt(gm,525,140,'setpoint',{class:'s','text-anchor':'middle'});
+  box(gm,566,110,150,80,'Foreman','moves the miners','#fff');
+  el('path',{d:'M716,150 L776,150',stroke:'#5F7282','stroke-width':1.4,'marker-end':'url(#ah)'},gm);
+  box(gm,782,40,206,92,'44 miners','6.2 kW efficient …|7.8 kW full surplus','#FBF1EA',css('--c-full'));
+  box(gm,782,168,206,92,'Grid export','SSP spill contract|SSP + gDUoS − fee','#EAF2F8',css('--c-export'));
+  el('path',{d:'M716,165 C750,175 750,214 778,214',fill:'none',stroke:'#5F7282','stroke-width':1.4,'marker-end':'url(#ah)'},gm);
+  txt(gm,566,232,'Edge agent on site keeps the plan',{class:'s'});
+  txt(gm,566,248,'if the cloud link drops',{class:'s'});
+}
+
+/* ---------------------------------------------------------------- 2 state cards + slice bar */
+function drawStates(){
+  const m=model(state.hp), wrap=document.getElementById('stateCards');
+  const jth = kw => kw*1000/(F.ths*Math.pow(kw/F.instKw,F.alpha));
+  const ths = kw => F.ths*Math.pow(kw/F.instKw,F.alpha);
+  const fullKw=m.pmax/F.N, effKw=F.minKw;
+  const exportAtEff = F.S - m.pmin - m.par(m.pmin);
+  const cards=[
+    {c:'--c-full',name:'Full mining',big:`${fmt(fullKw,1)} kW`,unit:'per miner',rows:[['Miners draw',`${fmt(m.pmax)} kW`],['vs installed (7.2 kW)',`+${fmt((fullKw/F.instKw-1)*100)}%`],['Efficiency',`${fmt(jth(fullKw),2)} J/TH`],['Earns',`${gbp(m.avg(m.pmax),2)}/MWh`],['Exported','0 kW']],when:'When export is worth less than the top slice of mining.'},
+    {c:'--c-eff',name:'Efficient mining + export',big:`${fmt(effKw,1)} kW`,unit:'per miner',rows:[['Miners draw',`${fmt(m.pmin)} kW`],['vs installed (7.2 kW)',`−${fmt((1-effKw/F.instKw)*100)}%`],['Efficiency',`${fmt(jth(effKw),2)} J/TH`],['Earns',`${gbp(m.avg(m.pmin),2)}/MWh`],['Exported',`${fmt(exportAtEff)} kW`]],when:'When export beats the top slice but not efficient mining.'},
+    {c:'--c-export',name:'Stop & export everything',big:`${fmt(F.S)} kW`,unit:'exported',rows:[['Miners draw','0 kW'],['Cooling & controls','off'],['Earns','export value'],['Start/stop','counts as a cycle'],['Minimum run','8 half-hours']],when:'When export beats even efficient mining.'}];
+  wrap.innerHTML=cards.map(k=>`<div class="card state"><div class="sw" style="background:var(${k.c})"></div><h3>${k.name}</h3><div class="big">${k.big}</div><div class="muted small">${k.unit}</div><dl>${k.rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}</dl><p class="small muted" style="margin:10px 0 0">${k.when}</p></div>`).join('');
+  // slice bar
+  const svg=document.getElementById('sliceChart'); clear(svg);
+  const W=1000,x0=10,x1=990,y=34,h=40, sc=v=>x0+(x1-x0)*v/F.S;
+  const instP=F.N*F.instKw;
+  const absorbed=P=>P+m.par(P);
+  const slices=[
+    {a:0,b:absorbed(m.pmin),c:css('--c-eff'),label:`Efficient base ${fmt(absorbed(m.pmin))} kW`,v:m.avg(m.pmin)},
+    {a:absorbed(m.pmin),b:absorbed(instP),c:css('--c-full'),label:'up to installed',v:(m.rev(instP)-m.rev(m.pmin))/(absorbed(instP)-absorbed(m.pmin))*1000,op:.75},
+    {a:absorbed(instP),b:absorbed(m.pmax),c:css('--c-full'),label:'overclock',v:(m.rev(m.pmax)-m.rev(instP))/(absorbed(m.pmax)-absorbed(instP))*1000},
+  ];
+  slices.forEach((s,i)=>{const r=el('rect',{x:sc(s.a)+(i?1:0),y,width:Math.max(0,sc(s.b)-sc(s.a)-(i?1:0)),height:h,rx:4,fill:s.c,'fill-opacity':s.op||1},svg);
+    r.addEventListener('mousemove',ev=>showTip(ev,`<b>${s.label}</b><br>${fmt(s.b-s.a)} kW · <b>${gbp(s.v,2)}/MWh</b>`));r.addEventListener('mouseleave',hideTip);
+    const cx=(sc(s.a)+sc(s.b))/2; txt(svg,cx,y-10,gbp(s.v,0)+'/MWh',{'text-anchor':'middle','font-size':14,'font-weight':700,fill:css('--ink-1')});
+    txt(svg,cx,y+h+20,s.label,{'text-anchor':'middle','font-size':12,fill:css('--ink-3')});});
+  // operating points table
+  const ops=[['Efficient','MicroBT Low-mode floor',F.minKw,'Yes — when export value is close to mining'],
+             ['Installed','MicroBT Normal mode',F.instKw,'Passed through while trimming'],
+             ['Full surplus','light overclock, uses all 371 kW',fullKw,'Yes — the default when mining'],
+             ['Max overclock','MicroBT Aggressive',F.maxKw,`No — needs ${fmt(F.N*F.maxKw+m.par(F.N*F.maxKw))} kW, we have ${F.S} kW`]];
+  document.getElementById('opsTable').innerHTML='<tr><th>Setting</th><th class="n">kW / miner</th><th class="n">Total draw</th><th class="n">J/TH</th><th class="n">£/MWh</th><th>Do we use it?</th></tr>'+
+    ops.map(([n,s,kw,use])=>{const P=F.N*kw;return `<tr${n==='Full surplus'||n==='Efficient'?' class="hl"':''}><td><b>${n}</b><br><span class="small muted">${s}</span></td><td class="n">${fmt(kw,kw===F.instKw?3:(kw===F.maxKw?3:2))}</td><td class="n">${fmt(P+m.par(P))} kW</td><td class="n">${fmt(jth(kw),2)}</td><td class="n">${gbp(m.avg(P),2)}</td><td>${use}</td></tr>`;}).join('');
+  txt(svg,x0,y+h+44,`Average for the whole fleet at full surplus: ${gbp(m.avg(m.pmax),2)}/MWh. The top ${fmt(absorbed(m.pmax)-absorbed(m.pmin))} kW earns only about ${gbp(slices[2].v,0)}–${gbp(slices[1].v,0)}/MWh.`,{'font-size':13,fill:css('--ink-2')});
+}
+
+/* ---------------------------------------------------------------- 3 ladder */
+function thresholds(m){
+  let tFull=null,tFloor=null,tStop=null;
+  for(let e=0;e<=160;e+=0.25){const b=m.best(e);
+    if(tFull===null && b.P<m.pmax-0.5) tFull=e;
+    if(tFloor===null && b.P>0 && b.P<=m.pmin+0.5) tFloor=e;
+    if(tStop===null && b.P===0) {tStop=e;break;}}
+  return {tFull,tFloor,tStop};
+}
+function drawLadder(){
+  const m=model(state.hp), e=+document.getElementById('eSlider').value, th=thresholds(m);
+  document.getElementById('eVal').textContent=gbp(e);
+  // scale strip
+  const svg=document.getElementById('ladderScale'); clear(svg);
+  const sx=v=>10+980*v/140, y=14;
+  const segs=[[0,th.tFull,'--c-full','Full'],[th.tFull,th.tFloor,'--c-eff','Trim'],[th.tFloor,th.tStop,'--c-eff','Efficient + export'],[th.tStop,140,'--c-export','Stop & export']];
+  segs.forEach(([a,b,c,l],i)=>{el('rect',{x:sx(a)+(i?1:0),y,width:Math.max(0,sx(b)-sx(a)-(i?1:0)),height:12,rx:3,fill:css(c),'fill-opacity':i===1?.55:1},svg);
+    if(sx(b)-sx(a)>70) txt(svg,(sx(a)+sx(b))/2,y+30,l,{'text-anchor':'middle','font-size':12,fill:css('--ink-2')});});
+  const labs = (sx(th.tFloor)-sx(th.tFull) < 44) ? [[(th.tFull+th.tFloor)/2, gbp(th.tFull)+'–'+gbp(th.tFloor).slice(1)],[th.tStop,gbp(th.tStop)]] : [[th.tFull,gbp(th.tFull)],[th.tFloor,gbp(th.tFloor)],[th.tStop,gbp(th.tStop)]];
+  labs.forEach(([v,s])=>txt(svg,sx(v),y+46,s,{'text-anchor':'middle','font-size':12,'font-weight':700,fill:css('--ink-1')}));
+  el('path',{d:`M${sx(e)},${y-6} l-6,-8 h12 z`,fill:css('--ink-1')},svg);
+  // outcome
+  const b=m.best(e), mode=modeOf(b.P,m), P=b.P, par=m.par(P), exp=Math.max(0,F.S-P-par);
+  const badge=document.getElementById('modeBadge'); badge.textContent=MODE[mode].label; badge.style.background=css(MODE[mode].c);
+  const split=document.getElementById('splitBar');
+  const pc=v=>(100*v/F.S)+'%';
+  split.innerHTML=`<div style="width:${pc(P)};background:var(${mode==='full'?'--c-full':'--c-eff'})"></div><div style="width:${pc(par)};background:#7FA9BF"></div><div style="width:${pc(exp)};background:var(--c-export)"></div>`;
+  split.setAttribute('aria-label',`Miners ${fmt(P)} kW, cooling ${fmt(par)} kW, exported ${fmt(exp)} kW`);
+  document.getElementById('splitText').textContent = P>0 ? `Miners ${fmt(P)} kW (${fmt(P/F.N,2)} kW each) · cooling ${fmt(par)} kW · exported ${fmt(exp)} kW` : `Miners off · all ${fmt(F.S)} kW exported`;
+  const mineAll = m.best(-1).val*0.5, exportAll=e*F.S/1000*0.5, eunice=b.val*0.5, bestSingle=Math.max(mineAll,exportAll);
+  const rows=[['Export everything',exportAll],['Mine everything (full)',mineAll],['Eunice’s choice',eunice]];
+  document.getElementById('cmpTable').innerHTML = rows.map(r=>`<tr class="${r[0].startsWith('Eunice')?'best':''}"><td>${r[0]}</td><td>${gbp(r[1],2)}</td></tr>`).join('') +
+    `<tr><td class="muted">Gain over the better single option</td><td>${gbp(eunice-bestSingle,2)}</td></tr>`;
+}
+
+/* ---------------------------------------------------------------- 4 week chart */
+function drawWeek(){
+  const svg=document.getElementById('weekChart'); clear(svg);
+  const key=`hp${state.hp}_b${state.bs}_${state.strat}`, v=WEEK.variants[key], m=model(state.hp);
+  const n=WEEK.export_value.length, L=46,R=990, top=16, h1=120, gap=34, top2=top+h1+gap, h2=170;
+  const xs=i=>L+(R-L)*i/n, bw=(R-L)/n;
+  const eMax=Math.max(140,Math.ceil(Math.max(...WEEK.export_value)/20)*20), eMin=Math.min(0,Math.floor(Math.min(...WEEK.export_value)/20)*20);
+  const ye=val=>top+h1*(1-(val-eMin)/(eMax-eMin)), yk=val=>top2+h2*(1-val/F.S);
+  // red band shading
+  for(let i=0;i<n;i++) if(WEEK.band[i]==='r') el('rect',{x:xs(i),y:top,width:bw+0.5,height:top2+h2-top,fill:'rgba(192,57,43,.10)'},svg);
+  // grid
+  for(let g=eMin; g<=eMax; g+=40){el('line',{x1:L,x2:R,y1:ye(g),y2:ye(g),stroke:css('--rule')},svg);txt(svg,L-6,ye(g)+4,'£'+g,{'text-anchor':'end','font-size':11,fill:css('--ink-3')});}
+  [0,100,200,300].forEach(g=>{el('line',{x1:L,x2:R,y1:yk(g),y2:yk(g),stroke:css('--rule')},svg);txt(svg,L-6,yk(g)+4,g,{'text-anchor':'end','font-size':11,fill:css('--ink-3')});});
+  txt(svg,L,top-4,'Export value (£/MWh)',{'font-size':12,fill:css('--ink-2')});
+  txt(svg,L,top2-6,'Surplus split (kW)',{'font-size':12,fill:css('--ink-2')});
+  // stacked columns
+  const fullC=css('--c-full'), effC=css('--c-eff'), expC=css('--c-export');
+  el('rect',{x:L,y:yk(F.S),width:R-L,height:yk(0)-yk(F.S),fill:expC},svg);
+  const cols=el('g',{'shape-rendering':'crispEdges'},svg);
+  for(let i=0;i<n;i++){const P=v.miner_kw[i], par=m.par(P), exp=F.S-P-par, md=v.mode[i];
+    const mc = md==='M'?fullC:effC;
+    const used=Math.min(F.S,P+par);
+    if(P>0){el('rect',{x:xs(i),y:yk(used),width:bw+0.6,height:yk(0)-yk(used),fill:mc},cols);}}
+  // price line
+  let d=''; WEEK.export_value.forEach((val,i)=>{d+=(i?'L':'M')+(xs(i)+bw/2).toFixed(1)+','+ye(val).toFixed(1);});
+  el('path',{d,fill:'none',stroke:css('--ink-1'),'stroke-width':1.6,'stroke-linejoin':'round'},svg);
+  // day ticks
+  WEEK.days.forEach((ds,k)=>{const x=xs(k*48);el('line',{x1:x,x2:x,y1:top,y2:top2+h2,stroke:css('--rule-2')},svg);
+    const dt=new Date(ds+'T12:00:00Z');txt(svg,x+4,top2+h2+18,dt.toLocaleDateString('en-GB',{weekday:'short',day:'numeric'}),{'font-size':12,fill:css('--ink-2')});});
+  // hover
+  const hl=el('line',{x1:0,x2:0,y1:top,y2:top2+h2,stroke:css('--ink-1'),'stroke-width':1,opacity:0},svg);
+  const hit=el('rect',{x:L,y:top,width:R-L,height:top2+h2-top,fill:'transparent'},svg);
+  hit.addEventListener('mousemove',ev=>{const r=svg.getBoundingClientRect();const x=(ev.clientX-r.left)*1000/r.width;const i=Math.max(0,Math.min(n-1,Math.floor((x-L)/bw)));
+    hl.setAttribute('x1',xs(i)+bw/2);hl.setAttribute('x2',xs(i)+bw/2);hl.setAttribute('opacity',.5);
+    const P=v.miner_kw[i],par=m.par(P),exp=Math.max(0,F.S-P-par), day=WEEK.days[Math.floor(i/48)], sp=i%48, hh=String(Math.floor(sp/2)).padStart(2,'0')+':'+(sp%2?'30':'00');
+    const md=v.mode[i]==='E'?'Stop & export':(v.mode[i]==='M'?'Full mining':'Efficient mining + export');
+    showTip(ev,`<b>${new Date(day+'T12:00:00Z').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})} ${hh}</b><br>Day-ahead £${fmt(WEEK.price[i],2)} · export value <b>£${fmt(WEEK.export_value[i],2)}</b>${WEEK.band[i]==='r'?' (red band)':''}<br>${md}<br>Miners <b>${fmt(P)}</b> kW · exported <b>${fmt(exp)}</b> kW`);});
+  hit.addEventListener('mouseleave',()=>{hideTip();hl.setAttribute('opacity',0);});
+  // stats
+  const other=WEEK.variants[`hp${state.hp}_b${state.bs}_${state.strat==='partial'?'binary':'partial'}`];
+  const cnt=c=>[...v.mode].filter(x=>x===c).length;
+  const diff = state.strat==='partial' ? v.value_gbp-other.value_gbp : other.value_gbp-v.value_gbp;
+  document.getElementById('weekStats').innerHTML=
+    `<span>Week value <b>${gbp(v.value_gbp)}</b></span><span>Full starts <b>${v.starts}</b></span>`+
+    `<span>Half-hours: full <b>${cnt('M')}</b> · efficient <b>${cnt('P')}</b> · stopped <b>${cnt('E')}</b></span>`+
+    `<span>Eunice vs mine-or-export this week <b>${diff>=0?'+':''}${gbp(diff)}</b></span>`;
+}
+
+/* ---------------------------------------------------------------- 5 blocks */
+function groupedBars(svgId, getter, opts){
+  const svg=document.getElementById(svgId); clear(svg);
+  const Y=YEAR[state.hp], blocks=['4','8','12'], L=58,R=470,T=14,B=220;
+  const vals=blocks.flatMap(b=>[getter(Y[b],'partial'),getter(Y[b],'binary')]);
+  let lo=Math.min(0,...vals), hi=Math.max(0,...vals); const pad=(hi-lo)*0.12||1; lo=lo<0?lo-pad:0; hi=hi+pad;
+  const yv=v=>T+(B-T)*(1-(v-lo)/(hi-lo)), step=opts.step;
+  for(let g=Math.ceil(lo/step)*step; g<=hi; g+=step){el('line',{x1:L,x2:R,y1:yv(g),y2:yv(g),stroke:g===0?css('--rule-2'):css('--rule')},svg);txt(svg,L-6,yv(g)+4,opts.fmt(g),{'text-anchor':'end','font-size':11,fill:css('--ink-3')});}
+  const gw=(R-L)/3, bw=Math.min(46,gw*0.3);
+  blocks.forEach((b,k)=>{const cx=L+gw*(k+.5);
+    [['partial',css('--teal'),-1],['binary',css('--c-muted'),1]].forEach(([s,c,side])=>{
+      const v=getter(Y[b],s), x=cx+side*(bw/2+1)-bw/2, y0=yv(0), y1=yv(v);
+      const r=el('rect',{x,y:Math.min(y0,y1),width:bw,height:Math.max(1,Math.abs(y1-y0)),rx:3,fill:c},svg);
+      r.addEventListener('mousemove',ev=>showTip(ev,`<b>${b}-period minimum</b><br>${s==='partial'?'Eunice (3 states)':'Mine or export only'}: <b>${opts.fmt(v)}</b>`));r.addEventListener('mouseleave',hideTip);
+      txt(svg,x+bw/2,(v>=0?y1-6:y1+14),opts.fmt(v),{'text-anchor':'middle','font-size':11,'font-weight':s==='partial'?700:400,fill:css(s==='partial'?'--ink-1':'--ink-3')});
+    });
+    txt(svg,cx,B+20,`${b} periods`,{'text-anchor':'middle','font-size':12,fill:css('--ink-2')});
+    txt(svg,cx,B+35,`${b/2} h`,{'text-anchor':'middle','font-size':11,fill:css('--ink-3')});
+  });
+}
+function drawBlocks(){
+  groupedBars('blkRev',(r,s)=>s==='partial'?r.partial_vs_base:r.binary_vs_base,{step:1000,fmt:v=>(v>0?'+':'')+gbp(v)});
+  groupedBars('blkCyc',(r,s)=>s==='partial'?r.cycles_partial:r.cycles_binary,{step:100,fmt:v=>fmt(v)});
+  // share chart: two tall segmented bars
+  const svg=document.getElementById('shareChart'); clear(svg); const Y=YEAR[state.hp]['8'];
+  const rows=[['Eunice (3 states)',[['full',Y.share_partial.full],['efficient',Y.share_partial.efficient+Y.share_partial.between],['stop',Y.share_partial.stop]]],
+              ['Mine or export only',[['full',Y.share_binary.full],['stop',Y.share_binary.stop]]]];
+  const C={full:css('--c-full'),efficient:css('--c-eff'),stop:css('--c-export')}, NAME={full:'Full mining',efficient:'Efficient + export',stop:'Stopped, all exported'};
+  rows.forEach(([lab,parts],k)=>{const y=12+k*54; txt(svg,10,y+19,lab,{'font-size':13,fill:css('--ink-2')}); let x=190;
+    parts.forEach(([p,s],j)=>{const w=790*s; const r=el('rect',{x:x+(j?1:0),y,width:Math.max(0,w-(j?1:0)),height:28,rx:3,fill:C[p]},svg);
+      r.addEventListener('mousemove',ev=>showTip(ev,`<b>${NAME[p]}</b><br>${fmt(s*100,1)}% of engine-running hours`));r.addEventListener('mouseleave',hideTip);
+      if(w>70) txt(svg,x+w/2,y+19,`${fmt(s*100)}%`,{'text-anchor':'middle','font-size':12,'font-weight':700,fill:'#fff'}); x+=w;});});
+  txt(svg,190,116,'Orange = full mining · purple = efficient mining + export · blue = miners stopped, all exported',{'font-size':12,fill:css('--ink-3')});
+  // callout + table
+  const y4=YEAR[state.hp]['4'], y8=YEAR[state.hp]['8'], y12=YEAR[state.hp]['12'];
+  document.getElementById('blockCallout').innerHTML=`<b>Recommendation: 8-period minimum with Eunice's three states.</b> At $${state.hp}/PH/day it earns <b>${gbp(y8.partial_minus_binary)}/yr</b> more than mine-or-export on the same 8-period rule, with about <b>${y8.cycles_partial}</b> full start/stop cycles a year (4-period: ${y4.cycles_partial}, 12-period: ${y12.cycles_partial}). That is ${y8.cycles_partial-y8.cycles_binary} more than mine-or-export, because efficient mode makes some shorter runs worth starting; moving between efficient and full is a power change, not a cycle. Efficient mining covers <b>${fmt((y8.share_partial.efficient+y8.share_partial.between)*100)}%</b> of engine-running hours.`;
+  document.getElementById('blockTable').innerHTML=`<table class="data"><tr><th>Minimum run</th><th class="n">Eunice £/yr</th><th class="n">Mine-or-export £/yr</th><th class="n">Eunice advantage</th><th class="n">Cycles Eunice</th><th class="n">Cycles mine-or-export</th></tr>${['4','8','12'].map(b=>{const r=YEAR[state.hp][b];return `<tr class="${b==='8'?'hl':''}"><td>${b} periods (${b/2} h)</td><td class="n">${gbp(r.partial_vs_base)}</td><td class="n">${gbp(r.binary_vs_base)}</td><td class="n">+${gbp(r.partial_minus_binary)}</td><td class="n">${r.cycles_partial}</td><td class="n">${r.cycles_binary}</td></tr>`}).join('')}</table><p class="small muted">£ figures are against mine-or-export with no minimum run, same year and prices.</p>`;
+}
+
+/* ---------------------------------------------------------------- 6 offtake */
+function drawPaid(){
+  const P=[['SmartestEnergy','Index PPA (index = SSP)','SSP, EPEX or N2EX','Strong','https://www.smartestenergy.com/en_GB/selling-energy/flexible-ppas/'],
+           ['TotalEnergies','System Price (Spill) PPA','SSP','Strong','https://business.totalenergies.uk/understanding-ppas'],
+           ['npower Business Solutions','System Sell Price PPA','SSP, no balance or volume fees','Strong','https://npowerbusinesssolutions.com/corporate/generation'],
+           ['Statkraft','Export PPA (floating index)','Floating index, option to fix','Ask','https://www.statkraft.co.uk/what-we-offer/power-purchase-agreements/export-ppas/'],
+           ['F&S Energy','Wholesale pass-through (on request)','Pass-through terms not published; ask','Ask','https://fs-energy.co.uk/sell-us-power'],
+           ['npower Business Solutions','N2EX PPA','Daily average day-ahead price','Avoid — a peaker loses its peak value','https://npowerbusinesssolutions.com/corporate/generation']];
+  document.getElementById('providerTable').innerHTML='<tr><th>Provider</th><th>Product</th><th>Index</th><th>Fit for us</th></tr>'+P.map(p=>`<tr${p[3]==='Strong'?' class="hl"':''}><td>${p[0]}</td><td><a href="${p[4]}" target="_blank" rel="noopener">${p[1]}</a></td><td>${p[2]}</td><td>${p[3]}</td></tr>`).join('')+
+    '<tr><td colspan="4" class="small muted">Later, for a portfolio: SmartestEnergy ETSA or TotalEnergies Fully Flexible (day-ahead position, deviations at SSP). Same value as spill in the backtest, more work.</td></tr>';
+  const svg=document.getElementById('infoChart'); clear(svg);
+  const D=[['Last SSP, 2 periods back (simple)',3019],['Last SSP, 1 period back',5495],['Grid short/long this period',8961],['Exact SSP (ceiling)',13754]];
+  const L=200,R=470,max=14000; D.forEach(([l,v],i)=>{const y=12+i*42; txt(svg,L-8,y+17,l,{'text-anchor':'end','font-size':12,fill:css('--ink-2')});
+    const w=(R-L-60)*v/max; el('rect',{x:L,y,width:w,height:24,rx:3,fill:i===3?css('--c-muted'):css('--teal')},svg);
+    txt(svg,L+w+6,y+17,'+'+gbp(v),{'font-size':12,'font-weight':700,fill:css('--ink-1')});});
+}
+
+/* ---------------------------------------------------------------- controls */
+function syncSegs(){document.querySelectorAll('.seg').forEach(s=>{const k=s.dataset.bind;s.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(String(state[k])===b.dataset.v)));});}
+document.querySelectorAll('.seg').forEach(s=>s.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;const k=s.dataset.bind;state[k]=(k==='strat')?b.dataset.v:+b.dataset.v;syncSegs();renderAll();}));
+document.getElementById('eSlider').addEventListener('input',drawLadder);
+function renderAll(){drawStates();drawLadder();drawWeek();drawBlocks();}
+// active section in the nav
+const links=[...document.querySelectorAll('nav.toc a')];
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));}),{rootMargin:'-45% 0px -50% 0px'});
+document.querySelectorAll('main section').forEach(s=>io.observe(s));
+drawFlow(); drawPaid(); syncSegs(); renderAll();
+</script>
+</body>
+</html>

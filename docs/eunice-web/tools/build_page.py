@@ -1,0 +1,18 @@
+"""Inline the data and wordmark into the self-contained explainer page.
+
+    python docs/eunice-web/tools/build_page.py   # writes docs/eunice-web/eunice.html
+"""
+import base64
+import json
+from pathlib import Path
+
+D = Path(__file__).resolve().parents[1]
+t = (D / "src" / "eunice.template.html").read_text()
+wm = base64.b64encode((D / "assets" / "wordmark-light.png").read_bytes()).decode()
+week = json.dumps(json.loads((D / "data" / "week.json").read_text()), separators=(",", ":"))
+year = json.dumps(json.loads((D / "data" / "year_blocks.json").read_text()), separators=(",", ":"))
+for k in ("__WM__", "__WEEK__", "__YEAR__"):
+    assert t.count(k) == 1, k
+out = t.replace("__WM__", wm).replace("__WEEK__", week).replace("__YEAR__", year)
+(D / "eunice.html").write_text(out)
+print(f"wrote {D / 'eunice.html'} ({len(out):,} bytes)")
