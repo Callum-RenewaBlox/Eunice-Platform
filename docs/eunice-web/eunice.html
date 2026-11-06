@@ -471,7 +471,7 @@ function drawFlow(){
     box(xo,40,206,...MI,92); box(xo,168,206,...GX,92);
     arrow(`M${xf+150},140 C${xf+150+gap/2},140 ${xo-gap/2},86 ${xo-4},86`);
     arrow(`M${xf+150},160 C${xf+150+gap/2},160 ${xo-gap/2},214 ${xo-4},214`);
-    txt(g,xf,232,'Edge agent on site keeps the plan',{class:'s'}); txt(g,xf,248,'if the cloud link drops',{class:'s'});
+    wrap(g,xf,232,'Edge agent on site keeps the plan if the cloud link drops',xo-xf-12,{class:'s'});
     size(svg,W,300); return;
   }
   // vertical: inputs in a 2×2 grid, then Eunice → Foreman → miners and export side by side
@@ -854,6 +854,7 @@ function groupedBars(svgId, getter, opts){
   const yv=v=>T+(B-T)*(1-(v-lo)/(hi-lo)), step=opts.step;
   for(let g=Math.ceil(lo/step)*step; g<=hi; g+=step){el('line',{x1:L,x2:R,y1:yv(g),y2:yv(g),stroke:g===0?css('--rule-2'):css('--rule')},svg);txt(svg,L-6,yv(g)+4,opts.fmt(g),{'text-anchor':'end','font-size':12,fill:css('--ink-3')});}
   const gw=(R-L)/3, bw=Math.min(46,gw*(W<400?0.42:0.3)), labels=el('g',{},svg);
+  let compact=false;
   blocks.forEach((b,k)=>{const cx=L+gw*(k+.5), placed=[];
     [['partial',css('--teal'),-1],['binary',css('--c-muted'),1]].forEach(([s,c,side])=>{
       const v=getter(Y[b],s), x=cx+side*(bw/2+1)-bw/2, y0=yv(0), y1=yv(v);
@@ -862,14 +863,18 @@ function groupedBars(svgId, getter, opts){
       // value label above (or below) its bar; nudged away from the zero line if it would overlap its neighbour
       const t=txt(labels,x+bw/2,(v>=0?y1-6:y1+15),opts.fmt(v),{'data-series':s,'data-block':b,class:'lbl','text-anchor':'middle','font-size':12,'font-weight':s==='partial'?700:400,fill:css(s==='partial'?'--ink-1':'--ink-3'),stroke:'#fff','stroke-width':3,'stroke-linejoin':'round','paint-order':'stroke'});
       const w=textW(t);
-      if(w>bw+2){ t.setAttribute('text-anchor',side<0?'end':'start'); t.setAttribute('x',side<0?x+bw:x); }
-      const x0=w>bw+2?(side<0?x+bw-w:x):x+bw/2-w/2, box={x0,x1:x0+w,y:+t.getAttribute('y')};
+      let x0=w>bw+2?(side<0?x+bw-w:x):x+bw/2-w/2;
+      x0=Math.max(2,Math.min(W-2-w,x0));              // inside the chart whatever the font's widths
+      t.setAttribute('text-anchor','start'); t.setAttribute('x',x0);
+      const box={x0,x1:x0+w,y:+t.getAttribute('y')};
       placed.forEach(p=>{ if(box.x0<p.x1+3&&box.x1>p.x0-3&&Math.abs(box.y-p.y)<14){ box.y=v>=0?Math.min(box.y,p.y)-14:Math.max(box.y,p.y)+14; t.setAttribute('y',box.y);} });
       placed.push(box);
     });
-    txt(svg,cx,B+20,`${b} periods`,{'text-anchor':'middle','font-size':12,fill:css('--ink-2')});
+    const xl=txt(svg,cx,B+20,`${b} periods`,{'text-anchor':'middle','font-size':12,fill:css('--ink-2')});
+    if(textW(xl)>gw-8){ xl.textContent=`${b}`; compact=true; }
     txt(svg,cx,B+36,`${b/2} h`,{'text-anchor':'middle','font-size':12,fill:css('--ink-3')});
   });
+  if(compact){ txt(svg,(L+R)/2,B+54,'minimum run, periods (hours)',{'text-anchor':'middle','font-size':12,fill:css('--ink-3')}); size(svg,W,H+16); }
   svg.appendChild(labels);
 }
 function drawBlkRev(){ groupedBars('blkRev',(r,s)=>s==='partial'?r.partial_vs_base:r.binary_vs_base,{step:1000,fmt:v=>(v>0?'+':'')+gbp(v)}); }
@@ -883,7 +888,9 @@ function wholePercents(shares){ const tot=shares.reduce((a,b)=>a+b,0)||1, raw=sh
 function drawShare(){
   const svg=document.getElementById('shareChart'); clear(svg); const W=widthOf(svg), Y=YEAR[state.hp]['8'];
   size(svg,W,200);
-  const side=W>=560, x0=side?190:10, bwid=W-10-x0, rowH=side?54:62;
+  const probe=l=>{const t=txt(svg,0,-99,l,{'font-size':13}),w=textW(t);t.remove();return w;};
+  const lw=Math.max(probe('Eunice (3 states)'),probe('Mine or export only'));
+  const side=W>=560&&lw+34<=W*0.4, x0=side?Math.max(190,Math.ceil(lw)+24):10, bwid=W-10-x0, rowH=side?54:62;
   const rows=[['Eunice (3 states)',[['full',Y.share_partial.full],['efficient',Y.share_partial.efficient+Y.share_partial.between],['stop',Y.share_partial.stop]]],
               ['Mine or export only',[['full',Y.share_binary.full],['stop',Y.share_binary.stop]]]];
   const C={full:css('--c-full'),efficient:css('--c-eff'),stop:css('--c-export')}, NAME={full:'Full mining',efficient:'Efficient + export',stop:'Stopped, all exported'};
@@ -921,7 +928,9 @@ function drawPaid(){
 function drawInfo(){
   const svg=document.getElementById('infoChart'); clear(svg); const W=widthOf(svg); size(svg,W,220);
   const D=[['Last SSP, 2 periods back (simple)',3019],['Last SSP, 1 period back',5495],['Grid short/long this period',8961],['Exact SSP (ceiling)',13754]];
-  const side=W>=440, L=side?200:10, R=W-10, max=14000, rowH=side?42:50;
+  const probe=l=>{const t=txt(svg,0,-99,l,{'font-size':12}),w=textW(t);t.remove();return w;};
+  const labelW=Math.max(...D.map(([l])=>probe(l)));
+  const side=labelW+18<=W*0.5, L=side?Math.ceil(labelW)+18:10, R=W-10, max=14000, rowH=side?42:50;
   D.forEach(([l,v],i)=>{const y=(side?12:24)+i*rowH;
     if(side) txt(svg,L-8,y+17,l,{class:'lbl','text-anchor':'end','font-size':12,fill:css('--ink-2')});
     else txt(svg,L,y-6,l,{class:'lbl','font-size':12,fill:css('--ink-2')});

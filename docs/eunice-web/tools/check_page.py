@@ -155,7 +155,7 @@ def fig_labels(page):
 
 def no_hscroll(page, c, what):
     sw, cw = page.evaluate("[document.documentElement.scrollWidth, document.documentElement.clientWidth]")
-    c.ok(sw <= cw, f"no horizontal scroll at 390 px ({what}): scrollWidth {sw} > clientWidth {cw}")
+    c.ok(sw <= cw, f"no horizontal page scroll ({what}): scrollWidth {sw} > clientWidth {cw}")
 
 
 PAGE_FACTS = """() => {
@@ -706,6 +706,15 @@ def run(path, shots):
         no_hscroll(page, c, "scenario 4 with its table open")
         page.close()
 
+        # --- 320 px (the narrowest phones): still no sideways scroll, legible charts, labels apart
+        page = new_page(320, 640)
+        for h in ("", "#scenario-3", "#scenario-5"):
+            page.goto("about:blank")
+            page.goto(url + h)
+            no_hscroll(page, c, f"320 px {h or 'whole week'}")
+            check_charts(page, c, f"320 px {h or 'whole week'}")
+        page.close()
+
         # --- a phone with touch: taps show tooltips; a swipe changes the day
         ctx = browser.new_context(**p.devices["iPhone 13"])
         page = ctx.new_page()
@@ -747,10 +756,21 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("page", nargs="?", type=Path, default=PAGE)
     ap.add_argument("--shots", help="directory to save screenshots in")
+    ap.add_argument("--font", help="check the page as it looks in this font family (e.g. 'DejaVu Sans', whose glyphs are wide)")
     a = ap.parse_args()
     if a.shots:
         Path(a.shots).mkdir(parents=True, exist_ok=True)
-    sys.exit(0 if run(a.page, a.shots) else 1)
+    page = a.page
+    if a.font:   # a copy of the page whose font stack is this family alone, so layouts are tested against other glyph widths
+        import re
+        import tempfile
+        html = page.read_text(encoding="utf-8")
+        html, n = re.subn(r'--font:[^;]+;', f'--font:"{a.font}",sans-serif;', html, count=1)
+        assert n == 1, "the page's --font token is gone"
+        page = Path(tempfile.mkdtemp()) / "eunice.html"
+        page.write_text(html, encoding="utf-8")
+        print(f"checking in {a.font}")
+    sys.exit(0 if run(page, a.shots) else 1)
 
 
 if __name__ == "__main__":
