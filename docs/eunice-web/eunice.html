@@ -104,7 +104,9 @@ details summary{cursor:pointer;color:var(--teal);font-size:14px;margin-top:10px}
 .btn-s{border:1px solid var(--rule-2);background:#fff;font:inherit;font-size:13px;line-height:1.3;color:var(--ink-2);padding:4px 11px;border-radius:8px;cursor:pointer}
 .btn-s:disabled{opacity:.45;cursor:default}
 .chip:focus-visible,.btn-s:focus-visible,.chart:focus-visible,.linkbtn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
-.chart:focus{outline:none}
+.chart:focus:not(:focus-visible){outline:none}
+svg.chart text{-webkit-user-select:none;user-select:none}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .chart:focus-visible{border-radius:6px}
 .scen-card{margin:12px 0 0;border:1px solid var(--rule-2);border-left:4px solid var(--teal);border-radius:12px;padding:14px 16px}
 .scen-card .when{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--sea);font-weight:700}
@@ -245,7 +247,7 @@ svg.chart text.lbl{pointer-events:none}
   <div class="eyebrow">4 · A week of decisions</div>
   <h2>What Eunice would have done, 10–16 November 2025</h2>
   <p class="sub">Real day-ahead prices for one week, run through Eunice's optimiser. Switch the trading block and compare against simple mine-or-export.</p>
-  <div class="card">
+  <div class="card" id="weekCard" style="scroll-margin-top:56px">
     <div class="controls">
       <span class="ctl-label">Strategy</span><div class="seg" data-bind="strat"><button data-v="partial" aria-pressed="true">Eunice (3 states)</button><button data-v="binary" aria-pressed="false">Mine or export only</button></div>
       <span class="ctl-label">Minimum run</span><div class="seg" data-bind="bs"><button data-v="4" aria-pressed="false">4</button><button data-v="8" aria-pressed="true">8</button><button data-v="12" aria-pressed="false">12</button></div>
@@ -265,7 +267,8 @@ svg.chart text.lbl{pointer-events:none}
     <div class="daypick" id="dayPick" role="group" aria-label="Day shown" hidden></div>
     <svg class="chart" id="weekChart" viewBox="0 0 1000 390" role="img" tabindex="0" aria-label="Export value and the split between miners and export for each half-hour of the week"></svg>
     <p class="small muted" id="swipeHint" hidden style="margin:2px 0 0">One day at a time on a narrow screen: pick a day above or swipe the chart.</p>
-    <div class="scen-card" id="scenCard" hidden aria-live="polite"></div>
+    <div class="scen-card" id="scenCard" hidden></div>
+    <p class="sr-only" id="scenStatus" role="status"></p>
     <div class="statline" id="weekStats"></div>
     <details id="weekDetails"><summary>Show the numbers</summary>
       <p class="small muted" id="weekTableNote" style="margin:8px 0 0"></p>
@@ -574,10 +577,8 @@ const dayDate = d => new Date(WEEK.days[Math.min(d,WEEK.days.length-1)]+'T12:00:
 const dayName = d => dayDate(d).toLocaleDateString('en-GB',{weekday:'short',timeZone:'UTC'});
 const hhTime = i => {const sp=((i%48)+48)%48; return String(Math.floor(sp/2)).padStart(2,'0')+':'+(sp%2?'30':'00');};
 function rangeLabel(a,b){            // inclusive half-hour indices → "Mon 16:00–19:00" or "Wed 22:00 – Thu 07:00"
-  const e=b+1, d0=Math.floor(a/48), d1=Math.floor(e/48);
-  if(d1===d0) return `${dayName(d0)} ${hhTime(a)}–${hhTime(e)}`;
-  if(e%48===0 && d1===d0+1) return `${dayName(d0)} ${hhTime(a)}–24:00`;
-  return `${dayName(d0)} ${hhTime(a)} – ${dayName(d1)} ${hhTime(e)}`;
+  const e=b+1, d0=Math.floor(a/48), atMidnight=e%48===0, d1=atMidnight?e/48-1:Math.floor(e/48), t1=atMidnight?'24:00':hhTime(e);
+  return d1===d0 ? `${dayName(d0)} ${hhTime(a)}–${t1}` : `${dayName(d0)} ${hhTime(a)} – ${dayName(d1)} ${t1}`;
 }
 const variantKey = (strat,hp=state.hp,bs=state.bs) => `hp${hp}_b${bs}_${strat}`;
 // £ for one half-hour with the miners at P kW: 0.5 h × (export value × exported MWh + mining £/h).
@@ -610,7 +611,7 @@ const scenOf = () => view.scen ? SCENARIOS[view.scen-1] : null;
 function viewRange(){ const s=scenOf(); if(s) return s.zoom; return view.narrow ? [view.day*48, view.day*48+47] : [0,HH-1]; }
 
 function drawWeek(){
-  const svg=document.getElementById('weekChart'); clear(svg);
+  const svg=document.getElementById('weekChart'); clear(svg); hideTip();
   const W=widthOf(svg); view.narrow=W<640;
   const v=WEEK.variants[variantKey(state.strat)], m=model(state.hp), sc=scenOf();
   const [a,b]=viewRange(), n=b-a+1, hourly=n<=96, nar=view.narrow;
@@ -666,7 +667,7 @@ function drawWeek(){
   titles.forEach(t=>svg.appendChild(t));       // panel titles above the outline
   // crosshair + tooltip: follows the mouse; a tap or a sideways drag with a finger
   const hl=el('line',{x1:0,x2:0,y1:top,y2:axisY,stroke:css('--ink-1'),'stroke-width':1,opacity:0,'pointer-events':'none'},svg);
-  const hit=el('rect',{x:L,y:top,width:R-L,height:axisY-top,fill:'transparent'},svg);
+  const hit=el('rect',{x:L,y:top,width:R-L,height:axisY-top,fill:'transparent','data-role':'plot'},svg);
   const show=ev=>{const r=svg.getBoundingClientRect();const x=(ev.clientX-r.left)*W/r.width;const i=a+Math.max(0,Math.min(n-1,Math.floor((x-L)/bw)));
     hl.setAttribute('x1',xs(i)+bw/2);hl.setAttribute('x2',xs(i)+bw/2);hl.setAttribute('opacity',.5);
     const P=v.miner_kw[i],exp=Math.max(0,F.S-P-m.par(P)), dd=Math.floor(i/48);
@@ -690,9 +691,9 @@ function drawWeek(){
   if(showPick){ if(!pick.childElementCount) pick.innerHTML=WEEK.days.map((ds,k)=>`<button type="button" class="dayb" data-day="${k}" aria-pressed="false" aria-label="${dayDate(k).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'})}">${dayName(k)}<b>${dayDate(k).getUTCDate()}</b></button>`).join('');
     pick.querySelectorAll('.dayb').forEach(bt=>bt.setAttribute('aria-pressed',String(+bt.dataset.day===view.day)));}
   svg.setAttribute('aria-label', sc
-    ? `Week chart zoomed to ${rangeLabel(a,b)} for scenario ${view.scen}, ${sc.head}. The scenario window, ${rangeLabel(sc.win[0],sc.win[1])}, is outlined. Left and right arrow keys step through the scenarios; Escape shows the whole week.`
-    : (nar ? `Export value and the split between miners and export for each half-hour of ${dayDate(view.day).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'})}. Left and right arrow keys step through the scenarios.`
-           : 'Export value and the split between miners and export for each half-hour of the week. Left and right arrow keys step through the scenarios.'));
+    ? `Week chart zoomed to ${rangeLabel(a,b)} for scenario ${view.scen}, ${sc.head}. The scenario window, ${rangeLabel(sc.win[0],sc.win[1])}, is outlined.`
+    : (nar ? `Export value and the split between miners and export for each half-hour of ${dayDate(view.day).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'})}.`
+           : 'Export value and the split between miners and export for each half-hour of the week.'));
   // stats (whole week, from the optimiser's own totals)
   const other=WEEK.variants[variantKey(state.strat==='partial'?'binary':'partial')];
   const cnt=c=>[...v.mode].filter(x=>x===c).length;
@@ -732,7 +733,7 @@ function drawScenario(){
   document.getElementById('scenAll').disabled = view.scen===0;
   document.getElementById('scenHint').hidden = !!sc;
   document.getElementById('scenLegend').hidden = !sc;
-  if(!sc){ card.hidden=true; card.innerHTML=''; return; }
+  if(!sc){ card.hidden=true; card.innerHTML=''; lastCard=''; announce(view.closed?'Whole week shown.':''); return; }
   const [wa,wb]=sc.win, hp=state.hp, bs=state.bs;
   const eu=windowValue(variantKey('partial'),wa,wb,hp), mo=windowValue(variantKey('binary'),wa,wb,hp), ex=windowValue(null,wa,wb,hp);
   const changed = hp!==sc.hp || bs!==sc.bs || state.strat!==sc.strat;
@@ -746,25 +747,38 @@ function drawScenario(){
   if(sc.night){const [na,nb]=sc.night, k4=windowValue(`hp${hp}_b4_partial`,na,nb,hp), k8=windowValue(`hp${hp}_b8_partial`,na,nb,hp);
     html += `<p class="scen-note">Over the night, ${rangeLabel(na,nb)}, Eunice earns <b data-fig="night-4">${gbp(k4,2)}</b> on a 4-period minimum and <b data-fig="night-8">${gbp(k8,2)}</b> on 8 periods (<span style="white-space:nowrap">${k4>=k8?'+':''}${gbp(k4-k8,2)}</span>).</p>`;}
   if(changed) html += `<p class="scen-note muted">You've changed the settings from this scenario's ($${sc.hp}/PH/day, ${sc.bs}-period minimum, ${sc.strat==='partial'?'Eunice':'mine or export'}). <button type="button" class="linkbtn" data-restore>Restore them</button></p>`;
-  card.innerHTML=html; card.hidden=false;
+  if(html!==lastCard){ card.innerHTML=html; lastCard=html; }
+  card.hidden=false;
+  announce(`Scenario ${view.scen} of ${SCENARIOS.length}, ${sc.head}. Over ${rangeLabel(wa,wb)}: Eunice ${gbp(eu,2)}, mine or export ${gbp(mo,2)}, export only ${gbp(ex,2)}.`);
 }
+let lastCard='', lastStatus='';
+function announce(t){ if(t===lastStatus) return; lastStatus=t; document.getElementById('scenStatus').textContent=t; }
 function openScenario(k,{scroll=false,url=true}={}){
+  view.closed = !k && view.scen>0;
   view.scen = k||0;
   const sc=scenOf(); if(sc){state.hp=sc.hp; state.bs=sc.bs; state.strat=sc.strat;}
   syncSegs(); renderAll();
   if(url) history.replaceState(null,'', sc?`#scenario-${k}`:'#week');
-  if(scroll) requestAnimationFrame(()=>document.getElementById('scenBar').scrollIntoView({block:'start'}));
+  if(scroll) requestAnimationFrame(()=>document.getElementById('weekCard').scrollIntoView({block:'start'}));
 }
 function stepScenario(d){ const k=Math.max(0,Math.min(SCENARIOS.length,view.scen+d)); if(k!==view.scen) openScenario(k); }
+// After a button that had focus is disabled (Previous on scenario 1, Next on 6, Whole week) or rebuilt (Restore), keep focus
+// in the scenario controls rather than letting it fall back to the page.
+function refocus(){ const a=document.activeElement; if(a&&a!==document.body&&!a.disabled&&a.isConnected) return;
+  const c=document.querySelector('#scenChips .chip[aria-pressed="true"]')||document.querySelector('#scenChips .chip'); if(c) c.focus({preventScroll:true}); }
+// After a click, bring the chart into view if it is off screen.
+function bringIntoView(){ const r=document.getElementById('weekChart').getBoundingClientRect();
+  if(r.top>innerHeight-160||r.bottom<80) document.getElementById('scenBar').scrollIntoView({block:'start'}); }
 function initScenarios(){
   document.getElementById('scenChips').innerHTML = SCENARIOS.map((s,k)=>
     `<button type="button" class="chip" data-k="${k+1}" aria-pressed="false" aria-label="Scenario ${k+1}: ${s.head}" title="${s.head}"><b>${k+1}</b><span>${s.head}</span></button>`).join('');
-  document.getElementById('scenChips').addEventListener('click',ev=>{const c=ev.target.closest('.chip'); if(c) openScenario(+c.dataset.k);});
-  document.getElementById('scenPrev').addEventListener('click',()=>stepScenario(-1));
-  document.getElementById('scenNext').addEventListener('click',()=>stepScenario(1));
-  document.getElementById('scenAll').addEventListener('click',()=>openScenario(0));
-  document.getElementById('scenCard').addEventListener('click',ev=>{if(ev.target.closest('[data-restore]')) openScenario(view.scen);});
+  document.getElementById('scenChips').addEventListener('click',ev=>{const c=ev.target.closest('.chip'); if(c){ openScenario(+c.dataset.k); bringIntoView(); }});
+  document.getElementById('scenPrev').addEventListener('click',()=>{stepScenario(-1); refocus(); bringIntoView();});
+  document.getElementById('scenNext').addEventListener('click',()=>{stepScenario(1); refocus(); bringIntoView();});
+  document.getElementById('scenAll').addEventListener('click',()=>{openScenario(0); refocus();});
+  document.getElementById('scenCard').addEventListener('click',ev=>{if(ev.target.closest('[data-restore]')){ openScenario(view.scen); refocus(); }});
   document.getElementById('weekChart').addEventListener('keydown',ev=>{
+    if(ev.altKey||ev.ctrlKey||ev.metaKey||ev.shiftKey) return;
     if(ev.key==='ArrowRight') stepScenario(1); else if(ev.key==='ArrowLeft') stepScenario(-1);
     else if(ev.key==='Escape' && view.scen) openScenario(0); else return;
     ev.preventDefault();});
@@ -773,8 +787,14 @@ function initScenarios(){
   document.getElementById('weekDetails').addEventListener('toggle',drawWeekTable);
 }
 function scenarioFromHash(scroll){
-  const mm=/^#scenario-([1-6])$/.exec(location.hash);
-  if(mm){ openScenario(+mm[1],{scroll,url:false}); return true; }
+  const h=location.hash, mm=/^#scenario-([1-6])$/.exec(h);
+  if(mm){
+    if(+mm[1]!==view.scen) openScenario(+mm[1],{scroll,url:false});   // the open scenario's own link keeps any toggles changed since
+    else if(scroll) requestAnimationFrame(()=>document.getElementById('weekCard').scrollIntoView({block:'start'}));
+    return true;
+  }
+  // Back or Forward to the whole week (no hash, #week) or a scenario that doesn't exist: show the whole week
+  if(view.scen && (!h || h==='#' || h==='#week' || /^#scenario-/.test(h))) openScenario(0,{url:false});
   return false;
 }
 
@@ -794,7 +814,7 @@ function groupedBars(svgId, getter, opts){
       const r=el('rect',{x,y:Math.min(y0,y1),width:bw,height:Math.max(1,Math.abs(y1-y0)),rx:3,fill:c},svg);
       tipOn(r,`<b>${b}-period minimum</b><br>${s==='partial'?'Eunice (3 states)':'Mine or export only'}: <b>${opts.fmt(v)}</b>`);
       // value label above (or below) its bar; nudged away from the zero line if it would overlap its neighbour
-      const t=txt(labels,x+bw/2,(v>=0?y1-6:y1+15),opts.fmt(v),{class:'lbl','text-anchor':'middle','font-size':12,'font-weight':s==='partial'?700:400,fill:css(s==='partial'?'--ink-1':'--ink-3'),stroke:'#fff','stroke-width':3,'stroke-linejoin':'round','paint-order':'stroke'});
+      const t=txt(labels,x+bw/2,(v>=0?y1-6:y1+15),opts.fmt(v),{'data-series':s,'data-block':b,class:'lbl','text-anchor':'middle','font-size':12,'font-weight':s==='partial'?700:400,fill:css(s==='partial'?'--ink-1':'--ink-3'),stroke:'#fff','stroke-width':3,'stroke-linejoin':'round','paint-order':'stroke'});
       const w=textW(t), box={x0:x+bw/2-w/2,x1:x+bw/2+w/2,y:+t.getAttribute('y')};
       placed.forEach(p=>{ if(box.x0<p.x1+3&&box.x1>p.x0-3&&Math.abs(box.y-p.y)<14){ box.y=v>=0?Math.min(box.y,p.y)-14:Math.max(box.y,p.y)+14; t.setAttribute('y',box.y);} });
       placed.push(box);
@@ -806,6 +826,11 @@ function groupedBars(svgId, getter, opts){
 }
 function drawBlkRev(){ groupedBars('blkRev',(r,s)=>s==='partial'?r.partial_vs_base:r.binary_vs_base,{step:1000,fmt:v=>(v>0?'+':'')+gbp(v)}); }
 function drawBlkCyc(){ groupedBars('blkCyc',(r,s)=>s==='partial'?r.cycles_partial:r.cycles_binary,{step:100,fmt:v=>fmt(v)}); }
+// Whole percentages that add up to 100: round down, then give the leftover points to the largest remainders.
+function wholePercents(shares){ const tot=shares.reduce((a,b)=>a+b,0)||1, raw=shares.map(v=>v/tot*100), out=raw.map(Math.floor);
+  let left=100-out.reduce((a,b)=>a+b,0);
+  raw.map((v,i)=>[v-Math.floor(v),i]).sort((a,b)=>b[0]-a[0]).forEach(([,i])=>{ if(left>0){ out[i]++; left--; } });
+  return out; }
 // share chart: two segmented bars; the row labels sit beside the bars on a wide screen, above them on a narrow one
 function drawShare(){
   const svg=document.getElementById('shareChart'); clear(svg); const W=widthOf(svg), Y=YEAR[state.hp]['8'];
@@ -816,9 +841,10 @@ function drawShare(){
   const C={full:css('--c-full'),efficient:css('--c-eff'),stop:css('--c-export')}, NAME={full:'Full mining',efficient:'Efficient + export',stop:'Stopped, all exported'};
   let yEnd=0;
   rows.forEach(([lab,parts],k)=>{const y=(side?12:30)+k*rowH; txt(svg,10,side?y+19:y-8,lab,{class:'lbl','font-size':13,fill:css('--ink-2')}); let x=x0;
+    const pct=wholePercents(parts.map(q=>q[1]));
     parts.forEach(([p,s],j)=>{const w=bwid*s; const r=el('rect',{x:x+(j?1:0),y,width:Math.max(0,w-(j?1:0)),height:28,rx:3,fill:C[p]},svg);
       tipOn(r,`<b>${NAME[p]}</b><br>${fmt(s*100,1)}% of engine-running hours`);
-      const t=txt(svg,x+w/2,y+19,`${fmt(s*100)}%`,{class:'lbl','text-anchor':'middle','font-size':12,'font-weight':700,fill:'#fff'});
+      const t=txt(svg,x+w/2,y+19,`${pct[j]}%`,{class:'lbl','text-anchor':'middle','font-size':12,'font-weight':700,fill:'#fff'});
       if(textW(t)>w-8) t.remove(); x+=w;});
     yEnd=y+28;});
   const n=wrap(svg,side?x0:10,yEnd+22,'Orange = full mining · purple = efficient mining + export · blue = miners stopped, all exported',W-10-(side?x0:10),{class:'lbl','font-size':12,fill:css('--ink-3')});
@@ -829,7 +855,7 @@ function drawBlocks(){
   // callout + table
   const y4=YEAR[state.hp]['4'], y8=YEAR[state.hp]['8'], y12=YEAR[state.hp]['12'];
   document.getElementById('blockCallout').innerHTML=`<b>Recommendation: 8-period minimum with Eunice's three states.</b> At $${state.hp}/PH/day it earns <b>${gbp(y8.partial_minus_binary)}/yr</b> more than mine-or-export on the same 8-period rule, with about <b>${y8.cycles_partial}</b> full start/stop cycles a year (4-period: ${y4.cycles_partial}, 12-period: ${y12.cycles_partial}). That is ${y8.cycles_partial-y8.cycles_binary} more than mine-or-export, because efficient mode makes some shorter runs worth starting; moving between efficient and full is a power change, not a cycle. Efficient mining covers <b>${fmt((y8.share_partial.efficient+y8.share_partial.between)*100)}%</b> of engine-running hours.`;
-  document.getElementById('blockTable').innerHTML=`<table class="data"><tr><th>Minimum run</th><th class="n">Eunice £/yr</th><th class="n">Mine-or-export £/yr</th><th class="n">Eunice advantage</th><th class="n">Cycles Eunice</th><th class="n">Cycles mine-or-export</th></tr>${['4','8','12'].map(b=>{const r=YEAR[state.hp][b];return `<tr class="${b==='8'?'hl':''}"><td>${b} periods (${b/2} h)</td><td class="n">${gbp(r.partial_vs_base)}</td><td class="n">${gbp(r.binary_vs_base)}</td><td class="n">+${gbp(r.partial_minus_binary)}</td><td class="n">${r.cycles_partial}</td><td class="n">${r.cycles_binary}</td></tr>`}).join('')}</table><p class="small muted">£ figures are against mine-or-export with no minimum run, same year and prices.</p>`;
+  document.getElementById('blockTable').innerHTML=`<table class="data"><tr><th>Minimum run</th><th class="n">Eunice £/yr</th><th class="n">Mine-or-export £/yr</th><th class="n">Eunice advantage</th><th class="n">Cycles Eunice</th><th class="n">Cycles mine-or-export</th></tr>${['4','8','12'].map(b=>{const r=YEAR[state.hp][b];return `<tr class="${b==='8'?'hl':''}"><td>${b} periods (${b/2} h)</td><td class="n">${gbp(r.partial_vs_base)}</td><td class="n">${gbp(r.binary_vs_base)}</td><td class="n">+${gbp(r.partial_minus_binary)}</td><td class="n">${r.cycles_partial}</td><td class="n">${r.cycles_binary}</td></tr>`}).join('')}</table><p class="small muted">£ figures are against mine-or-export with no minimum run, same year and prices. Each column is rounded on its own, so the advantage can differ by £1 from the difference of the two columns beside it.</p>`;
 }
 
 /* ---------------------------------------------------------------- 6 offtake */
