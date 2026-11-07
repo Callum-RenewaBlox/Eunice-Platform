@@ -539,7 +539,8 @@ def run(path, shots):
         c.ok(f"full {mb.count('M')} · efficient {mb.count('P')} · stopped {mb.count('E')}" in st and "this week +£14.28" in st,
              f"mine or export: the week's half-hours and Eunice's advantage still +£14.28: {st!r}")
         click_toggle(page, "strat", "partial")
-        check_focus_rings(page, c, ['#states .seg button', '#eSlider', '#scenChips .chip', '#scenNext', '#week .seg button', '#weekChart'], "1280 px")
+        check_focus_rings(page, c, ['.brandrow a.home', '#states .seg button', '#eSlider', '#scenChips .chip', '#scenNext', '#week .seg button', '#weekChart'], "1280 px")
+        c.eq(page.evaluate("document.querySelector('.brandrow a.home').getAttribute('href')"), "/", "the wordmark leads to the RenewaBlox AI home page")
 
         # --- the week chart's table view follows the chart
         open_table(page)

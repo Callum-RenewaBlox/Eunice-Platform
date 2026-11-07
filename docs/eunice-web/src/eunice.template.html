@@ -22,6 +22,8 @@ a{color:var(--teal)}
 header.hero{background:linear-gradient(128deg,#1B6E94 0%,#156082 46%,#0B3549 100%);color:#fff;padding:26px 0 40px}
 .brandrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .brandrow img{height:22px;background:#fff;border-radius:6px;padding:5px 9px}
+.brandrow a.home{display:block;border-radius:6px}
+.brandrow a.home:focus-visible{outline:2px solid #fff;outline-offset:3px}
 .pill{font-size:12px;letter-spacing:.02em;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:3px 10px;color:#E7F1F7}
 .hero h1{font-size:clamp(28px,4.4vw,44px);line-height:1.12;margin:26px 0 10px;font-weight:700;letter-spacing:-.01em}
 .hero p.lead{font-size:clamp(16px,2vw,19px);max-width:760px;color:#E7F1F7;margin:0}
@@ -167,7 +169,7 @@ svg.chart text.lbl{pointer-events:none}
 <header class="hero">
   <div class="wrap">
     <div class="brandrow">
-      <img src="data:image/png;base64,__WM__" alt="RenewaBlox">
+      <a class="home" href="/" title="RenewaBlox AI: all the tools"><img src="data:image/png;base64,__WM__" alt="RenewaBlox AI home"></a>
       <span class="pill">Eunice · Dispatch</span>
       <span class="pill">Prototype · backtest on Mar 2025 – Mar 2026 data</span>
     </div>
